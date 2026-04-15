@@ -1,0 +1,68 @@
+<div class="d-flex overflow-hidden" style="height: 100vh;">
+
+  <div class="d-flex flex-column flex-shrink-0 p-3 bg-white border-end" style="width: 250px;">
+    <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto link-dark text-decoration-none"
+      style="height: 40px;">
+      <i class="bi bi-chat-square-dots-fill text-primary fs-4 me-2"></i>
+      <span class="fs-4 fw-bold">Bnan CRM</span>
+    </a>
+    <hr>
+
+    <ul class="nav nav-pills flex-column mb-auto">
+      <li class="nav-item">
+        <a href="#" class="nav-link active mb-1">
+          <i class="bi bi-grid-1x2 me-2"></i> Dashboard
+        </a>
+      </li>
+      <li>
+        <a href="#" class="nav-link link-dark mb-1">
+          <i class="bi bi-people me-2"></i> Contactos
+        </a>
+      </li>
+      <li>
+        <a href="#" class="nav-link link-dark mb-1">
+          <i class="bi bi-check2-square me-2"></i> Tareas
+        </a>
+      </li>
+    </ul>
+
+    <hr>
+
+    <ul class="nav nav-pills flex-column">
+      <li>
+        <a href="#" class="nav-link link-dark">
+          <i class="bi bi-gear me-2"></i> Configuración
+        </a>
+      </li>
+    </ul>
+  </div>
+
+  <div class="flex-grow-1 d-flex flex-column bg-light overflow-auto">
+
+    <nav class="navbar navbar-expand-lg bg-white border-bottom p-3" style="height: 73px;">
+      <div class="container-fluid">
+        <div class="d-flex flex-column">
+          <span class="fw-bold fs-4" style="line-height: 1.2;">Dashboard</span>
+          <small class="text-muted">Resumen de actividad</small>
+        </div>
+      </div>
+    </nav>
+    <!--INFO CARD-->
+    <div class="p-3">
+      <div class="row mt-3">
+        <div class="col-md-4">
+          <app-info-card></app-info-card>
+        </div>
+        <div class="col-md-4">
+          <app-info-card></app-info-card>
+        </div>
+        <div class="col-md-4">
+          <app-info-card></app-info-card>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+<!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * -->
+<router-outlet />
