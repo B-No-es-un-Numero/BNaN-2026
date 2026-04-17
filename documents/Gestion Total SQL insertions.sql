@@ -1,6 +1,24 @@
 CREATE DATABASE IF NOT EXISTS gestion_total_app CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 USE gestion_total_app;
 
+CREATE TABLE `client_app_client` (
+  `id` char(32) NOT NULL,
+  `name` varchar(100) NOT NULL,
+  `email` varchar(254) NOT NULL,
+  `dni` varchar(8) NOT NULL,
+  `date_of_birth` date NOT NULL,
+  `phone` varchar(20) DEFAULT NULL,
+  `status` varchar(10) NOT NULL,
+  `company_id` char(32) DEFAULT NULL,
+  `responsible_user_id` char(32) DEFAULT NULL,
+  `enabled` tinyint(1) NOT NULL,
+  `created_at` datetime(6) NOT NULL,
+  `updated_at` datetime(6) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `email` (`email`),
+  UNIQUE KEY `dni` (`dni`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
 INSERT INTO client_app_client (
     id,
     name,
