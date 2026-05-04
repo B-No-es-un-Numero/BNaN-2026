@@ -1,0 +1,34 @@
+:host {
+  --purple-main: #9333ea;
+  --purple-light: #f3e8ff;
+  --bg-neutral: #f8f9fa; 
+}
+
+.text-purple {
+  color: var(--purple-main) !important;
+}
+
+.service-card {
+  background-color: var(--bg-neutral);
+  transition: all 0.3s ease-in-out;
+}
+
+.service-card:hover {
+  background-color: #ffffff;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  transform: translateY(-5px);
+}
+
+.icon-box {
+  width: 56px;
+  height: 56px;
+  background-color: var(--purple-light);
+}
+
+.leading-relaxed {
+  line-height: 1.6;
+}
+
+.icon-box i {
+  line-height: 0;
+}

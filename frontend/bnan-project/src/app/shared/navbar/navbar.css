@@ -1,0 +1,17 @@
+nav.navbar {
+  backdrop-filter: blur(8px);
+  background-color: rgba(255, 255, 255, 0.95) !important;
+}
+
+.nav-link {
+  font-weight: 700;
+  color: #616161;
+  transition: color 0.3s ease;
+  &:hover {
+    color: #6f42c1 !important; 
+  }
+}
+
+.btn-link {
+  text-decoration: none;
+}

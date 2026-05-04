@@ -1,0 +1,39 @@
+<nav class="navbar navbar-expand-md fixed-top bg-white shadow-sm py-2">
+  <div class="container">
+    <a class="navbar-brand text-primary fw-bold fs-3" style="color: #6f42c1 !important;" href="#">
+      Bnan
+    </a>
+
+    <button 
+      class="navbar-toggler border-0 shadow-none" 
+      type="button" 
+      (click)="toggleMenu()"
+      aria-label="Toggle navigation">
+      @if (isMenuOpen()) {
+        <span class="fs-2">&times;</span>
+      } @else {
+        <span class="navbar-toggler-icon"></span>
+      }
+    </button>
+
+    <div class="collapse navbar-collapse justify-content-end d-none d-md-flex">
+      <div class="navbar-nav gap-3">
+        <button (click)="scrollToSection('inicio')" class="btn btn-link nav-link ">Inicio</button>
+        <button (click)="scrollToSection('servicios')" class="btn btn-link nav-link ">Servicios</button>
+        <button (click)="scrollToSection('nosotros')" class="btn btn-link nav-link ">Quiénes Somos</button>
+        <button (click)="scrollToSection('contacto')" class="btn btn-link nav-link ">Contacto</button>
+      </div>
+    </div>
+
+    @if (isMenuOpen()) {
+      <div class="d-md-none w-100 mt-2 border-top pt-2">
+        <div class="d-flex flex-column gap-1">
+          <button (click)="scrollToSection('inicio')" class="btn btn-light text-start py-2">Inicio</button>
+          <button (click)="scrollToSection('servicios')" class="btn btn-light text-start py-2">Servicios</button>
+          <button (click)="scrollToSection('nosotros')" class="btn btn-light text-start py-2">Quiénes Somos</button>
+          <button (click)="scrollToSection('contacto')" class="btn btn-light text-start py-2">Contacto</button>
+        </div>
+      </div>
+    }
+  </div>
+</nav>

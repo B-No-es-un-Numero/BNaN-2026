@@ -1,0 +1,113 @@
+<section id="contacto" class="py-5 bg-white">
+  <div class="container py-md-5">
+    <div class="text-center mb-5">
+      <h2 class="display-5 fw-bold text-dark mb-3">Contacto</h2>
+      <p class="lead text-secondary mx-auto" style="max-width: 600px;">
+        ¿Listo para impulsar tu negocio? Contáctanos y descubre cómo podemos ayudarte
+      </p>
+    </div>
+
+    <div class="row g-5">
+      <div class="col-lg-7">
+        <form (ngSubmit)="handleSubmit()" #contactForm="ngForm" class="row g-4">
+          <div class="col-12">
+            <label for="name" class="form-label fw-semibold text-secondary">Nombre completo</label>
+            <input 
+              type="text" 
+              id="name" 
+              name="name" 
+              [(ngModel)]="formData.name" 
+              required 
+              class="form-control form-control-lg border-2 shadow-none" 
+              placeholder="Tu nombre">
+          </div>
+
+          <div class="col-md-6">
+            <label for="email" class="form-label fw-semibold text-secondary">Email</label>
+            <input 
+              type="email" 
+              id="email" 
+              name="email" 
+              [(ngModel)]="formData.email" 
+              required 
+              class="form-control form-control-lg border-2 shadow-none" 
+              placeholder="tu@email.com">
+          </div>
+
+          <div class="col-md-6">
+            <label for="company" class="form-label fw-semibold text-secondary">Empresa</label>
+            <input 
+              type="text" 
+              id="company" 
+              name="company" 
+              [(ngModel)]="formData.company" 
+              class="form-control form-control-lg border-2 shadow-none" 
+              placeholder="Nombre de tu empresa">
+          </div>
+
+          <div class="col-12">
+            <label for="message" class="form-label fw-semibold text-secondary">Mensaje</label>
+            <textarea 
+              id="message" 
+              name="message" 
+              [(ngModel)]="formData.message" 
+              required 
+              rows="5" 
+              class="form-control form-control-lg border-2 shadow-none" 
+              style="resize: none;" 
+              placeholder="Cuéntanos sobre tu proyecto..."></textarea>
+          </div>
+
+          <div class="col-12 mt-4">
+            <button 
+              type="submit" 
+              [disabled]="!contactForm.form.valid"
+              class="btn btn-purple btn-lg w-100 py-3 d-flex align-items-center justify-content-center gap-2">
+              Enviar Mensaje
+              <i class="bi bi-send fs-5"></i>
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <div class="col-lg-5">
+        <div class="bg-light-custom p-4 p-md-5 rounded-4 h-100">
+          <h3 class="h3 fw-bold text-dark mb-4">Información de Contacto</h3>
+
+          <div class="d-flex flex-column gap-4">
+            <div class="d-flex gap-4">
+              <div class="icon-box-small">
+                <i class="bi bi-envelope text-purple fs-4"></i>
+              </div>
+              <div>
+                <h5 class="fw-bold text-dark mb-1">Email</h5>
+                <p class="text-secondary mb-0">contacto@bnan.com</p>
+                <p class="text-secondary mb-0">ventas@bnan.com</p>
+              </div>
+            </div>
+            <div class="d-flex gap-4">
+              <div class="icon-box-small">
+                <i class="bi bi-telephone text-purple fs-4"></i>
+              </div>
+              <div>
+                <h5 class="fw-bold text-dark mb-1">Teléfono</h5>
+                <p class="text-secondary mb-0">+34 900 123 456</p>
+                <p class="text-secondary mb-0">+34 900 123 457</p>
+              </div>
+            </div>
+            <div class="d-flex gap-4">
+              <div class="icon-box-small">
+                <i class="bi bi-geo-alt text-purple fs-4"></i>
+              </div>
+              <div>
+                <h5 class="fw-bold text-dark mb-1">Oficina</h5>
+                <p class="text-secondary mb-0">Calle Mayor 123, 4º Piso</p>
+                <p class="text-secondary mb-0">28013 Madrid, España</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

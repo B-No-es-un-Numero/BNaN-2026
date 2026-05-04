@@ -1,0 +1,55 @@
+:host {
+  --purple-main: #9333ea;
+  --purple-dark: #7e22ce;
+  --bg-light: #F8F7FF;
+}
+
+.bg-light-custom {
+  background-color: var(--bg-light);
+}
+
+.text-purple {
+  color: var(--purple-main) !important;
+}
+
+.about-card {
+  aspect-ratio: 1 / 1;
+  background: linear-gradient(135deg, #a855f7 0%, var(--purple-main) 100%);
+}
+
+.deco-circle {
+  position: absolute;
+  border-radius: 50%;
+  z-index: -1;
+}
+
+.circle-yellow {
+  bottom: -25px;
+  right: -25px;
+  width: 120px;
+  height: 120px;
+  background-color: #facc15;
+  opacity: 0.2;
+}
+
+.circle-pink {
+  top: -25px;
+  left: -25px;
+  width: 100px;
+  height: 100px;
+  background-color: #f472b6;
+  opacity: 0.2;
+}
+
+h5 {
+  font-size: 1.1rem;
+}
+
+.lead {
+  line-height: 1.6;
+}
+
+.bi {
+  line-height: 1;
+  display: inline-block;
+}
