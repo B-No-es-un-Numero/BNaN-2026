@@ -1,0 +1,89 @@
+<div class="flex-grow-1 p-4">
+  <!-- Header -->
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h4 class="mb-0">Detalles del Cliente</h4>
+
+    <div class="d-flex gap-2">
+      <a
+        class="btn btn-sm btn-outline-primary me-2"
+        [routerLink]="['/dashboard/clientes-form', client.clientEmail]"
+      >
+        <i class="bi bi-pencil"></i>
+      </a>
+      <button class="btn btn-sm btn-outline-danger">
+        <i class="bi bi-trash"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- Contenido centrado -->
+  <div class="d-flex justify-content-center">
+    <div class="w-100" style="max-width: 800px">
+      <div class="card border-0 shadow-sm p-3">
+        <div class="table-responsive">
+          <table class="table align-middle mb-0">
+            <tbody>
+              <tr>
+                <th class="bg-light w-25">Nombre</th>
+                <td>{{ client.clientName }}</td>
+              </tr>
+
+              <tr>
+                <th class="bg-light">Email</th>
+                <td>{{ client.clientEmail }}</td>
+              </tr>
+
+              <tr>
+                <th class="bg-light">DNI</th>
+                <td>{{ client.clientDNI }}</td>
+              </tr>
+
+              <tr>
+                <th class="bg-light">Fecha de Nacimiento</th>
+                <td>{{ client.clientDateOfBirth }}</td>
+              </tr>
+
+              <tr>
+                <th class="bg-light">Teléfono</th>
+                <td>{{ client.clientPhone }}</td>
+              </tr>
+
+              <tr>
+                <th class="bg-light">Empresa</th>
+                <td>{{ client.clientCompany }}</td>
+              </tr>
+
+              <tr>
+                <th class="bg-light">Responsable</th>
+                <td>{{ client.clientResponsible }}</td>
+              </tr>
+
+              <tr>
+                <th class="bg-light">Estado</th>
+                <td>
+                  @if (client.clientStatus === 'active') {
+                    <span class="badge bg-success-subtle text-success">Activo</span>
+                  } @else if (client.clientStatus === 'lead') {
+                    <span class="badge bg-primary-subtle text-primary">Lead</span>
+                  } @else if (client.clientStatus === 'closed') {
+                    <span class="badge bg-secondary-subtle text-secondary">Cerrado</span>
+                  }
+                </td>
+              </tr>
+
+              <tr>
+                <th class="bg-light">Creado</th>
+                <td>{{ client.clientCreatedAt }}</td>
+              </tr>
+
+              <tr>
+                <th class="bg-light">Actualizado</th>
+                <td>{{ client.clientUpdatedAt }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
