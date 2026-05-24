@@ -10,6 +10,7 @@ import { Login } from './pages/auth/login/login';
 import { TeamMemberDetail } from './pages/team-member-detail/team-member-detail';
 import { CompanyListView } from './pages/user-dashboard/company-list-view/company-list-view';
 import { CompanyDetailView } from './pages/user-dashboard/company-detail-view/company-detail-view';
+import { CompanyForm } from './pages/user-dashboard/company-form/company-form';
 
 
 export const routes: Routes = [
@@ -25,6 +26,7 @@ export const routes: Routes = [
       { path: 'usuarios', component: UsersView },
       { path: 'empresas', component: CompanyListView},
       { path: 'empresas-detalle/:id', component: CompanyDetailView },
+      { path: 'empresas-form/:id?', component: CompanyForm },
     ],
   },
   { path: '', component: Home },
