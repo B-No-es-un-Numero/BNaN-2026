@@ -8,6 +8,8 @@ import { ClientForm } from './pages/user-dashboard/client-form/client-form';
 import { UsersView } from './pages/user-dashboard/users-view/users-view';
 import { Login } from './pages/auth/login/login';
 import { TeamMemberDetail } from './pages/team-member-detail/team-member-detail';
+import { CompanyListView } from './pages/user-dashboard/company-list-view/company-list-view';
+import { CompanyDetailView } from './pages/user-dashboard/company-detail-view/company-detail-view';
 
 
 export const routes: Routes = [
@@ -20,7 +22,9 @@ export const routes: Routes = [
       { path: 'clientes', component: ClientListView },
       { path: 'clientes-detalle/:id', component: ClientDetailView },
       { path: 'clientes-form/:id?', component: ClientForm },
-      { path: 'usuarios', component: UsersView }
+      { path: 'usuarios', component: UsersView },
+      { path: 'empresas', component: CompanyListView},
+      { path: 'empresas-detalle/:id', component: CompanyDetailView },
     ],
   },
   { path: '', component: Home },
