@@ -48,18 +48,3 @@ export class ClientDetailView implements OnInit {
 
   }
 }
-  /*constructor() {
-
-    const id = Number(this.route.snapshot.paramMap.get('id'));
-
-    this.clientService.getClientById(id)
-      .subscribe({
-        next: (response: any) => {
-          this.client = response;
-        },
-        error: (error) => {
-          console.error(error);
-        }
-      });
-  }
-}*/
