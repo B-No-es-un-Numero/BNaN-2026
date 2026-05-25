@@ -1,7 +1,8 @@
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { ClientService } from '../../../services/client-service';
+import { ClientService } from '../../../services/client/client-service';
+import { Client } from '../../../model/client.model';
 
 @Component({
   selector: 'app-client-list-view',
@@ -13,7 +14,7 @@ export class ClientListView implements OnInit {
 
   private clientService = inject(ClientService);
 
-  clientList = signal<any[]>([]);
+  clientList = signal<Client[]>([]);
   searchTerm = signal<string>('');
   filteredClientList = computed(() => {
     const term = this.searchTerm().toLowerCase().trim();
