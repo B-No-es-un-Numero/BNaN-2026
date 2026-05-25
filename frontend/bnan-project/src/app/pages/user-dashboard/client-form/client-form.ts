@@ -3,6 +3,7 @@ import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { ClientService } from '../../../services/client/client-service';
+import { CreateClientRequest } from '../../../model/client.model';
 
 @Component({
   selector: 'app-client-form',
@@ -34,7 +35,7 @@ export class ClientForm {
     this.form.markAllAsTouched();
     return;
   }
-  this.clientService.createClient(this.form.getRawValue())
+  this.clientService.createClient(this.form.getRawValue() as CreateClientRequest)
     .subscribe({ next: () => {
         alert('El cliente se registró exitosamente');
         this.form.reset();

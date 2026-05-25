@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Client } from '../../model/client.model';
+import { CreateClientRequest } from '../../model/client.model';
 
 @Injectable({
   providedIn: 'root',
@@ -9,12 +9,12 @@ export class ClientService {
   private readonly baseUrl = '${environment.apiUrl}'; 
   constructor(private http:HttpClient){}
 
-  public createClient(clientData: Client) { // tipar
+  public createClient(clientData: CreateClientRequest) {
     return this.http.post(this.baseUrl, clientData);
   }
   
   public getClientList(){
-    return this.http.get<Client[]>(this.baseUrl);
+    return this.http.get(this.baseUrl);
   }
 
   public getClientById(id: number) {
