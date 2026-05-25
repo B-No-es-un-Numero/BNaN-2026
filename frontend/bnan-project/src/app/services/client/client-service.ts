@@ -1,12 +1,13 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { CreateClientRequest } from '../../model/client.model';
+import { environment } from '../../../environments/environment.development';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ClientService {
-  private readonly baseUrl = '${environment.apiUrl}'; 
+  private readonly baseUrl = `${environment.apiUrl}/clientes`; 
   constructor(private http:HttpClient){}
 
   public createClient(clientData: CreateClientRequest) {

@@ -1,57 +1,92 @@
 import { CommonModule } from '@angular/common';
-import { Component, signal } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { Modal } from '../../../shared/modal/modal';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { UserService } from '../../../services/users/user-service';
+import { User } from '../../../model/user.model';
+import { Toast } from "../../../shared/toast/toast/toast";
 
-interface UserProps {
-  id: number;
-  name: string;
-  email: string;
-  role: string;
-}
 
 @Component({
   selector: 'app-users-view',
-  imports: [CommonModule, Modal, FormsModule, ReactiveFormsModule],
+  imports: [CommonModule, Modal, FormsModule, ReactiveFormsModule, Toast],
   templateUrl: './users-view.html'
 })
 export class UsersView {
-  users: UserProps[] = [
-    { id: 1, name: 'Joaquín García', email: 'joaquin@bnan.com', role: 'Admin' },
-    { id: 2, name: 'Lucas Martínez', email: 'lucas@bnan.com', role: 'User' },
-    { id: 3, name: 'Sofía López', email: 'sofia@bnan.com', role: 'User' }
-  ];
-  
+
+  private UserService = inject(UserService)
+  users = signal<User[]>([]);
+
   userForm: FormGroup;
 
   isEditModalOpen = signal(false);
   isDeleteModalOpen = signal(false);
   isViewModalOpen = signal(false);isAddModalOpen = signal(false);
-  selectedUser = signal<UserProps | null>(null);
+  selectedUser = signal<User | null>(null);
+  showPassword = signal(false);
+
+  toasMessage = signal('');
+  toasType = signal<'success' | 'error'>('success');
+  toastOpen = signal(false);
+
+  isCreating = signal(false);
 
   constructor(private fb: FormBuilder) {
     this.userForm = this.fb.group({
-      name: ['', [Validators.required, Validators.minLength(3)]],
+      username: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(20)]],
+      password: ['', [Validators.required, Validators.minLength(6), Validators.maxLength(10)]],
+      first_name: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(20)]],
+      last_name: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(20)]],
       email: ['', [Validators.required, Validators.email]],
-      role: ['User', Validators.required]
+      role: ['user', Validators.required]
     });
   }
 
+  ngOnInit(): void {
+    this.UserService.getUserList().subscribe({
+      next: (data: any) => { this.users.set(data); },
+      error: (error) => console.error(error),
+      complete: () => console.info('complete')
+    });
+  }
+
+  togglePassword() {
+    this.showPassword.set(!this.showPassword());
+  }
+
   newUser() {
-    this.userForm.reset({ role: 'User' });
+    this.userForm.reset({ role: 'user' });
     this.isAddModalOpen.set(true);
   }
 
   saveNewUser() {
-    if (this.userForm.valid) {
-      console.log('Simulando creación de:', this.userForm.value);
-      this.closeModals();
-    } else {
+    if(this.userForm.invalid) {
       this.userForm.markAllAsTouched();
+      return;
     }
+
+    this.isCreating.set(true);
+    this.userForm.disable();
+    
+    this.UserService.createUser(this.userForm.getRawValue()).subscribe({
+      next: (newUser: any) => { 
+        this.users.update(users => [...users, newUser]);
+        this.showToast('Usuario creado exitosamente', 'success'); 
+        this.closeModals();
+        this.isCreating.set(false);
+        this.userForm.enable();
+      },
+      error: (error) => {
+        console.error('Error al crar usuario:', error)
+        this.showToast('Error al crear usuario', 'error');
+        this.isCreating.set(false);
+        this.userForm.enable();
+      },
+    });
+
   }
 
-  editUser(user: UserProps) {
+  editUser(user: User) {
     this.selectedUser.set(user);
     this.isEditModalOpen.set(true);
   }
@@ -60,7 +95,7 @@ export class UsersView {
     this.isDeleteModalOpen.set(true);
   }
 
-  viewUser(user: UserProps) {
+  viewUser(user: User) {
     this.selectedUser.set(user);
     this.isViewModalOpen.set(true);
   }
@@ -70,5 +105,12 @@ export class UsersView {
     this.isEditModalOpen.set(false);
     this.isViewModalOpen.set(false);
     this.isDeleteModalOpen.set(false);
+  }
+
+  showToast(message: string, type: 'success' | 'error') {
+    this.toasMessage.set(message);
+    this.toasType.set(type);
+    this.toastOpen.set(true);
+    setTimeout(() => this.toastOpen.set(false), 4000);
   }
 }

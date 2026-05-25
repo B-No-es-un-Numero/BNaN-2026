@@ -28,13 +28,13 @@
         </tr>
       </thead>
       <tbody>
-        @for (user of users; track user.id) {
+        @for (user of users(); track user.id) {
         <tr>
           <td class="text-muted fw-bold">#{{ user.id }}</td>
-          <td>{{ user.name }}</td>
+          <td>{{ user.first_name }} {{ user.last_name }}</td>
           <td>{{ user.email }}</td>
           <td>
-            @if (user.role === 'Admin') {
+            @if (user.role === 'admin') {
             <span class="badge bg-primary-subtle text-primary">Administrador</span>
             } @else {
             <span class="badge bg-secondary-subtle text-secondary">Usuario</span>
@@ -61,7 +61,7 @@
 </div>
 
 <app-modal 
-  [title]="'Editar Usuario: ' + selectedUser()?.name" 
+  [title]="'Editar Usuario: ' + selectedUser()?.first_name" 
   [isOpen]="isEditModalOpen()" 
   (close)="closeModals()"
   size="md">
@@ -69,7 +69,7 @@
   <div class="row g-3">
     <div class="col-12">
       <label class="form-label fw-bold small text-muted">Nombre</label>
-      <input type="text" class="form-control" [value]="selectedUser()?.name">
+      <input type="text" class="form-control" [value]="selectedUser()?.first_name">
     </div>
     <div class="col-12">
       <label class="form-label fw-bold small text-muted">Email</label>
@@ -110,10 +110,10 @@
     <div class="text-center mb-4">
       <!-- Avatar con Inicial -->
       <div class="bg-primary-subtle text-primary rounded-circle d-inline-flex align-items-center justify-content-center mb-2" style="width: 70px; height: 70px;">
-        <span class="fs-1 fw-bold">{{ user.name.charAt(0) }}</span>
+        <span class="fs-1 fw-bold">{{ user.first_name.charAt(0) }}</span>
       </div>
-      <h5 class="mb-0">{{ user.name }}</h5>
-      <span class="badge" [ngClass]="user.role === 'Admin' ? 'bg-primary-subtle text-primary' : 'bg-secondary-subtle text-secondary'">
+      <h5 class="mb-0">{{ user.first_name }} {{ user.last_name }}</h5>
+      <span class="badge" [ngClass]="user.role === 'admin' ? 'bg-primary-subtle text-primary' : 'bg-secondary-subtle text-secondary'">
         {{ user.role }}
       </span>
     </div>
@@ -153,16 +153,48 @@
 
   <form [formGroup]="userForm" (ngSubmit)="saveNewUser()">
     <div class="row g-3">
-      
-      <div class="col-12">
-        <label class="form-label small fw-bold text-muted">Nombre Completo</label>
+
+       <div class="col-12">
+        <label class="form-label small fw-bold text-muted">Nombre de usuario</label>
         <input type="text" 
                class="form-control" 
-               formControlName="name"
-               [class.is-invalid]="userForm.get('name')?.touched && userForm.get('name')?.invalid">
-        <div class="invalid-feedback">El nombre debe tener al menos 3 caracteres.</div>
+               formControlName="username"
+               [class.is-invalid]="userForm.get('username')?.touched && userForm.get('username')?.invalid">
+        <div class="invalid-feedback">El nombre de usuario debe tener al menos 3 caracteres y un máximo de 20.</div>
+      </div>
+      
+      <div class="col-12">
+        <label class="form-label small fw-bold text-muted">Contraseña</label>
+        <div class="input-group">
+          <input [type]="showPassword() ? 'text' : 'password'"
+               class="form-control" 
+               formControlName="password"
+               [class.is-invalid]="userForm.get('password')?.touched && userForm.get('password')?.invalid">
+          <button class="btn btn-light" type="button" (click)="togglePassword()">
+            <i [class]="showPassword() ? 'bi bi-eye-slash' : 'bi bi-eye'"></i>
+          </button>
+        <div class="invalid-feedback">La contraseña debe tener al menos 6 caracteres y un máximo de 10.</div>
+        </div>
+        
+      </div>
+      
+      <div class="col-12">
+        <label class="form-label small fw-bold text-muted">Nombre</label>
+        <input type="text" 
+               class="form-control" 
+               formControlName="first_name"
+               [class.is-invalid]="userForm.get('first_name')?.touched && userForm.get('first_name')?.invalid">
+        <div class="invalid-feedback">El nombre debe tener al menos 3 caracteres y un máximo de 20.</div>
       </div>
 
+      <div class="col-12">
+        <label class="form-label small fw-bold text-muted">Apellido</label>
+        <input type="text" 
+               class="form-control" 
+               formControlName="last_name"
+               [class.is-invalid]="userForm.get('last_name')?.touched && userForm.get('last_name')?.invalid">
+        <div class="invalid-feedback">El apellido debe tener al menos 3 caracteres y un máximo de 20.</div>
+      </div>
       <div class="col-12">
         <label class="form-label small fw-bold text-muted">Correo Electrónico</label>
         <input type="email" 
@@ -175,18 +207,29 @@
       <div class="col-12">
         <label class="form-label small fw-bold text-muted">Rol inicial</label>
         <select class="form-select" formControlName="role">
-          <option value="Admin">Administrador</option>
-          <option value="User">Usuario</option>
+          <option value="admin">Administrador</option>
+          <option value="user">Usuario</option>
         </select>
       </div>
 
       <div class="col-12 mt-4 d-flex gap-2">
         <button type="button" class="btn btn-light w-100" (click)="closeModals()">Cancelar</button>
-        <button type="submit" class="btn btn-purple w-100">
+        <button type="submit" class="btn btn-purple w-100" [disabled]="isCreating()">
+          @if (isCreating()) {
+            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Creando...
+          } @else { 
           Crear
+          }
         </button>
       </div>
 
     </div>
   </form>
 </app-modal>
+
+<app-toast 
+  [message]="toasMessage()"
+  [type]="toasType()"
+  [isOpen]="toastOpen()"
+  (close)="toastOpen.set(false)"
+  ></app-toast>
