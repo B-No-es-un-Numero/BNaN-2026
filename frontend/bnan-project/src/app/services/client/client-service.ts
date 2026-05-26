@@ -22,4 +22,12 @@ export class ClientService {
     return this.http.get(`${this.baseUrl}/${id}/`);
   }
 
+   public updateClient(id: number, clientData: any) {
+    return this.http.put(`${this.baseUrl}/${id}/`, clientData);
+  }
+
+  public deleteClient(id: number, hard: boolean = false) {
+    return this.http.delete(`${this.baseUrl}/${id}/?hard=${hard}`);
+  }
+
 }
