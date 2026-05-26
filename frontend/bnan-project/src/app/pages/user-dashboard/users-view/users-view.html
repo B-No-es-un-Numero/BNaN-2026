@@ -159,6 +159,7 @@
         <input type="text" 
                class="form-control" 
                formControlName="username"
+               placeholder="sebastian"
                [class.is-invalid]="userForm.get('username')?.touched && userForm.get('username')?.invalid">
         <div class="invalid-feedback">El nombre de usuario debe tener al menos 3 caracteres y un máximo de 20.</div>
       </div>

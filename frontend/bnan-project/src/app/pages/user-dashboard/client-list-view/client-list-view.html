@@ -86,9 +86,22 @@
   </div>
 </div>
 
-<app-client-modal
+<app-modal
+  [title]="selectedClientId() === null ? 'Crear Cliente' : 'Editar Cliente'"
   [isOpen]="isClientModalOpen()"
-  [clientId]="selectedClientId()"
   (close)="closeClientModal()"
-  (saved)="handleClientSaved()"
-></app-client-modal>
+  size="md"
+>
+  <app-client-form
+    [clientIdInput]="selectedClientId()"
+    (saved)="handleClientSaved()"
+    (canceled)="closeClientModal()"
+  />
+</app-modal>
+
+<app-toast
+  [isOpen]="toastOpen()"
+  [message]="toastMessage()"
+  [type]="toastType()"
+  (close)="toastOpen.set(false)">
+</app-toast>

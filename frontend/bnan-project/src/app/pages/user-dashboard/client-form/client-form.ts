@@ -18,7 +18,6 @@ export class ClientForm implements OnInit {
   private router = inject(Router);
 
   clientIdInput = input<number | null>(null);
-  insideModal = input<boolean>(false);
 
   saved = output<void>();
   canceled = output<void>();
@@ -29,6 +28,8 @@ export class ClientForm implements OnInit {
   toastOpen = signal(false);
   toastMessage = signal('');
   toastType = signal<'success' | 'error' | 'info'>('success');
+
+  isCreating = signal(false);
 
   showToast(message: string, type: 'success' | 'error' | 'info') {
     this.toastMessage.set(message);
@@ -86,22 +87,21 @@ export class ClientForm implements OnInit {
       return;
     }
 
+    this.isCreating.set(true);
     const clientData = this.form.getRawValue() as CreateClientRequest;
 
     if (this.isEditMode && this.clientId !== null) {
       this.clientService.updateClient(this.clientId, clientData).subscribe({
         next: () => {
           this.showToast('El cliente se actualizó exitosamente', 'success');
-
-          if (this.insideModal()) {
-            this.saved.emit();
-            return;
-          }
-
+          this.saved.emit();
           this.router.navigate(['/dashboard/clientes']);
+          this.isCreating.set(false);
         },
         error: (error) => {
           console.error(error);
+          this.showToast('Error al actualizar el cliente', 'error');
+          this.isCreating.set(false);
         }
       });
 
@@ -111,27 +111,20 @@ export class ClientForm implements OnInit {
     this.clientService.createClient(clientData).subscribe({
       next: () => {
         this.showToast('El cliente se registró exitosamente', 'success');
-
-        if (this.insideModal()) {
-          this.saved.emit();
-          return;
-        }
-
+        this.saved.emit();
         this.form.reset();
+        this.isCreating.set(false);
       },
       error: (error) => {
         console.error(error);
         this.showToast('Error al registrar el cliente', 'error');
+        this.isCreating.set(false);
       }
     });
   }
 
   onCancel(): void {
-    if (this.insideModal()) {
-      this.canceled.emit();
-      return;
-    }
-
+    this.canceled.emit();
     this.router.navigate(['/dashboard/clientes']);
   }
 }
