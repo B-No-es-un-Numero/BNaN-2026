@@ -1,0 +1,39 @@
+@if (isOpen()) {
+  <div class="modal-backdrop fade show"></div>
+
+  <div
+    class="modal d-block fade show"
+    tabindex="-1"
+    role="dialog"
+    (click)="onClose()"
+  >
+    <div
+      class="modal-dialog modal-dialog-centered modal-lg"
+      (click)="$event.stopPropagation()"
+    >
+      <div class="modal-content border-0 shadow-lg">
+        <div class="modal-header border-bottom-0 py-3 px-4">
+          <h5 class="modal-title fw-bold">
+            {{ clientId() === null ? 'Crear Cliente' : 'Editar Cliente' }}
+          </h5>
+
+          <button
+            type="button"
+            class="btn-close shadow-none"
+            aria-label="Close"
+            (click)="onClose()"
+          ></button>
+        </div>
+
+        <div class="modal-body px-4 pb-4">
+          <app-client-form
+            [clientIdInput]="clientId()"
+            [insideModal]="true"
+            (saved)="onSaved()"
+            (canceled)="onClose()"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+}

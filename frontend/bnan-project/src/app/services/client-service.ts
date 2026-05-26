@@ -20,4 +20,12 @@ export class ClientService {
     return this.http.get(`${this.url}/${id}/`);
   }
 
+  public updateClient(id: number, clientData: any) {
+    return this.http.put(`${this.url}/${id}/`, clientData);
+  }
+
+  public deleteClient(id: number, hard: boolean = false) {
+    return this.http.delete(`${this.url}/${id}/?hard=${hard}`);
+  }
+
 }
