@@ -2,7 +2,7 @@ import { Injectable, signal } from '@angular/core';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-    private _isAdmin = signal<boolean>(false);
+    private _isAdmin = signal<boolean>(true);
 
     isAdmin = this._isAdmin.asReadonly();
     private readonly TOKEN_KEY = 'bnan_token';

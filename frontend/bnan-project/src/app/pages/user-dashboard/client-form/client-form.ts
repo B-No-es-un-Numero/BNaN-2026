@@ -1,19 +1,30 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, OnInit, input, output } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 import { ClientService } from '../../../services/client/client-service';
 import { CreateClientRequest } from '../../../model/client.model';
 import { Toast } from '../../../shared/toast/toast/toast';
 
+
 @Component({
   selector: 'app-client-form',
-  imports: [CommonModule, ReactiveFormsModule, RouterLink, Toast],
+  imports: [CommonModule, ReactiveFormsModule, Toast],
   templateUrl: './client-form.html',
 })
-export class ClientForm {
+export class ClientForm implements OnInit {
   private fb = inject(FormBuilder);
   private clientService = inject(ClientService);
+  private router = inject(Router);
+
+  clientIdInput = input<number | null>(null);
+  insideModal = input<boolean>(false);
+
+  saved = output<void>();
+  canceled = output<void>();
+
+  clientId: number | null = null;
+  isEditMode = false;
 
   toastOpen = signal(false);
   toastMessage = signal('');
@@ -42,17 +53,85 @@ export class ClientForm {
     status: ['', [Validators.required]],
   });
 
+  ngOnInit(): void {
+    const id = this.clientIdInput();
+
+    if (id === null) {
+      return;
+    }
+
+    this.clientId = id;
+    this.isEditMode = true;
+
+    this.clientService.getClientById(this.clientId).subscribe({
+      next: (client: any) => {
+        this.form.patchValue({
+          name: client.name,
+          email: client.email,
+          dni: client.dni,
+          date_of_birth: client.date_of_birth,
+          phone: client.phone ?? '',
+          status: client.status,
+        });
+      },
+      error: (error) => {
+        console.error(error);
+      }
+    });
+  }
+
   submit() {
     if (this.form.invalid) {
-    this.form.markAllAsTouched();
-    return;
-  }
-  this.clientService.createClient(this.form.getRawValue() as CreateClientRequest)
-    .subscribe({ next: () => {
+      this.form.markAllAsTouched();
+      return;
+    }
+
+    const clientData = this.form.getRawValue() as CreateClientRequest;
+
+    if (this.isEditMode && this.clientId !== null) {
+      this.clientService.updateClient(this.clientId, clientData).subscribe({
+        next: () => {
+          this.showToast('El cliente se actualizó exitosamente', 'success');
+
+          if (this.insideModal()) {
+            this.saved.emit();
+            return;
+          }
+
+          this.router.navigate(['/dashboard/clientes']);
+        },
+        error: (error) => {
+          console.error(error);
+        }
+      });
+
+      return;
+    }
+
+    this.clientService.createClient(clientData).subscribe({
+      next: () => {
         this.showToast('El cliente se registró exitosamente', 'success');
+
+        if (this.insideModal()) {
+          this.saved.emit();
+          return;
+        }
+
         this.form.reset();
       },
-      error: (error) => {console.error(error); }
+      error: (error) => {
+        console.error(error);
+        this.showToast('Error al registrar el cliente', 'error');
+      }
     });
-}
+  }
+
+  onCancel(): void {
+    if (this.insideModal()) {
+      this.canceled.emit();
+      return;
+    }
+
+    this.router.navigate(['/dashboard/clientes']);
+  }
 }
