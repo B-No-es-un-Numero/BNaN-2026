@@ -50,6 +50,8 @@ export class UsersView {
     });
   }
 
+  
+
   togglePassword() {
     this.showPassword.set(!this.showPassword());
   }
@@ -84,6 +86,15 @@ export class UsersView {
       },
     });
 
+  }
+
+  onSearch(event: Event) {
+    const term = (event.target as HTMLInputElement).value;
+    this.UserService.getUserList(term).subscribe({
+      next: (data: User[]) => { this.users.set(data); },
+      error: (error) => console.error(error),
+      complete: () => console.info('complete')
+    });
   }
 
   editUser(user: User) {

@@ -12,12 +12,13 @@ export class UserService {
 
   constructor(private http:HttpClient){}
 
-  public createUser(data: User) {
+  public createUser(data: CreateUserRequest) {
     return this.http.post(this.baseUrl, data);
   }
   
-  public getUserList(): Observable<CreateUserRequest[]>{
-    return this.http.get<CreateUserRequest[]>(this.baseUrl);
+  public getUserList(search?: string): Observable<User[]>{
+    const params = search ? `?search=${encodeURIComponent(search)}` : '';
+    return this.http.get<User[]>(`${this.baseUrl}${params}`);
   }
 
   public getUserById(id: number) {
