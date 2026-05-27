@@ -11,8 +11,7 @@ class CompanyView(APIView):
             company = get_object_or_404(Company, id=pk)
             serializer = CompanySerializer(company)
         else:
-            #companies = Company.objects.filter(enabled=True) para ver las eliminaciones sft
-            companies = Company.objects.all()
+            companies = Company.objects.filter(enabled=True)
             serializer = CompanySerializer(companies, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 

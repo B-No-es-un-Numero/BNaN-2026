@@ -1,0 +1,69 @@
+<form [formGroup]="form" (ngSubmit)="saveUser()">
+  <div class="row g-3">
+
+    <div class="col-12">
+      <label class="form-label small fw-bold text-muted">Nombre de usuario</label>
+      <input type="text" class="form-control" formControlName="username" placeholder="sebastian"
+        [class.is-invalid]="form.get('username')?.touched && form.get('username')?.invalid">
+      <div class="invalid-feedback">El nombre de usuario debe tener al menos 3 caracteres y un máximo de 20.</div>
+    </div>
+
+    <div class="col-12">
+      <label class="form-label small fw-bold text-muted">Contraseña</label>
+      <div class="input-group">
+        <input [type]="showPassword() ? 'text' : 'password'" formControlName="password" placeholder="mín. 6 caracteres"
+          class="form-control" [class.is-invalid]="form.get('password')?.touched && form.get('password')?.invalid" />
+        <button class="btn btn-light" type="button" (click)="togglePassword()">
+          <i [class]="showPassword() ? 'bi bi-eye-slash' : 'bi bi-eye'"></i>
+        </button>
+        <div class="invalid-feedback">La contraseña debe tener al menos 6 caracteres y un máximo de 10.</div>
+      </div>
+    </div>
+
+    <div class="col-12">
+      <label class="form-label small fw-bold text-muted">Nombre</label>
+      <input type="text" formControlName="first_name" placeholder="Sebastián" class="form-control"
+        [class.is-invalid]="form.get('first_name')?.touched && form.get('first_name')?.invalid">
+      <div class="invalid-feedback">El nombre debe tener al menos 3 caracteres y un máximo de 20.</div>
+    </div>
+
+    <div class="col-12">
+      <label class="form-label small fw-bold text-muted">Apellido</label>
+      <input type="text" formControlName="last_name" placeholder="García" class="form-control"
+        [class.is-invalid]="form.get('last_name')?.touched && form.get('last_name')?.invalid">
+      <div class="invalid-feedback">El apellido debe tener al menos 3 caracteres y un máximo de 20.</div>
+    </div>
+
+    <div class="col-12">
+      <label class="form-label small fw-bold text-muted">Email</label>
+      <input type="email" class="form-control" formControlName="email" placeholder="sebastiangarcia@mimail.com"
+        [class.is-invalid]="form.get('email')?.touched && form.get('email')?.invalid">
+      <div class="invalid-feedback">Ingresa un formato de email válido.</div>
+    </div>
+
+
+    <div class="col-12">
+      <label class="form-label small fw-bold text-muted">Rol</label>
+      <select class="form-select" formControlName="role">
+        <option value="admin">Administrador</option>
+        <option value="user">Usuario</option>
+      </select>
+    </div>
+
+    <div class="col-12 mt-4 d-flex gap-2">
+      <button type="button" class="btn btn-light w-100" (click)="onCancel()">
+        Cancelar
+      </button>
+
+      <button type="submit" class="btn btn-purple w-100" [disabled]="form.invalid || isCreating()">
+        @if (isCreating()) {
+        <span class="spinner-border spinner-border-sm me-1" role="status"></span>
+        Guardando...
+        } @else {
+        Crear usuario
+        }
+      </button>
+    </div>
+
+  </div>
+</form>

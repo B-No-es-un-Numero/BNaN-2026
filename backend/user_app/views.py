@@ -1,9 +1,12 @@
+from re import search
+
 from rest_framework.response import Response
 from rest_framework.views import APIView as ApiView
 from rest_framework import status
 from user_app.models import User
 from user_app.serializers import UserSerializer
 from django.shortcuts import get_object_or_404
+from django.db.models import Q
 
 
 class UserView(ApiView):
@@ -13,6 +16,12 @@ class UserView(ApiView):
             serializer = UserSerializer(user);
         else:
             users = User.objects.filter(enabled=True);
+            search = request.query_params.get('search', '');
+            if search:
+                users = users.filter(
+                   Q(username__icontains=search) | 
+                   Q(email__icontains=search)
+                )
             serializer = UserSerializer(users, many=True);
         return Response(serializer.data, status=status.HTTP_200_OK);
 
