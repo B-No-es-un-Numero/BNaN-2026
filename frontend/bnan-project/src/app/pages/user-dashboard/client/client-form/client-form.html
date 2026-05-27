@@ -1,0 +1,137 @@
+<form [formGroup]="form" (ngSubmit)="submit()">
+  <div class="row g-3">
+
+
+  <div class="col-12">
+    <label class="form-label small fw-bold text-muted">Nombre y Apellido</label>
+    <input
+      type="text"
+      formControlName="name"
+      placeholder="Juan Garcia"
+      class="form-control"
+    />
+    @if (form.controls.name.touched && form.controls.name.invalid) {
+      <small class="text-danger d-block mt-1">
+        @if (form.controls.name.errors?.['required']) {
+          Este campo es requerido.
+        }
+        @if (form.controls.name.errors?.['maxlength']) {
+          Máximo 30 caracteres.
+        }
+        @if (form.controls.name.errors?.['pattern']) {
+          Caracter inválido. Ingrese solo letras.
+        }
+      </small>
+    }
+  </div>
+
+  <div class="col-12">
+    <label class="form-label small fw-bold text-muted">Email</label>
+    <input
+      type="email"
+      formControlName="email"
+      placeholder="juangarcia25@mimail.com"
+      class="form-control"
+    />
+    @if (form.controls.email.touched && form.controls.email.invalid) {
+      <small class="text-danger d-block mt-1">
+        @if (form.controls.email.errors?.['required']) {
+          Este campo es requerido.
+        }
+        @if (form.controls.email.errors?.['email']) {
+          Formato inválido.
+        }
+      </small>
+    }
+  </div>
+
+  <div class="col-12">
+    <label class="form-label small fw-bold text-muted">DNI</label>
+    <input
+      type="text"
+      formControlName="dni"
+      placeholder="87654321"
+      class="form-control"
+    />
+    @if (form.controls.dni.touched && form.controls.dni.invalid) {
+      <small class="text-danger d-block mt-1">
+        @if (form.controls.dni.errors?.['required']) {
+          Este campo es requerido.
+        }
+        @if (form.controls.dni.errors?.['pattern']) {
+          El DNI debe tener 7 u 8 números.
+        }
+      </small>
+    }
+  </div>
+
+  <div class="col-12">
+    <label class="form-label small fw-bold text-muted">Fecha de nacimiento</label>
+    <input
+      type="text"
+      formControlName="date_of_birth"
+      placeholder="1990-12-31"
+      class="form-control"
+    />
+    @if (form.controls.date_of_birth.touched && form.controls.date_of_birth.invalid) {
+      <small class="text-danger d-block mt-1">
+        @if (form.controls.date_of_birth.errors?.['required']) {
+          Este campo es requerido.
+        }
+        @if (form.controls.date_of_birth.errors?.['pattern']) {
+          Formato YYYY-MM-DD
+        }
+      </small>
+    }
+  </div>
+
+  <div class="col-12">
+    <label class="form-label small fw-bold text-muted">Teléfono</label>
+    <input
+      type="text"
+      formControlName="phone"
+      placeholder="351351351"
+      class="form-control"
+    />
+    @if (form.controls.phone.touched && form.controls.phone.invalid) {
+      <small class="text-danger d-block mt-1">
+        @if (form.controls.phone.errors?.['required']) {
+          Este campo es requerido.
+        }
+        @if (form.controls.phone.errors?.['pattern']) {
+          Caracter inválido. Ingrese solo números.
+        }
+      </small>
+    }
+  </div>
+
+  <div class="col-12">
+    <label class="form-label small fw-bold text-muted">Estado</label>
+    <select formControlName="status" class="form-select">
+      <option value="">Seleccione</option>
+      <option value="lead">Lead</option>
+      <option value="active">Activo</option>
+      <option value="closed">Cerrado</option>
+    </select>
+    @if (form.controls.status.touched && form.controls.status.invalid) {
+      <small class="text-danger d-block mt-1">Este campo es obligatorio.</small>
+    }
+  </div>
+
+  <div class="col-12 mt-4 d-flex gap-2">
+    <button type="button" class="btn btn-light w-100" (click)="onCancel()">
+      Cancelar
+    </button>
+
+    <button type="submit" class="btn btn-purple w-100" [disabled]="form.invalid || isCreating()">
+      @if (isCreating()) {
+        <span class="spinner-border spinner-border-sm me-1" role="status"></span>
+        Guardando...
+      } @else {
+        {{ isEditMode ? 'Guardar cambios' : 'Crear cliente' }}
+      }
+    </button>
+  </div>
+
+  </div>
+</form>

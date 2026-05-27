@@ -126,3 +126,10 @@
     </div>
   </div>
 </section>
+
+<app-toast
+  [isOpen]="toastOpen()"
+  [message]="toastMessage()"
+  [type]="toastType()"
+  (close)="toastOpen.set(false)">
+</app-toast>
