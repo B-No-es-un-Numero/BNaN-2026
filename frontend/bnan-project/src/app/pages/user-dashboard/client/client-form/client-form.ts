@@ -3,7 +3,7 @@ import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { ClientService } from '../../../../services/client/client-service';
-import { CreateClientRequest } from '../../../../model/client.model';
+import { Client, CreateClientRequest } from '../../../../model/client.model';
 
 @Component({
   selector: 'app-client-form',
@@ -16,14 +16,10 @@ export class ClientForm implements OnInit {
   private router = inject(Router);
 
   clientIdInput = input<number | null>(null);
-
   saved = output<void>();
-  errored = output<string>();
-  canceled = output<void>();
-
-  clientId: number | null = null;
+  error = output<string>();
+  cancelled = output<void>();
   isEditMode = false;
-
   isCreating = signal(false);
 
   form = this.fb.nonNullable.group({
@@ -48,12 +44,10 @@ export class ClientForm implements OnInit {
     if (id === null) {
       return;
     }
-
-    this.clientId = id;
     this.isEditMode = true;
 
-    this.clientService.getClientById(this.clientId).subscribe({
-      next: (client: any) => {
+    this.clientService.getClientById(id).subscribe({
+      next: (client: Client) => {
         this.form.patchValue({
           name: client.name,
           email: client.email,
@@ -64,7 +58,7 @@ export class ClientForm implements OnInit {
         });
       },
       error: (error) => {
-        console.error(error);
+        this.error.emit('Error al buscar el usuario. Si persiste, comuníquese con administración.');
       }
     });
   }
@@ -78,8 +72,8 @@ export class ClientForm implements OnInit {
     this.isCreating.set(true);
     const clientData = this.form.getRawValue() as CreateClientRequest;
 
-    if (this.isEditMode && this.clientId !== null) {
-      this.clientService.updateClient(this.clientId, clientData).subscribe({
+    if (this.isEditMode && this.clientIdInput() !== null) {
+      this.clientService.updateClient(this.clientIdInput()!, clientData).subscribe({
         next: () => {
           this.saved.emit();
           this.router.navigate(['/dashboard/clientes']);
@@ -87,9 +81,9 @@ export class ClientForm implements OnInit {
         },
         error: (error) => {
           console.error(error);
-          this.errored.emit('Error al actualizar el cliente');
+          this.error.emit('Error al actualizar el cliente');
           this.isCreating.set(false);
-        }
+        },
       });
 
       return;
@@ -102,15 +96,14 @@ export class ClientForm implements OnInit {
         this.isCreating.set(false);
       },
       error: (error) => {
-        console.error(error);
-        this.errored.emit('Error al registrar el cliente');
+        this.error.emit('Error al registrar el cliente. Si el mismo persiste, comuníquese con administración.');
         this.isCreating.set(false);
       }
     });
   }
 
   onCancel(): void {
-    this.canceled.emit();
+    this.cancelled.emit();
     this.router.navigate(['/dashboard/clientes']);
   }
 }

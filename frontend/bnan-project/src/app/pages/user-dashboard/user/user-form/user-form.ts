@@ -16,7 +16,7 @@ export class UserForm {
   userIdInput = input<number | null>(null);
 
   saved = output<void>();
-  errored = output<string>();
+  error = output<string>();
   canceled = output<void>();
 
   isCreating = signal(false);
@@ -24,38 +24,10 @@ export class UserForm {
   showPassword = signal(false);
 
   form = this.fb.nonNullable.group({
-    username: [
-      '',
-      [
-        Validators.required,
-        Validators.minLength(3),
-        Validators.maxLength(20),
-      ],
-    ],
-    password: [
-      '',
-      [
-        Validators.required,
-        Validators.minLength(6),
-        Validators.maxLength(10),
-      ],
-    ],
-    first_name: [
-      '',
-      [
-        Validators.required,
-        Validators.minLength(3),
-        Validators.maxLength(20),
-      ],
-    ],
-    last_name: [
-      '',
-      [
-        Validators.required,
-        Validators.minLength(3),
-        Validators.maxLength(20),
-      ],
-    ],
+    username: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(20)]],
+    password: ['', [Validators.required, Validators.minLength(6), Validators.maxLength(10)]],
+    first_name: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(20)]],
+    last_name: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(20)]],
     email: ['', [Validators.required, Validators.email]],
     role: ['user', Validators.required],
   });
@@ -73,25 +45,27 @@ export class UserForm {
     this.isCreating.set(true);
     const data = this.form.getRawValue();
 
-    this.userService.createUser({
-      username: data.username,
-      password: data.password,
-      first_name: data.first_name,
-      last_name: data.last_name,
-      email: data.email,
-      role: data.role,
-    }).subscribe({
-      next: () => {
-        this.saved.emit();
-        this.form.reset();
-        this.isCreating.set(false);
-      },
-      error: (error) => {
-        console.error(error);
-        this.errored.emit('Error al registrar el usuario');
-        this.isCreating.set(false);
-      }
-    });
+    this.userService
+      .createUser({
+        username: data.username,
+        password: data.password,
+        first_name: data.first_name,
+        last_name: data.last_name,
+        email: data.email,
+        role: data.role,
+      })
+      .subscribe({
+        next: () => {
+          this.saved.emit();
+          this.form.reset();
+          this.isCreating.set(false);
+        },
+        error: (error) => {
+          console.error(error);
+          this.error.emit('Error al registrar el usuario');
+          this.isCreating.set(false);
+        },
+      });
   }
 
   onCancel(): void {

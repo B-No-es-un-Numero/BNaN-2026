@@ -1,38 +1,55 @@
-import { Component, inject, signal } from '@angular/core';
-import { FormBuilder, Validators, ReactiveFormsModule} from '@angular/forms';
+import { Component, inject, input, OnInit, output, signal } from '@angular/core';
+import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
-import { CompanyService } from '../../../../services/company-service';
-import { Toast } from '../../../../shared/toast/toast/toast';
+import { CompanyService } from '../../../../services/company/company-service';
+import { Company, CreateCompanyRequest } from '../../../../model/company.model';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-company-form',
-  imports: [ CommonModule, ReactiveFormsModule, RouterLink, Toast ],
+  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './company-form.html',
 })
-
-export class CompanyForm {
-
+export class CompanyForm implements OnInit {
   private fb = inject(FormBuilder);
   private companyService = inject(CompanyService);
+  private router = inject(Router);
 
-  toastOpen = signal(false);
-  toastMessage = signal('');
-  toastType = signal<'success' | 'error' | 'info'>('success');
-
-  showToast(message: string, type: 'success' | 'error' | 'info') {
-    this.toastMessage.set(message);
-    this.toastType.set(type);
-    this.toastOpen.set(true);
-    setTimeout(() => this.toastOpen.set(false), 4000);
-  }
+  companyIdInput = input<number | null>(null);
+  saved = output<void>();
+  error = output<string>();
+  cancelled = output<void>();
+  isEditMode = false;
+  isCreating = signal(false);
 
   form = this.fb.nonNullable.group({
-    name: [ '', [ Validators.required, Validators.maxLength(50), ], ],
-    cuil: [ '', [ Validators.required, Validators.pattern(/^\d{2}-?\d{8}-?\d$/), ], ],
-    email: [ '', [ Validators.required, Validators.email, ], ],
-    phone: [ '', [ Validators.pattern(/^\d+$/), ], ],
+    name: ['', [Validators.required, Validators.maxLength(50)]],
+    cuil: ['', [Validators.required, Validators.pattern(/^\d{2}-?\d{8}-?\d$/)]],
+    email: ['', [Validators.required, Validators.email]],
+    phone: ['', [Validators.pattern(/^\d+$/)]],
   });
+
+  ngOnInit(): void {
+    const id = this.companyIdInput();
+    if (id === null) {
+      return;
+    }
+    this.isEditMode = true;
+
+    this.companyService.getCompanyById(id).subscribe({
+      next: (company: Company) => {
+        this.form.patchValue({
+          name: company.name,
+          email: company.email,
+          cuil: company.cuil,
+          phone: company.phone ?? '',
+        });
+      },
+      error: (error) => {
+        this.error.emit('Error al buscar el usuario. Si persiste, comuníquese con administración.');
+      },
+    });
+  }
 
   submit() {
     if (this.form.invalid) {
@@ -40,12 +57,41 @@ export class CompanyForm {
       return;
     }
 
-    this.companyService.createCompany(this.form.getRawValue())
-      .subscribe({ next: () => {
-          this.showToast('La empresa se registró exitosamente', 'success');
-          this.form.reset();
+    this.isCreating.set(true);
+    const companyData = this.form.getRawValue() as CreateCompanyRequest;
+    if (this.isEditMode && this.companyIdInput() !== null) {
+      this.companyService.updateCompany(this.companyIdInput()!, companyData).subscribe({
+        next: () => {
+          this.saved.emit();
+          this.router.navigate(['/dashboard/empresas']);
+          this.isCreating.set(false);
         },
-        error: (error) => { console.error(error); }
+        error: (error) => {
+          this.error.emit('Error al actualizar la empresa. Comuníquese con administración si persiste.');
+          this.isCreating.set(false);
+        },
       });
+      return;
+    }
+
+    const payload: CreateCompanyRequest = this.form.getRawValue();
+    this.companyService.createCompany(payload).subscribe({
+      next: () => {
+        this.saved.emit();
+        this.form.reset();
+        this.isCreating.set(false);
+      },
+      error: (error) => {
+        this.error.emit(
+          'Error al registrar la empresa. Si persiste, comuníquese con administración.'
+        );
+        this.isCreating.set(false);
+      },
+    });
+  }
+
+  onCancel(): void {
+    this.cancelled.emit();
+    this.router.navigate(['/dashboard/empresas']);
   }
 }
