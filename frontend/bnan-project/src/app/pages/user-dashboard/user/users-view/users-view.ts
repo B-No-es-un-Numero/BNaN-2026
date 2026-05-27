@@ -1,91 +1,71 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, OnInit } from '@angular/core';
 import { Modal } from '../../../../shared/modal/modal';
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormsModule } from '@angular/forms';
 import { UserService } from '../../../../services/users/user-service';
 import { User } from '../../../../model/user.model';
 import { Toast } from "../../../../shared/toast/toast/toast";
-
+import { UserForm } from '../user-form/user-form';
 
 @Component({
   selector: 'app-users-view',
-  imports: [CommonModule, Modal, FormsModule, ReactiveFormsModule, Toast],
+  imports: [CommonModule, Modal, FormsModule, Toast, UserForm],
   templateUrl: './users-view.html'
 })
-export class UsersView {
+export class UsersView implements OnInit {
 
   private UserService = inject(UserService)
   users = signal<User[]>([]);
 
-  userForm: FormGroup;
+  isUserModalOpen = signal(false);
+  selectedUserId = signal<number | null>(null);
 
-  isEditModalOpen = signal(false);
   isDeleteModalOpen = signal(false);
-  isViewModalOpen = signal(false);isAddModalOpen = signal(false);
+  userToDeleteId = signal<number | null>(null);
+
+  isViewModalOpen = signal(false);
   selectedUser = signal<User | null>(null);
-  showPassword = signal(false);
 
   toasMessage = signal('');
   toasType = signal<'success' | 'error'>('success');
   toastOpen = signal(false);
 
-  isCreating = signal(false);
-
-  constructor(private fb: FormBuilder) {
-    this.userForm = this.fb.group({
-      username: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(20)]],
-      password: ['', [Validators.required, Validators.minLength(6), Validators.maxLength(10)]],
-      first_name: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(20)]],
-      last_name: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(20)]],
-      email: ['', [Validators.required, Validators.email]],
-      role: ['user', Validators.required]
-    });
-  }
+  constructor() {}
 
   ngOnInit(): void {
     this.UserService.getUserList().subscribe({
       next: (data: any) => { this.users.set(data); },
       error: (error) => console.error(error),
-      complete: () => console.info('complete')
     });
-  }
-
-  
-
-  togglePassword() {
-    this.showPassword.set(!this.showPassword());
   }
 
   newUser() {
-    this.userForm.reset({ role: 'user' });
-    this.isAddModalOpen.set(true);
+    this.selectedUserId.set(null);
+    this.isUserModalOpen.set(true);
   }
 
-  saveNewUser() {
-    if(this.userForm.invalid) {
-      this.userForm.markAllAsTouched();
-      return;
-    }
+  editUser(user: User) {
+    this.selectedUserId.set(user.id);
+    this.isUserModalOpen.set(true);
+  }
 
-    this.isCreating.set(true);
-    this.userForm.disable();
-    
-    this.UserService.createUser(this.userForm.getRawValue()).subscribe({
-      next: (newUser: any) => { 
-        this.users.update(users => [...users, newUser]);
-        this.showToast('Usuario creado exitosamente', 'success'); 
-        this.closeModals();
-        this.isCreating.set(false);
-        this.userForm.enable();
-      },
-      error: (error) => {
-        console.error('Error al crar usuario:', error)
-        this.showToast('Error al crear usuario', 'error');
-        this.isCreating.set(false);
-        this.userForm.enable();
-      },
+  closeUserModal() {
+    this.isUserModalOpen.set(false);
+    this.selectedUserId.set(null);
+  }
+
+  handleUserSaved(): void {
+    const wasEdit = this.selectedUserId() !== null;
+    this.closeUserModal();
+    this.showToast(wasEdit ? 'Usuario actualizado exitosamente' : 'Usuario creado exitosamente', 'success');
+    this.UserService.getUserList().subscribe({
+      next: (data: any) => { this.users.set(data); },
+      error: (error) => console.error(error),
     });
+  }
 
+  handleUserErrored(message: string): void {
+    this.showToast(message, 'error');
   }
 
   onSearch(event: Event) {
@@ -93,17 +73,34 @@ export class UsersView {
     this.UserService.getUserList(term).subscribe({
       next: (data: User[]) => { this.users.set(data); },
       error: (error) => console.error(error),
-      complete: () => console.info('complete')
     });
   }
 
-  editUser(user: User) {
-    this.selectedUser.set(user);
-    this.isEditModalOpen.set(true);
+  confirmDeleteUser(id: number) {
+    this.userToDeleteId.set(id);
+    this.isDeleteModalOpen.set(true);
   }
 
-  deleteUser(id: number) {
-    this.isDeleteModalOpen.set(true);
+  deleteUser() {
+    const id = this.userToDeleteId();
+    if (id === null) return;
+
+    this.UserService.deleteUser(id).subscribe({
+      next: () => {
+        this.users.update(users => users.filter(u => u.id !== id));
+        this.showToast('Usuario eliminado exitosamente', 'success');
+        this.closeDeleteModal();
+      },
+      error: (error) => {
+        console.error(error);
+        this.showToast('Error al eliminar usuario', 'error');
+      }
+    });
+  }
+
+  closeDeleteModal() {
+    this.isDeleteModalOpen.set(false);
+    this.userToDeleteId.set(null);
   }
 
   viewUser(user: User) {
@@ -111,11 +108,15 @@ export class UsersView {
     this.isViewModalOpen.set(true);
   }
 
-  closeModals() {
-    this.isAddModalOpen.set(false);
-    this.isEditModalOpen.set(false);
+  closeViewModal() {
     this.isViewModalOpen.set(false);
-    this.isDeleteModalOpen.set(false);
+    this.selectedUser.set(null);
+  }
+
+  closeModals() {
+    this.closeUserModal();
+    this.closeDeleteModal();
+    this.closeViewModal();
   }
 
   showToast(message: string, type: 'success' | 'error') {

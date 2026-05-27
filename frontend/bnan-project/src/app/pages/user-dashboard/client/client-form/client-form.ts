@@ -4,12 +4,10 @@ import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { ClientService } from '../../../../services/client/client-service';
 import { CreateClientRequest } from '../../../../model/client.model';
-import { Toast } from '../../../../shared/toast/toast/toast';
-
 
 @Component({
   selector: 'app-client-form',
-  imports: [CommonModule, ReactiveFormsModule, Toast],
+  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './client-form.html',
 })
 export class ClientForm implements OnInit {
@@ -20,23 +18,13 @@ export class ClientForm implements OnInit {
   clientIdInput = input<number | null>(null);
 
   saved = output<void>();
+  errored = output<string>();
   canceled = output<void>();
 
   clientId: number | null = null;
   isEditMode = false;
 
-  toastOpen = signal(false);
-  toastMessage = signal('');
-  toastType = signal<'success' | 'error' | 'info'>('success');
-
   isCreating = signal(false);
-
-  showToast(message: string, type: 'success' | 'error' | 'info') {
-    this.toastMessage.set(message);
-    this.toastType.set(type);
-    this.toastOpen.set(true);
-    setTimeout(() => this.toastOpen.set(false), 4000);
-  }
 
   form = this.fb.nonNullable.group({
     name: [
@@ -93,14 +81,13 @@ export class ClientForm implements OnInit {
     if (this.isEditMode && this.clientId !== null) {
       this.clientService.updateClient(this.clientId, clientData).subscribe({
         next: () => {
-          this.showToast('El cliente se actualizó exitosamente', 'success');
           this.saved.emit();
           this.router.navigate(['/dashboard/clientes']);
           this.isCreating.set(false);
         },
         error: (error) => {
           console.error(error);
-          this.showToast('Error al actualizar el cliente', 'error');
+          this.errored.emit('Error al actualizar el cliente');
           this.isCreating.set(false);
         }
       });
@@ -110,14 +97,13 @@ export class ClientForm implements OnInit {
 
     this.clientService.createClient(clientData).subscribe({
       next: () => {
-        this.showToast('El cliente se registró exitosamente', 'success');
         this.saved.emit();
         this.form.reset();
         this.isCreating.set(false);
       },
       error: (error) => {
         console.error(error);
-        this.showToast('Error al registrar el cliente', 'error');
+        this.errored.emit('Error al registrar el cliente');
         this.isCreating.set(false);
       }
     });

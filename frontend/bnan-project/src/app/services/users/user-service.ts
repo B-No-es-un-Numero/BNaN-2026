@@ -25,4 +25,12 @@ export class UserService {
     return this.http.get(`${this.baseUrl}/${id}/`);
   }
 
+  public updateUser(id: number, data: any) {
+    return this.http.put(`${this.baseUrl}/${id}/`, data);
+  }
+
+  public deleteUser(id: number) {
+    return this.http.delete(`${this.baseUrl}/${id}/`);
+  }
+
 }

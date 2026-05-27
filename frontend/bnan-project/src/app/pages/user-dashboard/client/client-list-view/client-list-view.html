@@ -96,6 +96,7 @@
     <app-client-form
       [clientIdInput]="selectedClientId()"
       (saved)="handleClientSaved()"
+      (errored)="handleClientErrored($event)"
       (canceled)="closeClientModal()"
     />
   }

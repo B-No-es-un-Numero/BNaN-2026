@@ -6,6 +6,7 @@ import { ClientListView } from './pages/user-dashboard/client/client-list-view/c
 import { ClientDetailView } from './pages/user-dashboard/client/client-detail-view/client-detail-view';
 // import { ClientForm } from './pages/user-dashboard/client-form/client-form';
 import { UsersView } from './pages/user-dashboard/user/users-view/users-view';
+import { UserForm } from './pages/user-dashboard/user/user-form/user-form';
 import { Login } from './pages/auth/login/login';
 import { TeamMemberDetail } from './pages/team-member-detail/team-member-detail';
 import { CompanyListView } from './pages/user-dashboard/company/company-list-view/company-list-view';
@@ -22,9 +23,8 @@ export const routes: Routes = [
       { path: '', redirectTo: 'clientes', pathMatch: 'full' },
       { path: 'clientes', component: ClientListView },
       { path: 'clientes-detalle/:id', component: ClientDetailView },
-      // { path: 'clientes-form', component: ClientForm },
-      // { path: 'clientes-form/:id', component: ClientForm },
       { path: 'usuarios', component: UsersView },
+      { path: 'usuarios-form/:id?', component: UserForm },
       { path: 'empresas', component: CompanyListView},
       { path: 'empresas-detalle/:id', component: CompanyDetailView },
       { path: 'empresas-form/:id?', component: CompanyForm },

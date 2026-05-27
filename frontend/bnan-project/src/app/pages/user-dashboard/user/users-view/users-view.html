@@ -1,5 +1,5 @@
 <div class="d-flex justify-content-between align-items-center mb-3">
-  <h4 class="mb-0">Gestión de Usuarios</h4>
+  <h4 class="mb-0">Gesti&oacute;n de Usuarios</h4>
   <button class="btn btn-sm btn-purple" (click)="newUser()">
     <i class="bi bi-plus-lg"></i> Nuevo Usuario
   </button>
@@ -14,7 +14,6 @@
   </div>
 </div>
 
-<!-- TABLE CARD -->
 <div class="card border-0 shadow-sm">
   <div class="table-responsive">
     <table class="table align-middle mb-0">
@@ -47,7 +46,7 @@
             <button class="btn btn-sm btn-outline-primary me-2" (click)="editUser(user)">
               <i class="bi bi-pencil"></i>
             </button>
-            <button class="btn btn-sm btn-outline-danger" (click)="deleteUser(user.id)">
+            <button class="btn btn-sm btn-outline-danger" (click)="confirmDeleteUser(user.id)">
               <i class="bi bi-trash"></i>
             </button>
           </td>
@@ -56,59 +55,50 @@
       </tbody>
     </table>
   </div>
-
-  
 </div>
 
-<app-modal 
-  [title]="'Editar Usuario: ' + selectedUser()?.first_name" 
-  [isOpen]="isEditModalOpen()" 
-  (close)="closeModals()"
-  size="md">
-
-  <div class="row g-3">
-    <div class="col-12">
-      <label class="form-label fw-bold small text-muted">Nombre</label>
-      <input type="text" class="form-control" [value]="selectedUser()?.first_name">
-    </div>
-    <div class="col-12">
-      <label class="form-label fw-bold small text-muted">Email</label>
-      <input type="email" class="form-control" [value]="selectedUser()?.email">
-    </div>
-    <div class="col-12 mt-4 d-flex gap-2">
-      <button class="btn btn-light w-100" (click)="closeModals()">Cancelar</button>
-      <button class="btn btn-purple w-100" (click)="closeModals()">Guardar</button>
-    </div>
-  </div>
+<app-modal
+  [title]="selectedUserId() === null ? 'Crear Usuario' : 'Editar Usuario'"
+  [isOpen]="isUserModalOpen()"
+  (close)="closeUserModal()"
+  size="md"
+>
+  @if (isUserModalOpen()) {
+    <app-user-form
+      [userIdInput]="selectedUserId()"
+      (saved)="handleUserSaved()"
+      (errored)="handleUserErrored($event)"
+      (canceled)="closeUserModal()"
+    />
+  }
 </app-modal>
 
-<app-modal 
-  title="Confirmar Eliminación" 
-  [isOpen]="isDeleteModalOpen()" 
-  (close)="closeModals()"
-  size="sm">
-
+<app-modal
+  title="Confirmar Eliminaci&oacute;n"
+  [isOpen]="isDeleteModalOpen()"
+  (close)="closeDeleteModal()"
+  size="sm"
+>
   <div class="text-center py-3">
     <i class="bi bi-exclamation-triangle text-danger display-4 mb-3"></i>
-    <p class="fs-5 fw-bold">¿Estás seguro?</p>
+    <p class="fs-5 fw-bold">&iquest;Est&aacute;s seguro?</p>
     <p class="text-muted small">Vas a eliminar este usuario de la base de datos.</p>
   </div>
 
   <div class="d-flex gap-2 mt-2">
-    <button class="btn btn-light w-100" (click)="closeModals()">No, volver</button>
-    <button class="btn btn-danger w-100" (click)="closeModals()">Sí, eliminar</button>
+    <button class="btn btn-light w-100" (click)="closeDeleteModal()">No, volver</button>
+    <button class="btn btn-danger w-100" (click)="deleteUser()">S&iacute;, eliminar</button>
   </div>
 </app-modal>
 
-<app-modal 
-  [title]="'Ficha del Usuario'" 
-  [isOpen]="isViewModalOpen()" 
-  (close)="closeModals()"
-  size="md">
-
+<app-modal
+  title="Ficha del Usuario"
+  [isOpen]="isViewModalOpen()"
+  (close)="closeViewModal()"
+  size="md"
+>
   @if (selectedUser(); as user) {
     <div class="text-center mb-4">
-      <!-- Avatar con Inicial -->
       <div class="bg-primary-subtle text-primary rounded-circle d-inline-flex align-items-center justify-content-center mb-2" style="width: 70px; height: 70px;">
         <span class="fs-1 fw-bold">{{ user.first_name.charAt(0) }}</span>
       </div>
@@ -140,97 +130,14 @@
     </div>
 
     <div class="mt-4">
-      <button class="btn btn-purple w-100" (click)="closeModals()">Cerrar</button>
+      <button class="btn btn-purple w-100" (click)="closeViewModal()">Cerrar</button>
     </div>
   }
 </app-modal>
 
-<app-modal 
-  title="Crear Usuario" 
-  [isOpen]="isAddModalOpen()" 
-  (close)="closeModals()"
-  size="md">
-
-  <form [formGroup]="userForm" (ngSubmit)="saveNewUser()">
-    <div class="row g-3">
-
-       <div class="col-12">
-        <label class="form-label small fw-bold text-muted">Nombre de usuario</label>
-        <input type="text" 
-               class="form-control" 
-               formControlName="username"
-               placeholder="sebastian"
-               [class.is-invalid]="userForm.get('username')?.touched && userForm.get('username')?.invalid">
-        <div class="invalid-feedback">El nombre de usuario debe tener al menos 3 caracteres y un máximo de 20.</div>
-      </div>
-      
-      <div class="col-12">
-        <label class="form-label small fw-bold text-muted">Contraseña</label>
-        <div class="input-group">
-          <input [type]="showPassword() ? 'text' : 'password'"
-               class="form-control" 
-               formControlName="password"
-               [class.is-invalid]="userForm.get('password')?.touched && userForm.get('password')?.invalid">
-          <button class="btn btn-light" type="button" (click)="togglePassword()">
-            <i [class]="showPassword() ? 'bi bi-eye-slash' : 'bi bi-eye'"></i>
-          </button>
-        <div class="invalid-feedback">La contraseña debe tener al menos 6 caracteres y un máximo de 10.</div>
-        </div>
-        
-      </div>
-      
-      <div class="col-12">
-        <label class="form-label small fw-bold text-muted">Nombre</label>
-        <input type="text" 
-               class="form-control" 
-               formControlName="first_name"
-               [class.is-invalid]="userForm.get('first_name')?.touched && userForm.get('first_name')?.invalid">
-        <div class="invalid-feedback">El nombre debe tener al menos 3 caracteres y un máximo de 20.</div>
-      </div>
-
-      <div class="col-12">
-        <label class="form-label small fw-bold text-muted">Apellido</label>
-        <input type="text" 
-               class="form-control" 
-               formControlName="last_name"
-               [class.is-invalid]="userForm.get('last_name')?.touched && userForm.get('last_name')?.invalid">
-        <div class="invalid-feedback">El apellido debe tener al menos 3 caracteres y un máximo de 20.</div>
-      </div>
-      <div class="col-12">
-        <label class="form-label small fw-bold text-muted">Correo Electrónico</label>
-        <input type="email" 
-               class="form-control" 
-               formControlName="email"
-               [class.is-invalid]="userForm.get('email')?.touched && userForm.get('email')?.invalid">
-        <div class="invalid-feedback">Ingresa un formato de email válido.</div>
-      </div>
-
-      <div class="col-12">
-        <label class="form-label small fw-bold text-muted">Rol inicial</label>
-        <select class="form-select" formControlName="role">
-          <option value="admin">Administrador</option>
-          <option value="user">Usuario</option>
-        </select>
-      </div>
-
-      <div class="col-12 mt-4 d-flex gap-2">
-        <button type="button" class="btn btn-light w-100" (click)="closeModals()">Cancelar</button>
-        <button type="submit" class="btn btn-purple w-100" [disabled]="isCreating()">
-          @if (isCreating()) {
-            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Creando...
-          } @else { 
-          Crear
-          }
-        </button>
-      </div>
-
-    </div>
-  </form>
-</app-modal>
-
-<app-toast 
+<app-toast
   [message]="toasMessage()"
   [type]="toasType()"
   [isOpen]="toastOpen()"
   (close)="toastOpen.set(false)"
-  ></app-toast>
+></app-toast>

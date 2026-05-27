@@ -97,9 +97,14 @@ export class ClientListView implements OnInit {
   }
 
   handleClientSaved(): void {
+    const wasEdit = this.selectedClientId() !== null;
     this.closeClientModal();
-    this.showToast('El cliente se registró exitosamente', 'success');
+    this.showToast(wasEdit ? 'El cliente se actualizó exitosamente' : 'El cliente se registró exitosamente', 'success');
     this.loadClients();
+  }
+
+  handleClientErrored(message: string): void {
+    this.showToast(message, 'error');
   }
 
   deleteClient(id: number, hard: boolean = false): void {
