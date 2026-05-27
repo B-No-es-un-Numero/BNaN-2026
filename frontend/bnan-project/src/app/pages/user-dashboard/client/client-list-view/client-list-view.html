@@ -92,11 +92,13 @@
   (close)="closeClientModal()"
   size="md"
 >
-  <app-client-form
-    [clientIdInput]="selectedClientId()"
-    (saved)="handleClientSaved()"
-    (canceled)="closeClientModal()"
-  />
+  @if (isClientModalOpen()) {
+    <app-client-form
+      [clientIdInput]="selectedClientId()"
+      (saved)="handleClientSaved()"
+      (canceled)="closeClientModal()"
+    />
+  }
 </app-modal>
 
 <app-toast
