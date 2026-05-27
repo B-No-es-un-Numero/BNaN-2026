@@ -2,8 +2,8 @@ import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule} from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
-import { CompanyService } from '../../../services/company-service';
-import { Toast } from '../../../shared/toast/toast/toast';
+import { CompanyService } from '../../../../services/company-service';
+import { Toast } from '../../../../shared/toast/toast/toast';
 
 @Component({
   selector: 'app-company-form',

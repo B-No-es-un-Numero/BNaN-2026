@@ -2,7 +2,7 @@ import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 
-import { CompanyService } from '../../../services/company-service';
+import { CompanyService } from '../../../../services/company-service';
 
 @Component({
   selector: 'app-company-list-view',

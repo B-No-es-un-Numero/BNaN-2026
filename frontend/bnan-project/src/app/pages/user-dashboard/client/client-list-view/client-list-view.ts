@@ -1,11 +1,11 @@
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { ClientService } from '../../../services/client/client-service';
-import { Client } from '../../../model/client.model';
-import { Modal } from '../../../shared/modal/modal';
+import { ClientService } from '../../../../services/client/client-service';
+import { Client } from '../../../../model/client.model';
+import { Modal } from '../../../../shared/modal/modal';
 import { ClientForm } from '../client-form/client-form';
-import { Toast } from '../../../shared/toast/toast/toast';
+import { Toast } from '../../../../shared/toast/toast/toast';
 
 @Component({
   selector: 'app-client-list-view',

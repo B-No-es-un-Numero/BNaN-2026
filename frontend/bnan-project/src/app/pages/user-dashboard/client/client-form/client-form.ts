@@ -2,9 +2,9 @@ import { Component, inject, signal, OnInit, input, output } from '@angular/core'
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
-import { ClientService } from '../../../services/client/client-service';
-import { CreateClientRequest } from '../../../model/client.model';
-import { Toast } from '../../../shared/toast/toast/toast';
+import { ClientService } from '../../../../services/client/client-service';
+import { CreateClientRequest } from '../../../../model/client.model';
+import { Toast } from '../../../../shared/toast/toast/toast';
 
 
 @Component({

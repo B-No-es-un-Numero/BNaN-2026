@@ -1,6 +1,6 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import { ClientService } from '../../../services/client/client-service';
+import { ClientService } from '../../../../services/client/client-service';
 
 interface ClientDetail {
   id: number;

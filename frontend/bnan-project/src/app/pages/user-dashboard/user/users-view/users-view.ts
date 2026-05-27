@@ -1,10 +1,10 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
-import { Modal } from '../../../shared/modal/modal';
+import { Modal } from '../../../../shared/modal/modal';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { UserService } from '../../../services/users/user-service';
-import { User } from '../../../model/user.model';
-import { Toast } from "../../../shared/toast/toast/toast";
+import { UserService } from '../../../../services/users/user-service';
+import { User } from '../../../../model/user.model';
+import { Toast } from "../../../../shared/toast/toast/toast";
 
 
 @Component({

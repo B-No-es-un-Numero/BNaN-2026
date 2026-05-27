@@ -1,7 +1,7 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 
-import { CompanyService } from '../../../services/company-service';
+import { CompanyService } from '../../../../services/company-service';
 
 interface CompanyDetail {
 
