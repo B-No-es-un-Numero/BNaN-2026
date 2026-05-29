@@ -1,15 +1,15 @@
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
-import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { ClientService } from '../../../../services/client/client-service';
 import { Client } from '../../../../model/client.model';
 import { Modal } from '../../../../shared/modal/modal';
 import { ClientForm } from '../client-form/client-form';
 import { Toast } from '../../../../shared/toast/toast/toast';
+import { debounceTime, distinctUntilChanged, Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-client-list-view',
-  imports: [RouterLink, FormsModule, Modal, ClientForm, Toast],
+  imports: [FormsModule, Modal, ClientForm, Toast],
   templateUrl: './client-list-view.html',
   styleUrl: './client-list-view.css',
 })
@@ -18,9 +18,17 @@ export class ClientListView implements OnInit {
 
   clientList = signal<Client[]>([]);
   searchTerm = signal<string>('');
+  private searchSubject = new Subject<string>();
+  private destroy$ = new Subject<void>();
 
   isClientModalOpen = signal(false);
   selectedClientId = signal<number | null>(null);
+
+  isDeleteModalOpen = signal(false);
+  clientToDeleteId = signal<number | null>(null);
+
+  isViewModalOpen = signal(false);
+  selectedClient = signal<Client | null>(null);
 
   toastOpen = signal(false);
   toastMessage = signal('');
@@ -30,12 +38,11 @@ export class ClientListView implements OnInit {
     this.toastMessage.set(message);
     this.toastType.set(type);
     this.toastOpen.set(true);
-    setTimeout(() => this.toastOpen.set(false), 4000);
+    setTimeout(() => this.toastOpen.set(false), 5000);
   }
 
   filteredClientList = computed(() => {
     const term = this.searchTerm().toLowerCase().trim();
-
     if (!term) {
       return this.clientList();
     }
@@ -48,7 +55,7 @@ export class ClientListView implements OnInit {
       const statusMap: Record<string, string> = {
         active: 'activo',
         lead: 'lead',
-        closed: 'cerrado'
+        closed: 'cerrado',
       };
       const status = statusMap[client.status?.toLowerCase()] || '';
 
@@ -64,16 +71,33 @@ export class ClientListView implements OnInit {
 
   ngOnInit(): void {
     this.loadClients();
+    this.searchSubject
+      .pipe(debounceTime(100), distinctUntilChanged(), takeUntil(this.destroy$))
+      .subscribe((term: string) => {
+        this.searchTerm.set(term);
+      });
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   loadClients(): void {
-    this.clientService.getClientList().subscribe({
-      next: (data: any) => {
-        this.clientList.set(data);
-      },
-      error: (error) => console.error(error),
-      complete: () => console.info('complete')
-    });
+    this.clientService
+      .getClientList()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (data: Client[]) => {
+          this.clientList.set(data);
+        },
+        error: (error) =>
+          this.showToast(
+            'No se pudo cargar la lista. Comuníquese con administración si el error persiste.',
+            'error'
+          ),
+        complete: () => console.info('complete'),
+      });
   }
 
   onSearch(event: Event): void {
@@ -81,13 +105,8 @@ export class ClientListView implements OnInit {
     this.searchTerm.set(input.value);
   }
 
-  openCreateModal(): void {
+  openNewClient(): void {
     this.selectedClientId.set(null);
-    this.isClientModalOpen.set(true);
-  }
-
-  openEditModal(id: number): void {
-    this.selectedClientId.set(id);
     this.isClientModalOpen.set(true);
   }
 
@@ -96,25 +115,60 @@ export class ClientListView implements OnInit {
     this.selectedClientId.set(null);
   }
 
+  openEditClient(client: Client): void {
+    this.selectedClientId.set(client.id);
+    this.isClientModalOpen.set(true);
+  }
+
+  openViewClient(client: Client): void {
+    this.selectedClient.set(client);
+    this.isViewModalOpen.set(true);
+  }
+
+  closeViewClient() {
+    this.isViewModalOpen.set(false);
+    this.selectedClient.set(null);
+  }
+
   handleClientSaved(): void {
-    const wasEdit = this.selectedClientId() !== null;
+    const wasEdited = this.selectedClientId() !== null;
     this.closeClientModal();
-    this.showToast(wasEdit ? 'El cliente se actualizó exitosamente' : 'El cliente se registró exitosamente', 'success');
+    this.showToast(
+      wasEdited ? 'El cliente se actualizó exitosamente' : 'El cliente se registró exitosamente',
+      'success'
+    );
     this.loadClients();
   }
 
-  handleClientErrored(message: string): void {
-    this.showToast(message, 'error');
+  confirmDeleteClient(id: number) {
+    this.clientToDeleteId.set(id);
+    this.isDeleteModalOpen.set(true);
   }
 
-  deleteClient(id: number, hard: boolean = false): void {
-    this.clientService.deleteClient(id, hard).subscribe({
-      next: () => {
-        this.clientList.update((clients) =>
-          clients.filter(client => client.id !== id)
-        );
-      },
-      error: (error) => console.error(error)
-    });
+  closeDeleteClient() {
+    this.isDeleteModalOpen.set(false);
+    this.clientToDeleteId.set(null);
+  }
+
+  deleteClient(): void {
+    const id = this.clientToDeleteId();
+    if (id === null) return;
+    this.clientService
+      .deleteClient(id, false)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: () => {
+          this.clientList.update((clients) => clients.filter((client) => client.id !== id));
+          this.showToast('Cliente eliminado exitosamente', 'success');
+          this.closeDeleteClient();
+        },
+        error: (error) => {
+          this.showToast('Error al eliminar cliente', 'error');
+        },
+      });
+  }
+
+  handleClientError(message: string): void {
+    this.showToast(message, 'error');
   }
 }

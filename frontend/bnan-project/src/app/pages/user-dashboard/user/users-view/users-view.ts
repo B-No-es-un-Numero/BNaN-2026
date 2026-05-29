@@ -4,17 +4,16 @@ import { Modal } from '../../../../shared/modal/modal';
 import { FormsModule } from '@angular/forms';
 import { UserService } from '../../../../services/users/user-service';
 import { User } from '../../../../model/user.model';
-import { Toast } from "../../../../shared/toast/toast/toast";
+import { Toast } from '../../../../shared/toast/toast/toast';
 import { UserForm } from '../user-form/user-form';
 
 @Component({
   selector: 'app-users-view',
   imports: [CommonModule, Modal, FormsModule, Toast, UserForm],
-  templateUrl: './users-view.html'
+  templateUrl: './users-view.html',
 })
 export class UsersView implements OnInit {
-
-  private UserService = inject(UserService)
+  private UserService = inject(UserService);
   users = signal<User[]>([]);
 
   isUserModalOpen = signal(false);
@@ -30,11 +29,11 @@ export class UsersView implements OnInit {
   toasType = signal<'success' | 'error'>('success');
   toastOpen = signal(false);
 
-  constructor() {}
-
   ngOnInit(): void {
     this.UserService.getUserList().subscribe({
-      next: (data: any) => { this.users.set(data); },
+      next: (data: any) => {
+        this.users.set(data);
+      },
       error: (error) => console.error(error),
     });
   }
@@ -55,23 +54,30 @@ export class UsersView implements OnInit {
   }
 
   handleUserSaved(): void {
-    const wasEdit = this.selectedUserId() !== null;
+    const wasEdited = this.selectedUserId() !== null;
     this.closeUserModal();
-    this.showToast(wasEdit ? 'Usuario actualizado exitosamente' : 'Usuario creado exitosamente', 'success');
+    this.showToast(
+      wasEdited ? 'Usuario actualizado exitosamente' : 'Usuario creado exitosamente',
+      'success'
+    );
     this.UserService.getUserList().subscribe({
-      next: (data: any) => { this.users.set(data); },
+      next: (data: any) => {
+        this.users.set(data);
+      },
       error: (error) => console.error(error),
     });
   }
 
-  handleUserErrored(message: string): void {
+  handleUsererror(message: string): void {
     this.showToast(message, 'error');
   }
 
   onSearch(event: Event) {
     const term = (event.target as HTMLInputElement).value;
     this.UserService.getUserList(term).subscribe({
-      next: (data: User[]) => { this.users.set(data); },
+      next: (data: User[]) => {
+        this.users.set(data);
+      },
       error: (error) => console.error(error),
     });
   }
@@ -87,14 +93,14 @@ export class UsersView implements OnInit {
 
     this.UserService.deleteUser(id).subscribe({
       next: () => {
-        this.users.update(users => users.filter(u => u.id !== id));
+        this.users.update((users) => users.filter((u) => u.id !== id));
         this.showToast('Usuario eliminado exitosamente', 'success');
         this.closeDeleteModal();
       },
       error: (error) => {
         console.error(error);
         this.showToast('Error al eliminar usuario', 'error');
-      }
+      },
     });
   }
 

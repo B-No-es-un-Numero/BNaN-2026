@@ -1,10 +1,7 @@
 <div class="d-flex justify-content-between align-items-center mb-3">
   <h4 class="mb-0">Empresas</h4>
 
-  <a
-    class="btn btn-sm btn-purple"
-    [routerLink]="['/dashboard/empresas-form', '']"
-  >
+  <a class="btn btn-sm btn-purple" (click)="openNewCompany()">
     <i class="bi bi-plus-lg"></i>
     Nueva Empresa
   </a>
@@ -29,7 +26,6 @@
 <div class="card border-0 shadow-sm">
   <div class="table-responsive">
     <table class="table align-middle mb-0">
-
       <thead class="bg-light">
         <tr>
           <th>Nombre</th>
@@ -43,53 +39,147 @@
 
       <tbody>
         @for (company of filteredCompanyList(); track company.id) {
-        <tr>
+          <tr>
+            <td>{{ company.name }}</td>
+            <td>{{ company.cuil }}</td>
+            <td>{{ company.email }}</td>
+            <td>{{ company.phone }}</td>
 
-          <td>{{ company.name }}</td>
-          <td>{{ company.cuil }}</td>
-          <td>{{ company.email }}</td>
-          <td>{{ company.phone }}</td>
+            <td>
+              @if (company.enabled) {
+                <span class="badge bg-success-subtle text-success"> Activa </span>
+              } @else {
+                <span class="badge bg-secondary-subtle text-secondary"> Inactiva </span>
+              }
+            </td>
 
-          <td>
-            @if (company.enabled) {
-            <span class="badge bg-success-subtle text-success">
-              Activa
-            </span>
-            } @else {
-            <span class="badge bg-secondary-subtle text-secondary">
-              Inactiva
-            </span>
-            }
-          </td>
+            <td class="text-end">
+              <button class="btn btn-sm btn-outline-primary me-2" (click)="openViewCompany(company)">
+                <i class="bi bi-eye"></i>
+              </button>
 
-          <td class="text-end">
+              <button
+                class="btn btn-sm btn-outline-primary me-2"
+                (click)="openEditCompany(company)"
+              >
+                <i class="bi bi-pencil"></i>
+              </button>
 
-            <a
-              class="btn btn-sm btn-outline-primary me-2"
-              [routerLink]="['/dashboard/empresas-detalle', company.id]"
-            >
-              <i class="bi bi-eye"></i>
-            </a>
-
-            <a
-              class="btn btn-sm btn-outline-primary me-2"
-              [routerLink]="['/dashboard/empresas-form', company.id]"
-            >
-              <i class="bi bi-pencil"></i>
-            </a>
-
-            <a
-                class="btn btn-sm btn-outline-danger"
-                (click)="deleteCompany(company.id)"
-            >
+              <a class="btn btn-sm btn-outline-danger" (click)="confirmDeleteCompany(company.id)">
                 <i class="bi bi-trash"></i>
-            </a>
-
-          </td>
-        </tr>
+              </a>
+            </td>
+          </tr>
         }
       </tbody>
-
     </table>
   </div>
 </div>
+
+<app-modal
+  [title]="selectedCompanyId() === null ? 'Crear Empresa' : 'Editar Empresa'"
+  [isOpen]="isCompanyModalOpen()"
+  (close)="closeCompanyModal()"
+  size="md"
+>
+  @if (isCompanyModalOpen()) {
+    <app-company-form
+      [companyIdInput]="selectedCompanyId()"
+      (saved)="handleCompanySaved()"
+      (error)="handleCompanyError($event)"
+      (canceled)="closeCompanyModal()"
+    />
+  }
+</app-modal>
+
+<app-modal
+  title="Confirmar Eliminaci&oacute;n"
+  [isOpen]="isDeleteModalOpen()"
+  (close)="closeDeleteCompany()"
+  size="sm"
+>
+  <div class="text-center py-3">
+    <i class="bi bi-exclamation-triangle text-danger display-4 mb-3"></i>
+    <p class="fs-5 fw-bold">&iquest;Est&aacute;s seguro?</p>
+    <p class="text-muted small">Vas a eliminar esta empresa de la base de datos.</p>
+  </div>
+
+  <div class="d-flex gap-2 mt-2">
+    <button class="btn btn-light w-100" (click)="closeDeleteCompany()">No, volver</button>
+    <button class="btn btn-danger w-100" (click)="deleteCompany()">S&iacute;, eliminar</button>
+  </div>
+</app-modal>
+
+<app-modal
+  title="Ficha de la empresa"
+  [isOpen]="isViewModalOpen()"
+  (close)="closeViewCompany()"
+  size="md"
+>
+  @if (selectedCompany(); as company) {
+    <div class="d-flex justify-content-center">
+      <div class="w-100" style="max-width: 800px">
+        <div class="card border-0 shadow-sm p-3">
+          <div class="table-responsive">
+            <table class="table align-middle mb-0">
+              <tbody>
+                <tr>
+                  <th class="bg-light w-25">Nombre</th>
+                  <td>{{ company.name }}</td>
+                </tr>
+
+                <tr>
+                  <th class="bg-light">CUIL</th>
+                  <td>{{ company.cuil }}</td>
+                </tr>
+
+                <tr>
+                  <th class="bg-light">Email</th>
+                  <td>{{ company.email }}</td>
+                </tr>
+
+                <tr>
+                  <th class="bg-light">Teléfono</th>
+                  <td>{{ company.phone }}</td>
+                </tr>
+
+                <tr>
+                  <th class="bg-light">Estado</th>
+
+                  <td>
+                    @if (company.enabled) {
+                      <span class="badge bg-success-subtle text-success"> Activa </span>
+                    } @else {
+                      <span class="badge bg-secondary-subtle text-secondary"> Inactiva </span>
+                    }
+                  </td>
+                </tr>
+
+                <tr>
+                  <th class="bg-light">Creado</th>
+                  <td>{{ company.created_at }}</td>
+                </tr>
+
+                <tr>
+                  <th class="bg-light">Actualizado</th>
+                  <td>{{ company.updated_at }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-4">
+      <button class="btn btn-purple w-100" (click)="closeViewCompany()">Cerrar</button>
+    </div>
+  }
+</app-modal>
+
+<app-toast
+  [message]="toastMessage()"
+  [type]="toastType()"
+  [isOpen]="toastOpen()"
+  (close)="toastOpen.set(false)"
+></app-toast>
