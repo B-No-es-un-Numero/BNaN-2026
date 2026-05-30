@@ -8,6 +8,8 @@ import { Login } from './pages/auth/login/login';
 import { TeamMemberDetail } from './pages/team-member-detail/team-member-detail';
 import { CompanyListView } from './pages/user-dashboard/company/company-list-view/company-list-view';
 import { Register } from './pages/auth/register/register';
+import { NotFound } from './shared/not-found/not-found';
+
 
 export const routes: Routes = [
   { path: "iniciar-sesion", component: Login },
@@ -25,4 +27,5 @@ export const routes: Routes = [
   { path: '', component: Home },
   { path: 'about', component: About },
   {path: 'about/:id',component: TeamMemberDetail},
+  { path: '**', component: NotFound },
 ];
