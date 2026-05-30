@@ -7,9 +7,11 @@ import { UsersView } from './pages/user-dashboard/user/users-view/users-view';
 import { Login } from './pages/auth/login/login';
 import { TeamMemberDetail } from './pages/team-member-detail/team-member-detail';
 import { CompanyListView } from './pages/user-dashboard/company/company-list-view/company-list-view';
+import { Register } from './pages/auth/register/register';
 
 export const routes: Routes = [
   { path: "iniciar-sesion", component: Login },
+  { path: "registrarse", component: Register },
   {
     path: 'dashboard',
     component: UserDashboard,
