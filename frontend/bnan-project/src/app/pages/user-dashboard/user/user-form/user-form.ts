@@ -42,6 +42,9 @@ export class UserForm implements OnInit {
     const userId = this.userIdInput();
 
     if (userId) {
+      this.form.get('password')?.clearValidators();
+      this.form.get('password')?.setValidators([Validators.minLength(6), Validators.maxLength(10)]);
+      this.form.get('password')?.updateValueAndValidity();
       this.loadUser(userId);
     }
   }
@@ -58,14 +61,19 @@ export class UserForm implements OnInit {
     const userId = this.userIdInput();
 
     if (userId) {
-
-      this.userService.updateUser(userId, {
+      const payload: any = {
         username: data.username,
         first_name: data.first_name,
         last_name: data.last_name,
         email: data.email,
         role: data.role,
-      }).subscribe({
+      };
+
+      if (data.password) {
+        payload.password = data.password;
+      }
+
+      this.userService.updateUser(userId, payload).subscribe({
         next: () => {
           this.saved.emit();
           this.isCreating.set(false);

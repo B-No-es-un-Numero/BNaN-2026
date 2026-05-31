@@ -16,7 +16,11 @@
         <button class="btn btn-light" type="button" (click)="togglePassword()">
           <i [class]="showPassword() ? 'bi bi-eye-slash' : 'bi bi-eye'"></i>
         </button>
-        <div class="invalid-feedback">La contraseña debe tener al menos 6 caracteres y un máximo de 10.</div>
+        @if (form.get('password')?.errors?.['required']) {
+          <div class="invalid-feedback">La contraseña es obligatoria.</div>
+        } @else {
+          <div class="invalid-feedback">La contraseña debe tener al menos 6 caracteres y un máximo de 10.</div>
+        }
       </div>
     </div>
 
