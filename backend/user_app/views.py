@@ -9,6 +9,18 @@ from django.shortcuts import get_object_or_404
 from django.db.models import Q
 
 
+class RegisterView(ApiView):
+    def post(self, request):
+        serializer = UserSerializer(data=request.data);
+        if serializer.is_valid():
+            serializer.save();
+            return Response(
+                {"message": "Usuario registrado exitosamente"},
+                status=status.HTTP_201_CREATED
+            );
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST);
+
+
 class UserView(ApiView):
     def get(self, request, pk=None):
         if pk:
