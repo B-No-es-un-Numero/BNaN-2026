@@ -2,6 +2,8 @@ import { Component, inject, signal, input, output } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { UserService } from '../../../../services/users/user-service';
+import { OnInit } from '@angular/core';
+import { User } from '../../../../model/user.model';
 
 @Component({
   selector: 'app-user-form',
@@ -9,7 +11,7 @@ import { UserService } from '../../../../services/users/user-service';
   templateUrl: './user-form.html',
   styleUrl: './user-form.css',
 })
-export class UserForm {
+export class UserForm implements OnInit {
   private fb = inject(FormBuilder);
   private userService = inject(UserService);
 
@@ -36,6 +38,14 @@ export class UserForm {
     this.showPassword.set(!this.showPassword());
   }
 
+  ngOnInit(): void {
+    const userId = this.userIdInput();
+
+    if (userId) {
+      this.loadUser(userId);
+    }
+  }
+
   saveUser() {
     if (this.form.invalid) {
       this.form.markAllAsTouched();
@@ -45,27 +55,71 @@ export class UserForm {
     this.isCreating.set(true);
     const data = this.form.getRawValue();
 
-    this.userService
-      .createUser({
+    const userId = this.userIdInput();
+
+    if (userId) {
+
+      this.userService.updateUser(userId, {
         username: data.username,
-        password: data.password,
         first_name: data.first_name,
         last_name: data.last_name,
         email: data.email,
         role: data.role,
-      })
-      .subscribe({
+      }).subscribe({
         next: () => {
           this.saved.emit();
-          this.form.reset();
           this.isCreating.set(false);
         },
         error: (error) => {
           console.error(error);
-          this.error.emit('Error al registrar el usuario');
+          this.error.emit('Error al actualizar usuario');
           this.isCreating.set(false);
-        },
+        }
       });
+
+    } else {
+
+      this.userService
+        .createUser({
+          username: data.username,
+          password: data.password,
+          first_name: data.first_name,
+          last_name: data.last_name,
+          email: data.email,
+          role: data.role,
+        })
+        .subscribe({
+          next: () => {
+            this.saved.emit();
+            this.form.reset();
+            this.isCreating.set(false);
+          },
+          error: (error) => {
+            console.error(error);
+            this.error.emit('Error al registrar el usuario');
+            this.isCreating.set(false);
+          },
+        });
+    }
+  }
+
+  loadUser(id: number): void {
+    
+    this.userService.getUserById(id).subscribe({
+      next: (user:User) => {
+        this.form.patchValue({
+          username: user.username,
+          first_name: user.first_name,
+          last_name: user.last_name,
+          email: user.email,
+          role: user.role,
+        });
+      },
+      error: (error) => {
+        console.error(error);
+        this.error.emit('Error al cargar usuario');
+      },
+    });
   }
 
   onCancel(): void {
