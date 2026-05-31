@@ -60,7 +60,7 @@
         <span class="spinner-border spinner-border-sm me-1" role="status"></span>
         Guardando...
         } @else {
-        Crear usuario
+        {{ userIdInput() ? 'Actualizar Usuario' : 'Crear Usuario' }}
         }
       </button>
     </div>
