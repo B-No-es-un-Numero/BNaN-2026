@@ -5,7 +5,6 @@
     --purple-light: #f3e8ff;
 }
 
-/* Colores de texto y botones idénticos a la landing */
 .text-purple {
     color: var(--purple-main) !important;
 }
@@ -32,13 +31,26 @@
     color: var(--purple-main);
 }
 
-/* Para el menú lateral activo */
 .nav-pills .nav-link.active {
     background-color: var(--purple-main) !important;
     color: white !important;
 }
 
-/* Para los badges (Admin/User) */
+.page-item.active .page-link {
+    background-color: var(--purple-main) !important;
+    border-color: var(--purple-main) !important;
+    color: white !important;
+}
+
+.page-item .page-link {
+    color: var(--purple-main);
+}
+
+.page-item .page-link:hover {
+    background-color: var(--purple-light);
+    color: var(--purple-main);
+}
+
 .bg-purple-subtle {
     background-color: var(--purple-light) !important;
     color: var(--purple-main) !important;
