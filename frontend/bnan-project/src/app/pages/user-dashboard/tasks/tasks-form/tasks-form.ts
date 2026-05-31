@@ -35,6 +35,11 @@ export class TasksForm implements OnInit {
   ngOnInit(): void {
     this.loadUsers();
     this.loadClients();
+    const taskId = this.taskIdInput();
+
+    if (taskId) {
+      this.loadTask(taskId);
+    }
   }
 
   loadUsers(): void {
@@ -52,6 +57,25 @@ export class TasksForm implements OnInit {
         this.clients.set(data);
       },
       error: (error) => console.error(error),
+    });
+  }
+
+  loadTask(id: number): void {
+    this.taskService.getTaskById(id).subscribe({
+      next: (task) => {
+        this.form.patchValue({
+          title: task.title,
+          description: task.description,
+          due_date: task.due_date,
+          status: task.status,
+          assigned_user_id: task.assigned_user,
+          client_id: task.client,
+        });
+      },
+      error: (error) => {
+        console.error(error);
+        this.error.emit('Error al cargar la tarea');
+      },
     });
   }
 
@@ -83,18 +107,38 @@ export class TasksForm implements OnInit {
       assigned_user: data.assigned_user_id,
     };
 
-    this.taskService.createTask(taskData).subscribe({
-      next: () => {
-        this.saved.emit();
-        this.form.reset();
-        this.isCreating.set(false);
-      },
-      error: (error) => {
-        console.error(error);
-        this.error.emit('Error al crear la tarea');
-        this.isCreating.set(false);
-      },
-    });
+    const taskId = this.taskIdInput();
+
+    if (taskId) {
+
+      this.taskService.updateTask(taskId, taskData).subscribe({
+        next: () => {
+          this.saved.emit();
+          this.isCreating.set(false);
+        },
+        error: (error) => {
+          console.error(error);
+          this.error.emit('Error al actualizar la tarea');
+          this.isCreating.set(false);
+        },
+      });
+
+    } else {
+
+      this.taskService.createTask(taskData).subscribe({
+        next: () => {
+          this.saved.emit();
+          this.form.reset();
+          this.isCreating.set(false);
+        },
+        error: (error) => {
+          console.error(error);
+          this.error.emit('Error al crear la tarea');
+          this.isCreating.set(false);
+        },
+      });
+
+    }
   }
 
   onCancel(): void {
