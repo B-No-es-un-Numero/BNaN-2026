@@ -7,6 +7,7 @@ import { UsersView } from './pages/user-dashboard/user/users-view/users-view';
 import { Login } from './pages/auth/login/login';
 import { TeamMemberDetail } from './pages/team-member-detail/team-member-detail';
 import { CompanyListView } from './pages/user-dashboard/company/company-list-view/company-list-view';
+import { TasksView } from './pages/user-dashboard/tasks/tasks-view/tasks-view';
 
 export const routes: Routes = [
   { path: "iniciar-sesion", component: Login },
@@ -18,6 +19,7 @@ export const routes: Routes = [
       { path: 'clientes', component: ClientListView },
       { path: 'usuarios', component: UsersView },
       { path: 'empresas', component: CompanyListView},
+      { path: 'tareas', component: TasksView},
     ],
   },
   { path: '', component: Home },

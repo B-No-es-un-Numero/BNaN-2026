@@ -8,7 +8,7 @@ import { Observable } from 'rxjs';
 export class TaskService {
     private http = inject(HttpClient);
 
-  private apiUrl = 'http://127.0.0.1:8000/api/tasks/';
+  private apiUrl = 'http://127.0.0.1:8000/api/tareas/';
 
   
   getTasks(): Observable<any> {
@@ -16,7 +16,7 @@ export class TaskService {
   }
 
   
-  getTaskById(id: string): Observable<any> {
+  getTaskById(id: number): Observable<any> {
     return this.http.get(`${this.apiUrl}${id}/`);
   }
 
@@ -26,12 +26,12 @@ export class TaskService {
   }
 
   
-  updateTask(id: string, taskData: any): Observable<any> {
+  updateTask(id: number, taskData: any): Observable<any> {
     return this.http.put(`${this.apiUrl}${id}/`, taskData);
   }
 
   
-  deleteTask(id: string): Observable<any> {
+  deleteTask(id: number): Observable<any> {
     return this.http.delete(`${this.apiUrl}${id}/`);
   }
 }
