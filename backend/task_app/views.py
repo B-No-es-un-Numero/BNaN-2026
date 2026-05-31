@@ -2,6 +2,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView as ApiView
 from rest_framework import status
 from django.shortcuts import get_object_or_404
+from django.db.models import Q
 from task_app.models import Task
 from task_app.serializer import TaskSerializer
 
@@ -25,6 +26,16 @@ class TaskView(ApiView):
                 tasks = tasks.filter(status=status_filter);
             if assigned_user:
                 tasks = tasks.filter(assigned_user_id=assigned_user);
+
+            search = request.query_params.get('search', '');
+            if search:
+                tasks = tasks.filter(
+                    Q(title__icontains=search) |
+                    Q(description__icontains=search) |
+                    Q(client__name__icontains=search) |
+                    Q(assigned_user__first_name__icontains=search) |
+                    Q(assigned_user__last_name__icontains=search)
+                )
 
             serializer = TaskSerializer(tasks, many=True);
 

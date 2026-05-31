@@ -102,15 +102,16 @@ export class TasksView implements OnInit {
   }
 
   onSearch(event: Event) {
-  console.log((event.target as HTMLInputElement).value);
-
-  this.taskService.getTasks().subscribe({
-    next: (data: Task[]) => {
-      this.tasks.set(data);
-    },
-    error: (error: any) => console.error(error),
-  });
-}
+    const term = (event.target as HTMLInputElement).value;
+    this.loadingTasks.set(true);
+    this.taskService.getTasks(term || undefined).subscribe({
+      next: (data: Task[]) => {
+        this.tasks.set(data);
+      },
+      error: (error: any) => console.error(error),
+      complete: () => this.loadingTasks.set(false),
+    });
+  }
 
   confirmDeleteTask(id: number): void {
     this.taskToDeleteId.set(id);

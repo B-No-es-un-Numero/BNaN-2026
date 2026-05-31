@@ -10,8 +10,9 @@ export class TaskService {
     private readonly baseUrl = `${environment.apiUrl}/tareas/`;
     private http = inject(HttpClient);
   
-  getTasks(): Observable<any> {
-    return this.http.get(this.baseUrl);
+  getTasks(search?: string): Observable<any> {
+    const params = search ? `?search=${encodeURIComponent(search)}` : '';
+    return this.http.get(`${this.baseUrl}${params}`);
   }
 
   
