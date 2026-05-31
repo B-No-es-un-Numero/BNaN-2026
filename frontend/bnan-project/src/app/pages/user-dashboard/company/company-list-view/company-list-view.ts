@@ -4,13 +4,16 @@ import { CompanyService } from '../../../../services/company/company-service';
 import { Subject, debounceTime, distinctUntilChanged, takeUntil } from 'rxjs';
 import { Company } from '../../../../model/company.model';
 import { CompanyForm } from '../company-form/company-form';
-import { Toast } from '../../../../shared/toast/toast/toast';
+import { Toast } from '../../../../shared/toast/toast';
 import { Modal } from '../../../../shared/modal/modal';
 import { CommonModule } from '@angular/common';
+import { TableColumn } from '../../../../model/table-column.model';
+import { DataTable } from '../../../../shared/data-table/data-table';
+import { TableTemplateDirective } from '../../../../shared/data-table/table-template.directive';
 
 @Component({
   selector: 'app-company-list-view',
-  imports: [CommonModule, Modal, FormsModule, Toast, CompanyForm],
+  imports: [CommonModule, Modal, FormsModule, Toast, CompanyForm, DataTable, TableTemplateDirective],
   templateUrl: './company-list-view.html',
   styleUrl: './company-list-view.css',
 })
@@ -18,9 +21,19 @@ export class CompanyListView implements OnInit, OnDestroy {
   private companyService = inject(CompanyService);
 
   companyList = signal<Company[]>([]);
+  loadingCompanies = signal(false);
   searchTerm = signal<string>('');
   private searchSubject = new Subject<string>();
   private destroy$ = new Subject<void>();
+
+  companyColumns: TableColumn[] = [
+    { key: 'name', label: 'Nombre' },
+    { key: 'cuil', label: 'CUIL' },
+    { key: 'email', label: 'Email' },
+    { key: 'phone', label: 'Teléfono' },
+    { key: 'status', label: 'Estado' },
+    { key: 'actions', label: 'Acciones', align: 'end' },
+  ];
 
   isCompanyModalOpen = signal(false);
   selectedCompanyId = signal<number | null>(null);
@@ -79,6 +92,7 @@ export class CompanyListView implements OnInit, OnDestroy {
   }
 
   loadCompanies(): void {
+    this.loadingCompanies.set(true);
     this.companyService
       .getCompanyList()
       .pipe(takeUntil(this.destroy$))
@@ -91,7 +105,7 @@ export class CompanyListView implements OnInit, OnDestroy {
             'No se pudo cargar la lista. Comuníquese con administración si el error persiste.',
             'error'
           ),
-        complete: () => console.info('complete'),
+        complete: () => this.loadingCompanies.set(false),
       });
   }
 

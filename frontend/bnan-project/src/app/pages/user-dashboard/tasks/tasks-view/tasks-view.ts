@@ -2,11 +2,13 @@ import { CommonModule } from '@angular/common';
 import { Component, inject, signal, OnInit } from '@angular/core';
 import { Modal } from '../../../../shared/modal/modal';
 import { FormsModule } from '@angular/forms';
-import { Toast } from '../../../../shared/toast/toast/toast';
-
+import { TableColumn } from '../../../../model/table-column.model';
+import { Toast } from '../../../../shared/toast/toast';
 import { TaskService } from '../../../../services/task/task-service';
 import { Task } from '../../../../model/task.model';
 import { TasksForm } from '../tasks-form/tasks-form';
+import { DataTable } from '../../../../shared/data-table/data-table';
+import { TableTemplateDirective } from '../../../../shared/data-table/table-template.directive';
 
 @Component({
   selector: 'app-tasks-view',
@@ -15,7 +17,9 @@ import { TasksForm } from '../tasks-form/tasks-form';
     Modal,
     FormsModule,
     Toast,
-    TasksForm
+    TasksForm,
+    DataTable,
+    TableTemplateDirective,
   ],
   templateUrl: './tasks-view.html',
 })
@@ -24,6 +28,16 @@ export class TasksView implements OnInit {
   private taskService = inject(TaskService);
 
   tasks = signal<Task[]>([]);
+  loadingTasks = signal(false);
+
+  taskColumns: TableColumn[] = [
+    { key: 'id', label: 'ID' },
+    { key: 'title', label: 'Título' },
+    { key: 'client_name', label: 'Cliente' },
+    { key: 'status', label: 'Estado' },
+    { key: 'due_date', label: 'Fecha límite' },
+    { key: 'actions', label: 'Acciones', align: 'end' },
+  ];
 
   isTaskModalOpen = signal(false);
   selectedTaskId = signal<number | null>(null);
@@ -34,8 +48,8 @@ export class TasksView implements OnInit {
   isViewModalOpen = signal(false);
   selectedTask = signal<Task | null>(null);
 
-  toasMessage = signal('');
-  toasType = signal<'success' | 'error'>('success');
+  toastMessage = signal('');
+  toastType  = signal<'success' | 'error'>('success');
   toastOpen = signal(false);
 
   ngOnInit(): void {
@@ -43,11 +57,13 @@ export class TasksView implements OnInit {
   }
 
   loadTasks(): void {
+    this.loadingTasks.set(true);
     this.taskService.getTasks().subscribe({
       next: (data: Task[]) => {
         this.tasks.set(data);
       },
       error: (error) => console.error(error),
+      complete: () => this.loadingTasks.set(false),
     });
   }
 
@@ -155,8 +171,8 @@ export class TasksView implements OnInit {
     message: string,
     type: 'success' | 'error'
   ): void {
-    this.toasMessage.set(message);
-    this.toasType.set(type);
+    this.toastMessage.set(message);
+    this.toastType.set(type);
     this.toastOpen.set(true);
 
     setTimeout(() => {

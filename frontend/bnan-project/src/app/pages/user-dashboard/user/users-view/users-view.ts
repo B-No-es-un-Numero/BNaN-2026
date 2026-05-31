@@ -4,17 +4,30 @@ import { Modal } from '../../../../shared/modal/modal';
 import { FormsModule } from '@angular/forms';
 import { UserService } from '../../../../services/users/user-service';
 import { User } from '../../../../model/user.model';
-import { Toast } from '../../../../shared/toast/toast/toast';
+import { Toast } from '../../../../shared/toast/toast';
 import { UserForm } from '../user-form/user-form';
+import { TableColumn } from '../../../../model/table-column.model';
+import { DataTable } from '../../../../shared/data-table/data-table';
+import { TableTemplateDirective } from '../../../../shared/data-table/table-template.directive';
+
 
 @Component({
   selector: 'app-users-view',
-  imports: [CommonModule, Modal, FormsModule, Toast, UserForm],
+  imports: [CommonModule, Modal, FormsModule, Toast, UserForm, DataTable, TableTemplateDirective],
   templateUrl: './users-view.html',
 })
 export class UsersView implements OnInit {
   private UserService = inject(UserService);
   users = signal<User[]>([]);
+  loadingUsers = signal(false);
+
+  userColumns: TableColumn[] = [
+    { key: 'id', label: 'ID' },
+    { key: 'full_name', label: 'Nombre' },
+    { key: 'email', label: 'Email' },
+    { key: 'role', label: 'Rol' },
+    { key: 'actions', label: 'Acciones', align: 'end' },
+  ];
 
   isUserModalOpen = signal(false);
   selectedUserId = signal<number | null>(null);
@@ -25,16 +38,22 @@ export class UsersView implements OnInit {
   isViewModalOpen = signal(false);
   selectedUser = signal<User | null>(null);
 
-  toasMessage = signal('');
-  toasType = signal<'success' | 'error'>('success');
+  toastMessage = signal('');
+  toastType = signal<'success' | 'error'>('success');
   toastOpen = signal(false);
 
   ngOnInit(): void {
-    this.UserService.getUserList().subscribe({
+    this.loadUsers();
+  }
+
+  private loadUsers(search?: string): void {
+    this.loadingUsers.set(true);
+    this.UserService.getUserList(search).subscribe({
       next: (data: any) => {
         this.users.set(data);
       },
       error: (error) => console.error(error),
+      complete: () => this.loadingUsers.set(false),
     });
   }
 
@@ -60,12 +79,7 @@ export class UsersView implements OnInit {
       wasEdited ? 'Usuario actualizado exitosamente' : 'Usuario creado exitosamente',
       'success'
     );
-    this.UserService.getUserList().subscribe({
-      next: (data: any) => {
-        this.users.set(data);
-      },
-      error: (error) => console.error(error),
-    });
+    this.loadUsers();
   }
 
   handleUsererror(message: string): void {
@@ -74,12 +88,7 @@ export class UsersView implements OnInit {
 
   onSearch(event: Event) {
     const term = (event.target as HTMLInputElement).value;
-    this.UserService.getUserList(term).subscribe({
-      next: (data: User[]) => {
-        this.users.set(data);
-      },
-      error: (error) => console.error(error),
-    });
+    this.loadUsers(term || undefined);
   }
 
   confirmDeleteUser(id: number) {
@@ -126,8 +135,8 @@ export class UsersView implements OnInit {
   }
 
   showToast(message: string, type: 'success' | 'error') {
-    this.toasMessage.set(message);
-    this.toasType.set(type);
+    this.toastMessage.set(message);
+    this.toastType.set(type);
     this.toastOpen.set(true);
     setTimeout(() => this.toastOpen.set(false), 4000);
   }
