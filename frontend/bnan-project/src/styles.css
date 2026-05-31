@@ -79,10 +79,6 @@
     border-color: #ef4444;
 }
 
-.text-danger {
-    font-size: 0.8rem;
-}
-
 input::placeholder {
     color: #9ca3af;
 }
