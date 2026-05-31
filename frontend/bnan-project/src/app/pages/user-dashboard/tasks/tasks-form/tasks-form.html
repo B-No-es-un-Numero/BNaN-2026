@@ -1,0 +1,115 @@
+<form [formGroup]="form" (ngSubmit)="saveTask()">
+  <div class="row g-3">
+
+    <div class="col-12">
+      <label class="form-label small fw-bold text-muted">Título</label>
+      <input
+        type="text"
+        class="form-control"
+        formControlName="title"
+        placeholder="Campaña Arcor"
+        [class.is-invalid]="form.get('title')?.touched && form.get('title')?.invalid"
+      >
+      <div class="invalid-feedback">
+        El título es obligatorio.
+      </div>
+    </div>
+
+    <div class="col-12">
+      <label class="form-label small fw-bold text-muted">Descripción</label>
+      <textarea
+        rows="4"
+        class="form-control"
+        formControlName="description"
+        placeholder="Descripción de la tarea..."
+        [class.is-invalid]="form.get('description')?.touched && form.get('description')?.invalid"
+      ></textarea>
+      <div class="invalid-feedback">
+        La descripción es obligatoria.
+      </div>
+    </div>
+
+    <div class="col-md-6">
+      <label class="form-label small fw-bold text-muted">Fecha límite</label>
+      <input
+        type="date"
+        class="form-control"
+        formControlName="due_date"
+      >
+    </div>
+
+    <div class="col-md-6">
+      <label class="form-label small fw-bold text-muted">Estado</label>
+      <select
+        class="form-select"
+        formControlName="status"
+      >
+        <option value="pending">Pendiente</option>
+        <option value="in_progress">En progreso</option>
+        <option value="done">Finalizada</option>
+        <option value="cancelled">Cancelada</option>
+      </select>
+    </div>
+
+    <div class="col-md-6">
+      <label class="form-label small fw-bold text-muted">
+        Usuario asignado
+      </label>
+      <select
+        class="form-select"
+        formControlName="assigned_user_id"
+      >
+        @for (user of users(); track user.id) {
+          <option [value]="user.id">
+            {{ user.first_name }} {{ user.last_name }}
+          </option>
+        }
+      </select>
+    </div>
+
+    <div class="col-md-6">
+      <label class="form-label small fw-bold text-muted">
+        Cliente
+      </label>
+      <select
+        class="form-select"
+        formControlName="client_id"
+      >
+        @for (client of clients(); track client.id) {
+          <option [value]="client.id">
+            {{ client.name }}
+          </option>
+        }
+      </select>
+    </div>
+
+    <div class="col-12 mt-4 d-flex gap-2">
+
+      <button
+        type="button"
+        class="btn btn-light w-100"
+        (click)="onCancel()"
+      >
+        Cancelar
+      </button>
+
+      <button
+        type="submit"
+        class="btn btn-purple w-100"
+        [disabled]="form.invalid || isCreating()"
+      >
+        @if (isCreating()) {
+          <span
+            class="spinner-border spinner-border-sm me-1"
+            role="status"
+          ></span>
+          Guardando...
+        } @else {
+          Crear tarea
+        }
+      </button>
+
+    </div>
+
+  </div>
+</form>
