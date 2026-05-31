@@ -10,7 +10,7 @@ import { Component, input, output } from '@angular/core';
 export class Toast {
   isOpen = input<boolean>(false);
   message = input<string>('');
-  type = input<'success' | 'error' | 'info'>('info');
+  type = input<'success' | 'error' | 'info' | 'danger'>('info');
 
   close= output<void>();
 

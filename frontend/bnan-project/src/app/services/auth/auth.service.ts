@@ -1,11 +1,22 @@
-import { Injectable, signal } from '@angular/core';
+import { Injectable, inject, signal } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { environment } from '../../../environments/environment.development';
+
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-    private _isAdmin = signal<boolean>(true);
+    private readonly baseUrl = `${environment.apiUrl}`;
+    
+    private http = inject(HttpClient);
 
+    private _isAdmin = signal<boolean>(true);
     isAdmin = this._isAdmin.asReadonly();
     private readonly TOKEN_KEY = 'bnan_token';
+
+    register(data: { first_name: string; last_name: string; username: string; email: string; password: string }): Observable<any> {
+        return this.http.post(`${environment.apiUrl}/register`, data);
+    }
 
     login(username: string): void {
         if (username === 'admin@test.com') {

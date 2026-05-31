@@ -1,37 +1,37 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '../../../environments/environment.development';
 
 @Injectable({
   providedIn: 'root',
 })
 export class TaskService {
+    private readonly baseUrl = `${environment.apiUrl}/tareas/`;
     private http = inject(HttpClient);
-
-  private apiUrl = 'http://127.0.0.1:8000/api/tareas/';
-
   
-  getTasks(): Observable<any> {
-    return this.http.get(this.apiUrl);
+  getTasks(search?: string): Observable<any> {
+    const params = search ? `?search=${encodeURIComponent(search)}` : '';
+    return this.http.get(`${this.baseUrl}${params}`);
   }
 
   
   getTaskById(id: number): Observable<any> {
-    return this.http.get(`${this.apiUrl}${id}/`);
+    return this.http.get(`${this.baseUrl}${id}/`);
   }
 
 
   createTask(taskData: any): Observable<any> {
-    return this.http.post(this.apiUrl, taskData);
+    return this.http.post(this.baseUrl, taskData);
   }
 
   
   updateTask(id: number, taskData: any): Observable<any> {
-    return this.http.put(`${this.apiUrl}${id}/`, taskData);
+    return this.http.put(`${this.baseUrl}${id}/`, taskData);
   }
 
   
   deleteTask(id: number): Observable<any> {
-    return this.http.delete(`${this.apiUrl}${id}/`);
+    return this.http.delete(`${this.baseUrl}${id}/`);
   }
 }

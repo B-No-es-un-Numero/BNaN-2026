@@ -3,6 +3,8 @@ from task_app.models import Task
 
 
 class TaskSerializer(serializers.ModelSerializer):
+    client_name = serializers.SerializerMethodField()
+    assigned_user_name = serializers.SerializerMethodField()
 
     class Meta:
         model = Task
@@ -12,3 +14,12 @@ class TaskSerializer(serializers.ModelSerializer):
             'created_at',
             'updated_at'
         ]
+
+    def get_client_name(self, obj):
+        return obj.client.name if obj.client else None
+
+    def get_assigned_user_name(self, obj):
+        if obj.assigned_user:
+            full = f"{obj.assigned_user.first_name} {obj.assigned_user.last_name}".strip()
+            return full or obj.assigned_user.username
+        return None

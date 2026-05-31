@@ -3,7 +3,6 @@ import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { CompanyService } from '../../../../services/company/company-service';
 import { Company, CreateCompanyRequest } from '../../../../model/company.model';
-import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-company-form',
@@ -13,12 +12,11 @@ import { Router } from '@angular/router';
 export class CompanyForm implements OnInit {
   private fb = inject(FormBuilder);
   private companyService = inject(CompanyService);
-  private router = inject(Router);
 
   companyIdInput = input<number | null>(null);
   saved = output<void>();
   error = output<string>();
-  cancelled = output<void>();
+  canceled = output<void>();
   isEditMode = false;
   isCreating = signal(false);
 
@@ -46,7 +44,7 @@ export class CompanyForm implements OnInit {
         });
       },
       error: (error) => {
-        this.error.emit('Error al buscar el usuario. Si persiste, comuníquese con administración.');
+        this.error.emit('Error al buscar la empresa. Si persiste, comuníquese con administración.');
       },
     });
   }
@@ -63,7 +61,6 @@ export class CompanyForm implements OnInit {
       this.companyService.updateCompany(this.companyIdInput()!, companyData).subscribe({
         next: () => {
           this.saved.emit();
-          this.router.navigate(['/dashboard/empresas']);
           this.isCreating.set(false);
         },
         error: (error) => {
@@ -91,7 +88,6 @@ export class CompanyForm implements OnInit {
   }
 
   onCancel(): void {
-    this.cancelled.emit();
-    this.router.navigate(['/dashboard/empresas']);
+    this.canceled.emit();
   }
 }

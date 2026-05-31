@@ -9,10 +9,17 @@
         formControlName="title"
         placeholder="Campaña Arcor"
         [class.is-invalid]="form.get('title')?.touched && form.get('title')?.invalid"
-      >
-      <div class="invalid-feedback">
-        El título es obligatorio.
-      </div>
+      />
+      @if (form.controls.title.touched && form.controls.title.invalid) {
+        <small class="text-danger d-block mt-1">
+          @if (form.controls.title.errors?.['required']) {
+            El título es obligatorio.
+          }
+          @if (form.controls.title.errors?.['maxlength']) {
+            Máximo 100 caracteres.
+          }
+        </small>
+      }
     </div>
 
     <div class="col-12">
@@ -24,9 +31,13 @@
         placeholder="Descripción de la tarea..."
         [class.is-invalid]="form.get('description')?.touched && form.get('description')?.invalid"
       ></textarea>
-      <div class="invalid-feedback">
-        La descripción es obligatoria.
-      </div>
+      @if (form.controls.description.touched && form.controls.description.invalid) {
+        <small class="text-danger d-block mt-1">
+          @if (form.controls.description.errors?.['required']) {
+            La descripción es obligatoria.
+          }
+        </small>
+      }
     </div>
 
     <div class="col-md-6">
@@ -35,7 +46,18 @@
         type="date"
         class="form-control"
         formControlName="due_date"
-      >
+        [class.is-invalid]="form.get('due_date')?.touched && form.get('due_date')?.invalid"
+      />
+      @if (form.controls.due_date.touched && form.controls.due_date.invalid) {
+        <small class="text-danger d-block mt-1">
+          @if (form.controls.due_date.errors?.['required']) {
+            La fecha límite es obligatoria.
+          }
+          @if (form.controls.due_date.errors?.['minDate']) {
+            La fecha límite no puede ser anterior a hoy.
+          }
+        </small>
+      }
     </div>
 
     <div class="col-md-6">
@@ -43,6 +65,7 @@
       <select
         class="form-select"
         formControlName="status"
+        [class.is-invalid]="form.get('status')?.touched && form.get('status')?.invalid"
       >
         <option value="pending">Pendiente</option>
         <option value="in_progress">En progreso</option>
@@ -58,13 +81,20 @@
       <select
         class="form-select"
         formControlName="assigned_user_id"
+        [class.is-invalid]="form.get('assigned_user_id')?.touched && form.get('assigned_user_id')?.invalid"
       >
+        <option value="0" disabled>Seleccione un usuario</option>
         @for (user of users(); track user.id) {
           <option [value]="user.id">
             {{ user.first_name }} {{ user.last_name }}
           </option>
         }
       </select>
+      @if (form.controls.assigned_user_id.touched && form.controls.assigned_user_id.invalid) {
+        <small class="text-danger d-block mt-1">
+          El usuario asignado es obligatorio.
+        </small>
+      }
     </div>
 
     <div class="col-md-6">
@@ -74,13 +104,20 @@
       <select
         class="form-select"
         formControlName="client_id"
+        [class.is-invalid]="form.get('client_id')?.touched && form.get('client_id')?.invalid"
       >
+        <option value="0" disabled>Seleccione un cliente</option>
         @for (client of clients(); track client.id) {
           <option [value]="client.id">
             {{ client.name }}
           </option>
         }
       </select>
+      @if (form.controls.client_id.touched && form.controls.client_id.invalid) {
+        <small class="text-danger d-block mt-1">
+          El cliente es obligatorio.
+        </small>
+      }
     </div>
 
     <div class="col-12 mt-4 d-flex gap-2">
