@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, signal } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
-import { Toast } from '../../../shared/toast/toast/toast';
+import { Toast } from '../../../shared/toast/toast';
 
 @Component({
   selector: 'app-contact',
