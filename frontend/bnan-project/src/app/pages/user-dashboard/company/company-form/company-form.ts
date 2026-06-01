@@ -22,7 +22,7 @@ export class CompanyForm implements OnInit {
 
   form = this.fb.nonNullable.group({
     name: ['', [Validators.required, Validators.maxLength(50)]],
-    cuil: ['', [Validators.required, Validators.pattern(/^\d{2}-?\d{8}-?\d$/)]],
+    cuit: ['', [Validators.required, Validators.pattern(/^\d{2}-?\d{8}-?\d$/)]],
     email: ['', [Validators.required, Validators.email]],
     phone: ['', [Validators.pattern(/^\d+$/)]],
   });
@@ -39,7 +39,7 @@ export class CompanyForm implements OnInit {
         this.form.patchValue({
           name: company.name,
           email: company.email,
-          cuil: company.cuil,
+          cuit: company.cuit,
           phone: company.phone ?? '',
         });
       },

@@ -1,7 +1,7 @@
 export interface Company {
   id: number;
   name: string;
-  cuil: string;
+  cuit: string;
   phone: string;
   email: string;
   enabled: boolean;
@@ -11,14 +11,14 @@ export interface Company {
 
 export interface CreateCompanyRequest {
   name: string;
-  cuil: string;
+  cuit: string;
   email: string;
   phone: string;
 }
 
 export interface UpdateCompanyRequest {
   name?: string;
-  cuil?: string;
+  cuit?: string;
   email?: string;
   phone?: string;
   enabled?: boolean;
