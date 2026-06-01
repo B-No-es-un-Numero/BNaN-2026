@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, input, output } from '@angular/core';
+import { Component, computed, input, output } from '@angular/core';
 
 @Component({
   selector: 'app-toast',
@@ -12,7 +12,18 @@ export class Toast {
   message = input<string>('');
   type = input<'success' | 'error' | 'info' | 'danger'>('info');
 
-  close= output<void>();
+  close = output<void>();
+
+  bgClass = computed(() => {
+    const t = this.type();
+    return t === 'error' ? 'danger' : t;
+  });
+
+  iconClass = computed(() =>
+    this.type() === 'success'
+      ? 'bi-check-circle-fill'
+      : 'bi-exclamation-triangle-fill'
+  );
 
   onClose() {
     this.close.emit();

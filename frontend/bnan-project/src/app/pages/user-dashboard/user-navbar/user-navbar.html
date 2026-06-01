@@ -1,7 +1,25 @@
-<aside class="d-flex flex-column flex-shrink-0 p-3 bg-white border-end shadow-sm flex-grow-1" style="width: 260px;">
-  <div class="mb-2 d-flex justify-content-center align-items-center">
+<div class="d-md-none mobile-topbar">
+  <button class="btn shadow-none border-0 d-flex align-items-center" (click)="toggleMobile()" aria-label="Toggle menu">
+    <i class="bi bi-list fs-2 text-purple"></i>
+  </button>
+  <span class="fw-bold text-purple fs-5">Bnan CRM</span>
+  <div class="flex-grow-1"></div>
+</div>
 
-    <h3 class="text-purple fw-bold  d-flex align-items-center gap-2 mt-3">
+@if (isMobileOpen()) {
+  <div class="mobile-backdrop" (click)="closeMobile()"></div>
+}
+
+<nav class="user-sidebar d-flex flex-column flex-shrink-0 p-3 bg-white border-end shadow-sm"
+  [class.open]="isMobileOpen()"
+  aria-label="Sidebar navigation">
+  <div class="d-flex d-md-none justify-content-end">
+    <button class="btn shadow-none border-0 p-0" (click)="closeMobile()" aria-label="Close menu">
+      <i class="bi bi-x-lg fs-5"></i>
+    </button>
+  </div>
+  <div class="mb-2 d-flex justify-content-center align-items-center">
+    <h3 class="text-purple fw-bold d-flex align-items-center gap-2 mt-3">
       <i class="bi bi-rocket-takeoff"></i> Bnan CRM
     </h3>
   </div>
@@ -12,19 +30,16 @@
         <i class="bi bi-people"></i> Clientes
       </a>
     </li>
-
     <li class="nav-item">
       <a routerLink="empresas" routerLinkActive="active" class="nav-link d-flex align-items-center gap-2 text-dark">
         <i class="bi bi-building"></i> Empresas
       </a>
     </li>
-
     <li class="nav-item">
       <a routerLink="tareas" routerLinkActive="active" class="nav-link d-flex align-items-center gap-2 text-dark">
         <i class="bi bi-kanban"></i> Tareas
       </a>
     </li>
-
     @if (auth.isAdmin()) {
     <li class="nav-item">
       <a routerLink="usuarios" routerLinkActive="active" class="nav-link d-flex align-items-center gap-2 text-dark">
@@ -32,14 +47,18 @@
       </a>
     </li>
     }
-
   </ul>
-
   <hr>
-
   <div class="text-center pb-2">
     <span class="badge" [class.text-bg-danger]="auth.isAdmin()" [class.text-bg-secondary]="!auth.isAdmin()">
       Rol actual: {{ auth.isAdmin() ? 'ADMINISTRADOR' : 'USUARIO' }}
     </span>
   </div>
-</aside>
+  <hr>
+  <div class="px-2 pb-3">
+    <a routerLink="/iniciar-sesion" class="btn btn-outline-danger w-100 d-flex align-items-center justify-content-center gap-2 py-2 logout-btn">
+      <i class="bi bi-box-arrow-right"></i>
+      Cerrar Sesión
+    </a>
+  </div>
+</nav>

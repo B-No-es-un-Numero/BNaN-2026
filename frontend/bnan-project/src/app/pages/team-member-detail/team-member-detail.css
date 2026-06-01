@@ -1,98 +1,32 @@
-.btn-purple-soft {
-  background: linear-gradient(
-    135deg,
-    rgb(140, 103, 210),
-    rgba(178, 147, 251, 0.75)
-  );
-
-  color: white;
-
-  border: none;
-
-  transition: 0.3s ease;
-
-  box-shadow:
-    0 4px 12px rgba(111, 66, 193, 0.18);
-}
-
-.btn-purple-soft:hover {
-  transform: translateY(-2px);
-
-  box-shadow:
-    0 6px 16px rgba(111, 66, 193, 0.25);
-}
 .team-member-card {
   max-width: 900px;
-
   margin: 0 auto;
-
   background: white;
-
   padding: 3rem;
-
   border-radius: 24px;
-
-  box-shadow:
-    0 10px 30px rgba(0, 0, 0, 0.08);
-
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
   border: 1px solid rgba(111, 66, 193, 0.08);
 }
 
 .member-header {
-  background: linear-gradient(
-    135deg,
-    rgba(111, 66, 193, 0.9),
-    rgba(139, 92, 246, 0.75)
-  );
-
+  background: linear-gradient(135deg, rgba(111, 66, 193, 0.9), rgba(139, 92, 246, 0.75));
   color: white;
-
   padding: 2rem;
-
   border-radius: 20px;
-
   box-shadow: 0 8px 20px rgba(111, 66, 193, 0.15);
-}
-
-
-.badge-purple {
-  background: linear-gradient(135deg, #6f42c1, #8b5cf6);
-  color: white;
-  transition: 0.3s ease;
-  cursor: pointer;
-}
-
-.badge-dark-custom {
-  background: linear-gradient(135deg, #343a40, #495057);
-  color: white;
-  transition: 0.3s ease;
-  cursor: pointer;
-}
-
-
-.badge-purple:hover,
-.badge-dark-custom:hover {
-  transform: translateY(-2px);
 }
 
 .contact-link {
   display: inline-flex;
-
   align-items: center;
-
   gap: 10px;
-
   text-decoration: none;
-
   color: #495057;
-
   font-weight: 500;
-
   transition: 0.3s ease;
 }
 
 .contact-link:hover {
   color: #6f42c1;
-
   transform: translateX(4px);
 }

@@ -3,6 +3,8 @@
     --purple-hover: #7e22ce;
     --purple-dark: #7e22ce;
     --purple-light: #f3e8ff;
+    --purple-accent: #a855f7;
+    --purple-50: #F8F7FF;
 }
 
 .text-purple {
@@ -13,22 +15,98 @@
     background-color: var(--purple-main);
     color: white;
     border: none;
+    font-weight: 600;
+    border-radius: 0.75rem;
+    transition: all 0.3s ease;
 }
 
 .btn-purple:hover {
     background-color: var(--purple-hover);
     color: white;
+    transform: translateY(-1px);
+}
+
+.btn-purple:disabled {
+    background-color: #cbd5e1;
+    cursor: not-allowed;
+    transform: none;
 }
 
 .btn-outline-purple {
-    border: 1px solid var(--purple-main);
+    border: 2px solid var(--purple-main);
     color: var(--purple-main);
     background-color: transparent;
+    font-weight: 600;
+    border-radius: 0.75rem;
+    transition: all 0.3s ease;
 }
 
 .btn-outline-purple:hover {
     background-color: var(--purple-light);
     color: var(--purple-main);
+    transform: translateY(-1px);
+}
+
+.btn-purple-soft {
+    background: linear-gradient(135deg, rgb(140, 103, 210), rgba(178, 147, 251, 0.75));
+    color: white;
+    border: none;
+    border-radius: 0.75rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(111, 66, 193, 0.18);
+}
+
+.btn-purple-soft:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(111, 66, 193, 0.25);
+    color: white;
+}
+
+.icon-circle {
+    width: 50px;
+    height: 50px;
+    background-color: var(--purple-light);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.icon-box {
+    width: 56px;
+    height: 56px;
+    background-color: var(--purple-light);
+    border-radius: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.icon-box i,
+.icon-circle i {
+    line-height: 0;
+}
+
+.section-description {
+    max-width: 700px;
+}
+
+.section-description-sm {
+    max-width: 600px;
+}
+
+.no-resize {
+    resize: none;
+}
+
+.view-card {
+    max-width: 800px;
+}
+
+.avatar-circle {
+    width: 70px;
+    height: 70px;
 }
 
 .nav-pills .nav-link.active {
@@ -85,4 +163,58 @@ input::placeholder {
 
 small {
     line-height: 1.2;
+}.form-wrapper {
+    width: 20vw;
+    min-width: 280px;
+    background-color: #ffffff;
+    border: 1px solid rgba(147, 51, 234, 0.15);
+    border-radius: 1rem;
+}
+
+@media (max-width: 768px) {
+    .form-wrapper {
+        width: 100%;
+    }
+}
+
+.dashboard-header {
+    height: 73px;
+}
+
+.sidebar {
+    width: 250px;
+}
+
+.user-sidebar {
+    width: 260px;
+}
+
+.badge-purple {
+    background: linear-gradient(135deg, #6f42c1, #8b5cf6);
+    color: white;
+    transition: 0.3s ease;
+    cursor: pointer;
+}
+
+.badge-purple:hover {
+    transform: translateY(-2px);
+}
+
+.badge-dark-custom {
+    background: linear-gradient(135deg, #343a40, #495057);
+    color: white;
+    transition: 0.3s ease;
+    cursor: pointer;
+}
+
+.badge-dark-custom:hover {
+    transform: translateY(-2px);
+}
+
+.bg-light-custom {
+    background-color: var(--purple-50);
+}
+
+.bg-gradient {
+    background: linear-gradient(135deg, #ffffff 0%, var(--purple-50) 100%) !important;
 }

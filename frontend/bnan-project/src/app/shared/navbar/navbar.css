@@ -15,3 +15,7 @@ nav.navbar {
 .btn-link {
   text-decoration: none;
 }
+
+.navbar-brand-purple {
+  color: #6f42c1 !important;
+}

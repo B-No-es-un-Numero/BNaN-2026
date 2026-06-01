@@ -51,9 +51,12 @@ export class UsersView implements OnInit {
     this.UserService.getUserList(search).subscribe({
       next: (data: any) => {
         this.users.set(data);
+        this.loadingUsers.set(false);
       },
-      error: (error) => console.error(error),
-      complete: () => this.loadingUsers.set(false),
+      error: (error) => {
+        this.loadingUsers.set(false);
+        console.error(error);
+      },
     });
   }
 
