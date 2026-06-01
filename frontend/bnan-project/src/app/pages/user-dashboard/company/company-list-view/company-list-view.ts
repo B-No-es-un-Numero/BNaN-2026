@@ -99,13 +99,15 @@ export class CompanyListView implements OnInit, OnDestroy {
       .subscribe({
         next: (data: Company[]) => {
           this.companyList.set(data);
+          this.loadingCompanies.set(false);
         },
-        error: (error) =>
+        error: (error) => {
+          this.loadingCompanies.set(false);
           this.showToast(
             'No se pudo cargar la lista. Comuníquese con administración si el error persiste.',
             'error'
-          ),
-        complete: () => this.loadingCompanies.set(false),
+          );
+        },
       });
   }
 

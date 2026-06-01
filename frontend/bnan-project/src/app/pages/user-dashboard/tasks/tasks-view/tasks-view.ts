@@ -61,9 +61,12 @@ export class TasksView implements OnInit {
     this.taskService.getTasks().subscribe({
       next: (data: Task[]) => {
         this.tasks.set(data);
+        this.loadingTasks.set(false);
       },
-      error: (error) => console.error(error),
-      complete: () => this.loadingTasks.set(false),
+      error: (error) => {
+        this.loadingTasks.set(false);
+        console.error(error);
+      },
     });
   }
 
@@ -107,9 +110,12 @@ export class TasksView implements OnInit {
     this.taskService.getTasks(term || undefined).subscribe({
       next: (data: Task[]) => {
         this.tasks.set(data);
+        this.loadingTasks.set(false);
       },
-      error: (error: any) => console.error(error),
-      complete: () => this.loadingTasks.set(false),
+      error: (error: any) => {
+        this.loadingTasks.set(false);
+        console.error(error);
+      },
     });
   }
 

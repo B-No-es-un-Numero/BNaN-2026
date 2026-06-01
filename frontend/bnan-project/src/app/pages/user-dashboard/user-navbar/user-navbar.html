@@ -41,5 +41,14 @@
     <span class="badge" [class.text-bg-danger]="auth.isAdmin()" [class.text-bg-secondary]="!auth.isAdmin()">
       Rol actual: {{ auth.isAdmin() ? 'ADMINISTRADOR' : 'USUARIO' }}
     </span>
-    </div>
+  </div>
+
+  <hr>
+
+  <div class="px-2 pb-3">
+    <a routerLink="/iniciar-sesion" class="btn btn-outline-danger w-100 d-flex align-items-center justify-content-center gap-2 py-2 logout-btn">
+      <i class="bi bi-box-arrow-right"></i>
+      Cerrar Sesión
+    </a>
+  </div>
 </nav>

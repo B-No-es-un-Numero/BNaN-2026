@@ -104,13 +104,15 @@ export class ClientListView implements OnInit {
       .subscribe({
         next: (data: Client[]) => {
           this.clientList.set(data);
+          this.loadingClients.set(false);
         },
-        error: (error) =>
+        error: (error) => {
+          this.loadingClients.set(false);
           this.showToast(
             'No se pudo cargar la lista. Comuníquese con administración si el error persiste.',
             'error'
-          ),
-        complete: () => this.loadingClients.set(false),
+          );
+        },
       });
   }
 
