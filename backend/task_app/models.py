@@ -1,15 +1,12 @@
 from django.db import models
 from django.conf import settings
 from client_app.models import Client
+from task_app.enum import STATUS_CHOICES
 
 
 class Task(models.Model):
-    STATUS_CHOICES = [
-        ('pending', 'Pendiente'),
-        ('in_progress', 'En progreso'),
-        ('cancelled', 'Cancelada'),
-        ('done', 'Completada'),
-    ]
+    class Meta:
+        db_table= "tareas";
 
     id = models.BigAutoField(primary_key=True, editable=False)
 
@@ -32,8 +29,8 @@ class Task(models.Model):
 
     status = models.CharField(
         max_length=15,
-        choices=STATUS_CHOICES,
-        default='pending',
+        choices=STATUS_CHOICES.choices,
+        default=STATUS_CHOICES.pending,
         help_text="Estado actual de la tarea."
     )
 

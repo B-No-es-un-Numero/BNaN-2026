@@ -2,7 +2,10 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 
 class User(AbstractUser):
-
+    class Meta:
+        swappable= "AUTH_USER_MODEL";
+        db_table= "usuarios";
+        
     ROLE_CHOICES = [
         ('admin', 'Administrador'),
         ('user', 'Usuario estandar'),

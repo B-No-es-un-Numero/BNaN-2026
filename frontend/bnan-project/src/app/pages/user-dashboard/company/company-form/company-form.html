@@ -1,6 +1,5 @@
 <form [formGroup]="form" (ngSubmit)="submit()">
   <div class="row g-3">
-
     <div class="col-12">
       <label class="form-label small fw-bold text-muted">Nombre</label>
       <input
@@ -23,20 +22,20 @@
     </div>
 
     <div class="col-12">
-      <label class="form-label small fw-bold text-muted">CUIL</label>
+      <label class="form-label small fw-bold text-muted">CUIT</label>
       <input
         type="text"
-        formControlName="cuil"
+        formControlName="cuit"
         placeholder="30-12345678-9"
         class="form-control"
-        [class.is-invalid]="form.get('cuil')?.touched && form.get('cuil')?.invalid"
+        [class.is-invalid]="form.get('cuit')?.touched && form.get('cuit')?.invalid"
       />
-      @if (form.controls.cuil.touched && form.controls.cuil.invalid) {
+      @if (form.controls.cuit.touched && form.controls.cuit.invalid) {
         <small class="text-danger d-block mt-1">
-          @if (form.controls.cuil.errors?.['required']) {
+          @if (form.controls.cuit.errors?.['required']) {
             Este campo es requerido.
           }
-          @if (form.controls.cuil.errors?.['pattern']) {
+          @if (form.controls.cuit.errors?.['pattern']) {
             Formato inválido.
           }
         </small>
@@ -83,9 +82,7 @@
     </div>
 
     <div class="col-12 mt-4 d-flex gap-2">
-      <button type="button" class="btn btn-light w-100" (click)="onCancel()">
-        Cancelar
-      </button>
+      <button type="button" class="btn btn-light w-100" (click)="onCancel()">Cancelar</button>
       <button type="submit" class="btn btn-purple w-100" [disabled]="form.invalid || isCreating()">
         @if (isCreating()) {
           <span class="spinner-border spinner-border-sm me-1" role="status"></span>
@@ -95,6 +92,5 @@
         }
       </button>
     </div>
-
   </div>
 </form>
