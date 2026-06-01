@@ -1,15 +1,12 @@
 from django.db import models
 from django.core.validators import RegexValidator
-
+from client_app.enum import STATUS_CHOICES
 from company_app.models import Company
 from user_app.models import User
 
 class Client(models.Model):
-    STATUS_CHOICES = [
-        ('lead', 'Lead'),
-        ('active', 'Activo'),
-        ('closed', 'Cerrado'),
-    ]
+    class Meta:
+        db_table= "clientes";
 
     id = models.BigAutoField(primary_key=True, editable=False)
 
@@ -43,8 +40,8 @@ class Client(models.Model):
 
     status = models.CharField(
         max_length=10,
-        choices=STATUS_CHOICES,
-        default='lead',
+        choices=STATUS_CHOICES.choices,
+        default=STATUS_CHOICES.Lead,
         help_text="Estado del cliente."
     )
 

@@ -49,7 +49,9 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-CORS_ORIGIN_ALLOW_ALL = True 
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:4200",
+]
 
 ROOT_URLCONF = 'gestion_total.urls'
 
@@ -122,10 +124,8 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
-# Configuración del modelo de usuario personalizado
 AUTH_USER_MODEL = 'user_app.User'
 
-# Configuración de Django REST Framework
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
@@ -135,7 +135,6 @@ REST_FRAMEWORK = {
     ),
 }
 
-# Configuración de SimpleJWT
 from datetime import timedelta
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),

@@ -3,8 +3,7 @@ CHARACTER SET utf8mb4
 COLLATE utf8mb4_unicode_ci;
 USE gestion_total_app;
 
-CREATE TABLE `user_app_user` (
-  `id` bigint NOT NULL AUTO_INCREMENT,
+CREATE TABLE `usuarios` (
   `password` varchar(128) NOT NULL,
   `last_login` datetime(6) DEFAULT NULL,
   `is_superuser` tinyint(1) NOT NULL,
@@ -14,6 +13,7 @@ CREATE TABLE `user_app_user` (
   `is_staff` tinyint(1) NOT NULL,
   `is_active` tinyint(1) NOT NULL,
   `date_joined` datetime(6) NOT NULL,
+  `id` bigint NOT NULL AUTO_INCREMENT,
   `email` varchar(150) NOT NULL,
   `role` varchar(50) NOT NULL,
   `enabled` tinyint(1) NOT NULL,
@@ -22,23 +22,23 @@ CREATE TABLE `user_app_user` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `username` (`username`),
   UNIQUE KEY `email` (`email`)
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
-CREATE TABLE `company_app_company` (
+CREATE TABLE `empresas` (
   `id` bigint NOT NULL AUTO_INCREMENT,
   `name` varchar(150) NOT NULL,
-  `cuil` varchar(20) NOT NULL,
+  `cuit` varchar(20) NOT NULL,
   `phone` varchar(20) DEFAULT NULL,
   `email` varchar(254) NOT NULL,
   `enabled` tinyint(1) NOT NULL,
   `created_at` datetime(6) NOT NULL,
   `updated_at` datetime(6) NOT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `cuil` (`cuil`),
+  UNIQUE KEY `cuil` (`cuit`),
   UNIQUE KEY `email` (`email`)
-) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
-CREATE TABLE `client_app_client` (
+CREATE TABLE `clientes` (
   `id` bigint NOT NULL AUTO_INCREMENT,
   `name` varchar(100) NOT NULL,
   `email` varchar(254) NOT NULL,
@@ -56,11 +56,11 @@ CREATE TABLE `client_app_client` (
   UNIQUE KEY `dni` (`dni`),
   KEY `client_app_client_company_id_c1869584_fk_company_app_company_id` (`company_id`),
   KEY `client_app_client_responsible_user_id_b77c8d94_fk` (`responsible_user_id`),
-  CONSTRAINT `client_app_client_company_id_c1869584_fk_company_app_company_id` FOREIGN KEY (`company_id`) REFERENCES `company_app_company` (`id`),
-  CONSTRAINT `client_app_client_responsible_user_id_b77c8d94_fk` FOREIGN KEY (`responsible_user_id`) REFERENCES `user_app_user` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  CONSTRAINT `client_app_client_company_id_c1869584_fk_company_app_company_id` FOREIGN KEY (`company_id`) REFERENCES `empresas` (`id`),
+  CONSTRAINT `client_app_client_responsible_user_id_b77c8d94_fk` FOREIGN KEY (`responsible_user_id`) REFERENCES `usuarios` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
-CREATE TABLE `task_app_task` (
+CREATE TABLE `tareas` (
   `id` bigint NOT NULL AUTO_INCREMENT,
   `title` varchar(150) NOT NULL,
   `description` longtext,
@@ -74,13 +74,14 @@ CREATE TABLE `task_app_task` (
   PRIMARY KEY (`id`),
   KEY `task_app_task_client_id_1f1fd5b1_fk_client_app_client_id` (`client_id`),
   KEY `task_app_task_assigned_user_id_e300523b_fk` (`assigned_user_id`),
-  CONSTRAINT `task_app_task_assigned_user_id_e300523b_fk` FOREIGN KEY (`assigned_user_id`) REFERENCES `user_app_user` (`id`),
-  CONSTRAINT `task_app_task_client_id_1f1fd5b1_fk_client_app_client_id` FOREIGN KEY (`client_id`) REFERENCES `client_app_client` (`id`)
+  CONSTRAINT `task_app_task_assigned_user_id_e300523b_fk` FOREIGN KEY (`assigned_user_id`) REFERENCES `usuarios` (`id`),
+  CONSTRAINT `task_app_task_client_id_1f1fd5b1_fk_client_app_client_id` FOREIGN KEY (`client_id`) REFERENCES `clientes` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
 
 /* INSERTIONS */
 /* USER */
-INSERT INTO `user_app_user`
+INSERT INTO `ususarios`
 (
     `id`,
     `password`,
@@ -117,8 +118,8 @@ VALUES
 (8, 'pbkdf2_sha256$1000000$hash08', NULL, 1,1,1, 'user06','Name','Surname','user06@gestiontotal.com','user',1,'2026-01-03 08:00:00.000000','2026-02-01 09:00:00.000000','2026-04-12 15:30:00.000000');
 
 /* COMPANY */
-INSERT INTO `company_app_company`
-(`id`,`name`,`cuil`,`phone`,`email`,`enabled`,`created_at`,`updated_at`)
+INSERT INTO `empresas`
+(`id`,`name`,`cuit`,`phone`,`email`,`enabled`,`created_at`,`updated_at`)
 VALUES
 (1,'Arcor SAIC','30-50279308-1','3514201001','contacto@arcor.com',1,'2026-01-05 09:15:00.000000','2026-04-02 11:40:00.000000'),
 (2,'Mercado Libre SRL','30-70308853-4','3514201002','marketing@mercadolibre.com',1,'2026-01-08 10:20:00.000000','2026-04-03 14:10:00.000000'),
@@ -132,7 +133,7 @@ VALUES
 (10,'Grupo Clarin','30-50612418-2','3514201010','corporativo@clarin.com',1,'2026-02-15 10:50:00.000000','2026-04-18 17:10:00.000000');
 
 /* CLIENT */
-INSERT INTO `client_app_client`
+INSERT INTO `clientes`
 (
 `id`,`name`,`email`,`dni`,`date_of_birth`,`phone`,`status`,
 `company_id`,`responsible_user_id`,`enabled`,`created_at`,`updated_at`
@@ -151,7 +152,7 @@ VALUES
 (10,'Florencia Medina','florencia.medina@gmail.com','30111231','1994-12-09','3515101010','active',10,4,1,'2026-02-15 11:00:00.000000','2026-04-18 16:20:00.000000');
 
 /* TASK */
-INSERT INTO `task_app_task`
+INSERT INTO `tareas`
 (
 `id`,`title`,`description`,`due_date`,`status`,
 `assigned_user_id`,`client_id`,`enabled`,`created_at`,`updated_at`

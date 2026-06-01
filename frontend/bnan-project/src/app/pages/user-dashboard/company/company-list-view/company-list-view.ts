@@ -13,7 +13,15 @@ import { TableTemplateDirective } from '../../../../shared/data-table/table-temp
 
 @Component({
   selector: 'app-company-list-view',
-  imports: [CommonModule, Modal, FormsModule, Toast, CompanyForm, DataTable, TableTemplateDirective],
+  imports: [
+    CommonModule,
+    Modal,
+    FormsModule,
+    Toast,
+    CompanyForm,
+    DataTable,
+    TableTemplateDirective,
+  ],
   templateUrl: './company-list-view.html',
   styleUrl: './company-list-view.css',
 })
@@ -28,7 +36,7 @@ export class CompanyListView implements OnInit, OnDestroy {
 
   companyColumns: TableColumn[] = [
     { key: 'name', label: 'Nombre' },
-    { key: 'cuil', label: 'CUIL' },
+    { key: 'cuit', label: 'CUIT' },
     { key: 'email', label: 'Email' },
     { key: 'phone', label: 'Teléfono' },
     { key: 'status', label: 'Estado' },
@@ -63,13 +71,13 @@ export class CompanyListView implements OnInit, OnDestroy {
 
     return this.companyList().filter((company) => {
       const name = company.name?.toLowerCase() || '';
-      const cuil = company.cuil?.toLowerCase() || '';
+      const cuit = company.cuit?.toLowerCase() || '';
       const email = company.email?.toLowerCase() || '';
       const phone = company.phone?.toLowerCase() || '';
       const status = company.enabled ? 'activa' : 'inactiva';
       return (
         name.includes(term) ||
-        cuil.includes(term) ||
+        cuit.includes(term) ||
         email.includes(term) ||
         phone.includes(term) ||
         status.includes(term)
