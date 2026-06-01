@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { AuthService } from '../../../services/auth/auth.service';
 
@@ -12,4 +12,13 @@ import { AuthService } from '../../../services/auth/auth.service';
 export class UserNavbar {
 
   auth = inject(AuthService);
+  isMobileOpen = signal(false);
+
+  toggleMobile(): void {
+    this.isMobileOpen.update(v => !v);
+  }
+
+  closeMobile(): void {
+    this.isMobileOpen.set(false);
+  }
 }
