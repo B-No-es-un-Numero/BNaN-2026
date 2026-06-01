@@ -16,7 +16,6 @@
     color: white;
     border: none;
     font-weight: 600;
-    border-radius: 0.75rem;
     transition: all 0.3s ease;
 }
 
@@ -37,7 +36,6 @@
     color: var(--purple-main);
     background-color: transparent;
     font-weight: 600;
-    border-radius: 0.75rem;
     transition: all 0.3s ease;
 }
 
@@ -51,7 +49,6 @@
     background: linear-gradient(135deg, rgb(140, 103, 210), rgba(178, 147, 251, 0.75));
     color: white;
     border: none;
-    border-radius: 0.75rem;
     font-weight: 600;
     transition: all 0.3s ease;
     box-shadow: 0 4px 12px rgba(111, 66, 193, 0.18);
