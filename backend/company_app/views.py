@@ -21,7 +21,7 @@ class CompanyView(APIView):
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response({"message": "Hubo un error generando la empresa", "errors": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
 
     def put(self, request, pk=None):
@@ -31,7 +31,7 @@ class CompanyView(APIView):
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response({"message": "Hubo un error modificando la empresa", "errors": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
 
     def delete(self, request, pk=None):

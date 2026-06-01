@@ -4,7 +4,7 @@ from rest_framework import status
 from user_app.models import User
 from user_app.serializers import UserSerializer
 from django.shortcuts import get_object_or_404
-from django.db.models import Q
+from django.db.models import Q as query
 from rest_framework.permissions import IsAuthenticated, AllowAny
 
 
@@ -18,7 +18,7 @@ class RegisterView(ApiView):
                 {"message": "Usuario registrado exitosamente"},
                 status=status.HTTP_201_CREATED
             );
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST);
+        return Response({"message": "Hubo un error en registro", "errors": serializer.errors}, status=status.HTTP_400_BAD_REQUEST);
 
 class UserView(ApiView):
     def get_permissions(self):
@@ -33,8 +33,8 @@ class UserView(ApiView):
             search = request.query_params.get('search', '');
             if search:
                 users = users.filter(
-                   Q(username__icontains=search) | 
-                   Q(email__icontains=search)
+                   query(username__icontains=search) | 
+                   query(email__icontains=search)
                 )
             serializer = UserSerializer(users, many=True);
         return Response(serializer.data, status=status.HTTP_200_OK);
@@ -45,7 +45,7 @@ class UserView(ApiView):
         if serializer.is_valid():
             serializer.save();
             return Response(serializer.data, status=status.HTTP_200_OK);
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST);
+        return Response({"message": "Hubo un error modificando usuario", "errors": serializer.errors}, status=status.HTTP_400_BAD_REQUEST);
 
     def delete(self, request, pk=None):
         user = get_object_or_404(User, id=pk);
@@ -57,11 +57,3 @@ class UserView(ApiView):
         user.enabled = False
         user.save();
         return Response(status=status.HTTP_204_NO_CONTENT);
-
-    
-class CurrentUserView(ApiView):
-    permission_classes = [IsAuthenticated]
-
-    def get(self, request):
-        serializer = UserSerializer(request.user)
-        return Response(serializer.data, status=status.HTTP_200_OK)
