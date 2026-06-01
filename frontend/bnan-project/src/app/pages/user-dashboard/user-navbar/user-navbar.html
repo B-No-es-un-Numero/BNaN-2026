@@ -1,4 +1,4 @@
-<aside class="d-flex flex-column flex-shrink-0 p-3 bg-white border-end shadow-sm flex-grow-1" style="width: 260px;">
+<nav class="user-sidebar d-flex flex-column flex-shrink-0 p-3 bg-white border-end shadow-sm flex-grow-1" aria-label="Sidebar navigation">
   <div class="mb-2 d-flex justify-content-center align-items-center">
 
     <h3 class="text-purple fw-bold  d-flex align-items-center gap-2 mt-3">
@@ -41,5 +41,5 @@
     <span class="badge" [class.text-bg-danger]="auth.isAdmin()" [class.text-bg-secondary]="!auth.isAdmin()">
       Rol actual: {{ auth.isAdmin() ? 'ADMINISTRADOR' : 'USUARIO' }}
     </span>
-  </div>
-</aside>
+    </div>
+</nav>

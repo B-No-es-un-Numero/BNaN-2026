@@ -1,14 +1,5 @@
-:host {
-  --purple-accent: #a855f7;
-  --bg-social: #2d3748;
-}
-
 .bg-dark {
-  background-color: #111827 !important; 
-}
-
-.text-purple-accent {
-  color: var(--purple-accent);
+  background-color: #111827 !important;
 }
 
 .footer-link {
@@ -24,7 +15,7 @@
 .social-btn {
   width: 40px;
   height: 40px;
-  background-color: var(--bg-social);
+  background-color: #2d3748;
   color: white;
   border-radius: 8px;
   display: flex;
