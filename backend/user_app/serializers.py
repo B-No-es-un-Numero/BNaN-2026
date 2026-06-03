@@ -11,6 +11,12 @@ class UserSerializer(serializers.ModelSerializer):
         fields = '__all__'
         read_only_fields = ['id', 'created_at', 'updated_at']
 
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        if instance.is_superuser:
+            representation['role'] = 'admin'
+        return representation
+
     def create(self, validated_data):
         password = validated_data.pop('password', None)
         user = User(**validated_data)

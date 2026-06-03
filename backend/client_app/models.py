@@ -41,7 +41,7 @@ class Client(models.Model):
     status = models.CharField(
         max_length=10,
         choices=STATUS_CHOICES.choices,
-        default=STATUS_CHOICES.Lead,
+        default=STATUS_CHOICES.LEAD,
         help_text="Estado del cliente."
     )
 

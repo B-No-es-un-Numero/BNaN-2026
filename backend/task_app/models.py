@@ -30,7 +30,7 @@ class Task(models.Model):
     status = models.CharField(
         max_length=15,
         choices=STATUS_CHOICES.choices,
-        default=STATUS_CHOICES.pending,
+        default=STATUS_CHOICES.PENDING,
         help_text="Estado actual de la tarea."
     )
 

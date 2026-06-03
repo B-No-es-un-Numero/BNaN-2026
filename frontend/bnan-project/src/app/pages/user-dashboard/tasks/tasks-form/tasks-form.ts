@@ -1,10 +1,9 @@
-import { Component, inject, signal, input, output } from '@angular/core';
+import { Component, inject, signal, input, output, OnInit } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { TaskService } from '../../../../services/task/task-service';
 import { UserService } from '../../../../services/users/user-service';
 import { ClientService } from '../../../../services/client/client-service';
-import { OnInit } from '@angular/core';
 import { User } from '../../../../model/user.model';
 import { Client } from '../../../../model/client.model';
 
@@ -28,6 +27,7 @@ export class TasksForm implements OnInit {
   canceled = output<void>();
 
   isCreating = signal(false);
+  serverError = signal<string>('');
 
   users = signal<User[]>([]);
   clients = signal<Client[]>([]);
@@ -36,7 +36,6 @@ export class TasksForm implements OnInit {
     this.loadUsers();
     this.loadClients();
     const taskId = this.taskIdInput();
-
     if (taskId) {
       this.loadTask(taskId);
     }
@@ -44,19 +43,15 @@ export class TasksForm implements OnInit {
 
   loadUsers(): void {
     this.userService.getUserList().subscribe({
-      next: (data: any) => {
-        this.users.set(data);
-      },
-      error: (error) => console.error(error),
+      next: (data: any) => this.users.set(data),
+      error: () => this.serverError.set('No se pudieron cargar los usuarios disponibles.'),
     });
   }
 
   loadClients(): void {
     this.clientService.getClientList().subscribe({
-      next: (data: any) => {
-        this.clients.set(data);
-      },
-      error: (error) => console.error(error),
+      next: (data: any) => this.clients.set(data),
+      error: () => this.serverError.set('No se pudieron cargar los clientes disponibles.'),
     });
   }
 
@@ -72,9 +67,8 @@ export class TasksForm implements OnInit {
           client_id: task.client,
         });
       },
-      error: (error) => {
-        console.error(error);
-        this.error.emit('Error al cargar la tarea');
+      error: () => {
+        this.serverError.set('No se pudo cargar la tarea. Intentá de nuevo.');
       },
     });
   }
@@ -93,6 +87,8 @@ export class TasksForm implements OnInit {
   });
 
   saveTask() {
+    this.serverError.set('');
+
     if (this.form.invalid) {
       this.form.markAllAsTouched();
       return;
@@ -101,7 +97,6 @@ export class TasksForm implements OnInit {
     this.isCreating.set(true);
 
     const data = this.form.getRawValue();
-
     const taskData = {
       title: data.title,
       description: data.description,
@@ -114,34 +109,28 @@ export class TasksForm implements OnInit {
     const taskId = this.taskIdInput();
 
     if (taskId) {
-
       this.taskService.updateTask(taskId, taskData).subscribe({
         next: () => {
           this.saved.emit();
           this.isCreating.set(false);
         },
-        error: (error) => {
-          console.error(error);
-          this.error.emit('Error al actualizar la tarea');
+        error: () => {
+          this.serverError.set('No se pudo actualizar la tarea. Verificá los datos e intentá de nuevo.');
           this.isCreating.set(false);
         },
       });
-
     } else {
-
       this.taskService.createTask(taskData).subscribe({
         next: () => {
           this.saved.emit();
-          this.form.reset();
+          this.form.reset({ status: 'pending', assigned_user_id: 0, client_id: 0 });
           this.isCreating.set(false);
         },
-        error: (error) => {
-          console.error(error);
-          this.error.emit('Error al crear la tarea');
+        error: () => {
+          this.serverError.set('No se pudo crear la tarea. Verificá los datos e intentá de nuevo.');
           this.isCreating.set(false);
         },
       });
-
     }
   }
 

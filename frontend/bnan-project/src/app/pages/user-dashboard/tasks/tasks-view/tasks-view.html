@@ -36,7 +36,7 @@
     } @else if (task.status === 'in_progress') {
       <span class="badge bg-info-subtle text-info">En progreso</span>
     } @else if (task.status === 'done') {
-      <span class="badge bg-success-subtle text-success">Finalizada</span>
+      <span class="badge bg-success-subtle text-success">Completada</span>
     } @else {
       <span class="badge bg-danger-subtle text-danger">Cancelada</span>
     }
@@ -178,7 +178,15 @@
           </label>
 
           <span>
-            {{ task.status }}
+            @if (task.status === 'pending') {
+              <span class="badge bg-warning-subtle text-warning">Pendiente</span>
+            } @else if (task.status === 'in_progress') {
+              <span class="badge bg-info-subtle text-info">En progreso</span>
+            } @else if (task.status === 'done') {
+              <span class="badge bg-success-subtle text-success">Completada</span>
+            } @else {
+              <span class="badge bg-danger-subtle text-danger">Cancelada</span>
+            }
           </span>
         </div>
 

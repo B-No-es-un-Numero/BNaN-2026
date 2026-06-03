@@ -8,17 +8,14 @@
         class="form-control"
         formControlName="title"
         placeholder="Campaña Arcor"
-        [class.is-invalid]="form.get('title')?.touched && form.get('title')?.invalid"
+        [class.is-invalid]="form.controls.title.touched && form.controls.title.invalid"
+        [class.is-valid]="form.controls.title.touched && form.controls.title.valid"
       />
       @if (form.controls.title.touched && form.controls.title.invalid) {
-        <small class="text-danger d-block mt-1">
-          @if (form.controls.title.errors?.['required']) {
-            El título es obligatorio.
-          }
-          @if (form.controls.title.errors?.['maxlength']) {
-            Máximo 100 caracteres.
-          }
-        </small>
+        <div class="invalid-feedback d-block">
+          @if (form.controls.title.errors?.['required']) { El título es obligatorio. }
+          @if (form.controls.title.errors?.['maxlength']) { Máximo 100 caracteres. }
+        </div>
       }
     </div>
 
@@ -29,14 +26,13 @@
         class="form-control"
         formControlName="description"
         placeholder="Descripción de la tarea..."
-        [class.is-invalid]="form.get('description')?.touched && form.get('description')?.invalid"
+        [class.is-invalid]="form.controls.description.touched && form.controls.description.invalid"
+        [class.is-valid]="form.controls.description.touched && form.controls.description.valid"
       ></textarea>
       @if (form.controls.description.touched && form.controls.description.invalid) {
-        <small class="text-danger d-block mt-1">
-          @if (form.controls.description.errors?.['required']) {
-            La descripción es obligatoria.
-          }
-        </small>
+        <div class="invalid-feedback d-block">
+          @if (form.controls.description.errors?.['required']) { La descripción es obligatoria. }
+        </div>
       }
     </div>
 
@@ -46,17 +42,14 @@
         type="date"
         class="form-control"
         formControlName="due_date"
-        [class.is-invalid]="form.get('due_date')?.touched && form.get('due_date')?.invalid"
+        [class.is-invalid]="form.controls.due_date.touched && form.controls.due_date.invalid"
+        [class.is-valid]="form.controls.due_date.touched && form.controls.due_date.valid"
       />
       @if (form.controls.due_date.touched && form.controls.due_date.invalid) {
-        <small class="text-danger d-block mt-1">
-          @if (form.controls.due_date.errors?.['required']) {
-            La fecha límite es obligatoria.
-          }
-          @if (form.controls.due_date.errors?.['minDate']) {
-            La fecha límite no puede ser anterior a hoy.
-          }
-        </small>
+        <div class="invalid-feedback d-block">
+          @if (form.controls.due_date.errors?.['required']) { La fecha límite es obligatoria. }
+          @if (form.controls.due_date.errors?.['minDate']) { La fecha no puede ser anterior a hoy. }
+        </div>
       }
     </div>
 
@@ -65,63 +58,67 @@
       <select
         class="form-select"
         formControlName="status"
-        [class.is-invalid]="form.get('status')?.touched && form.get('status')?.invalid"
+        [class.is-invalid]="form.controls.status.touched && form.controls.status.invalid"
+        [class.is-valid]="form.controls.status.touched && form.controls.status.valid"
       >
         <option value="pending">Pendiente</option>
         <option value="in_progress">En progreso</option>
-        <option value="done">Finalizada</option>
+        <option value="done">Completada</option>
         <option value="cancelled">Cancelada</option>
       </select>
+      @if (form.controls.status.touched && form.controls.status.invalid) {
+        <div class="invalid-feedback d-block">Seleccioná un estado para la tarea.</div>
+      }
     </div>
 
     <div class="col-md-6">
-      <label class="form-label small fw-bold text-muted">
-        Usuario asignado
-      </label>
+      <label class="form-label small fw-bold text-muted">Usuario asignado</label>
       <select
         class="form-select"
         formControlName="assigned_user_id"
-        [class.is-invalid]="form.get('assigned_user_id')?.touched && form.get('assigned_user_id')?.invalid"
+        [class.is-invalid]="form.controls.assigned_user_id.touched && form.controls.assigned_user_id.invalid"
+        [class.is-valid]="form.controls.assigned_user_id.touched && form.controls.assigned_user_id.valid"
       >
-        <option value="0" disabled>Seleccione un usuario</option>
+        <option value="0" disabled>— Seleccione un usuario —</option>
         @for (user of users(); track user.id) {
           <option [value]="user.id">
-            {{ user.first_name }} {{ user.last_name }}
+            {{ user.first_name || user.last_name ? user.first_name + ' ' + user.last_name : user.email }}
           </option>
         }
       </select>
       @if (form.controls.assigned_user_id.touched && form.controls.assigned_user_id.invalid) {
-        <small class="text-danger d-block mt-1">
-          El usuario asignado es obligatorio.
-        </small>
+        <div class="invalid-feedback d-block">Seleccioná el usuario responsable de la tarea.</div>
       }
     </div>
 
     <div class="col-md-6">
-      <label class="form-label small fw-bold text-muted">
-        Cliente
-      </label>
+      <label class="form-label small fw-bold text-muted">Cliente</label>
       <select
         class="form-select"
         formControlName="client_id"
-        [class.is-invalid]="form.get('client_id')?.touched && form.get('client_id')?.invalid"
+        [class.is-invalid]="form.controls.client_id.touched && form.controls.client_id.invalid"
+        [class.is-valid]="form.controls.client_id.touched && form.controls.client_id.valid"
       >
-        <option value="0" disabled>Seleccione un cliente</option>
+        <option value="0" disabled>— Seleccione un cliente —</option>
         @for (client of clients(); track client.id) {
-          <option [value]="client.id">
-            {{ client.name }}
-          </option>
+          <option [value]="client.id">{{ client.name }}</option>
         }
       </select>
       @if (form.controls.client_id.touched && form.controls.client_id.invalid) {
-        <small class="text-danger d-block mt-1">
-          El cliente es obligatorio.
-        </small>
+        <div class="invalid-feedback d-block">Seleccioná el cliente asociado a la tarea.</div>
       }
     </div>
 
-    <div class="col-12 mt-4 d-flex gap-2">
+    @if (serverError()) {
+      <div class="col-12">
+        <div class="alert alert-danger d-flex align-items-center gap-2 py-2 px-3 mb-0" role="alert">
+          <i class="bi bi-exclamation-triangle-fill flex-shrink-0"></i>
+          <span>{{ serverError() }}</span>
+        </div>
+      </div>
+    }
 
+    <div class="col-12 mt-4 d-flex gap-2">
       <button
         type="button"
         class="btn btn-light w-100"
@@ -133,19 +130,15 @@
       <button
         type="submit"
         class="btn btn-purple w-100"
-        [disabled]="form.invalid || isCreating()"
+        [disabled]="isCreating()"
       >
         @if (isCreating()) {
-          <span
-            class="spinner-border spinner-border-sm me-1"
-            role="status"
-          ></span>
+          <span class="spinner-border spinner-border-sm me-1" role="status"></span>
           Guardando...
         } @else {
           {{ taskIdInput() ? 'Actualizar tarea' : 'Crear tarea' }}
         }
       </button>
-
     </div>
 
   </div>

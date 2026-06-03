@@ -13,7 +13,7 @@ export class UserService {
   constructor(private http:HttpClient){}
 
   public createUser(data: CreateUserRequest) {
-    return this.http.post(this.baseUrl, data);
+    return this.http.post(`${environment.apiUrl}/auth/register/`, data);
   }
   
   public getUserList(search?: string): Observable<User[]>{

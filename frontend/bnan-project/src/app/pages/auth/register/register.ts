@@ -68,9 +68,20 @@ export class Register {
       error: (err) => {
         this.loading.set(false);
         let message = 'Error al conectar con el servidor.';
-        if (err.error && typeof err.error === 'object') {
-          const messages = Object.values(err.error).flat().join('. ');
-          message = messages || message;
+        try {
+          let errorBody = err.error;
+          if (typeof errorBody === 'string') {
+            errorBody = JSON.parse(errorBody);
+          }
+          if (errorBody && typeof errorBody === 'object') {
+            const messages = Object.values(errorBody)
+              .flat()
+              .filter((v): v is string => typeof v === 'string')
+              .join('. ');
+            message = messages || err.message || message;
+          }
+        } catch {
+          message = err.message || message;
         }
         this.toastMessage.set(message);
         this.toastType.set('danger');

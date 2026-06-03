@@ -12,7 +12,7 @@ class ClientView(ApiView):
             client = get_object_or_404(Client, id=pk);
             serializer = ClientSerializer(client);
         else:
-            clients = Client.objects.all();
+            clients = Client.objects.filter(enabled=True);
             serializer = ClientSerializer(clients, many=True);
         return Response(serializer.data, status=status.HTTP_200_OK);
 
