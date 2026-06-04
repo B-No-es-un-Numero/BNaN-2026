@@ -2,6 +2,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView as ApiView
 from rest_framework import status
 from user_app.models import User
+from user_app.permissions import IsAdminRole
 from user_app.serializers import UserSerializer
 from django.shortcuts import get_object_or_404
 from django.db.models import Q as query
@@ -22,6 +23,8 @@ class RegisterView(ApiView):
 
 class UserView(ApiView):
     def get_permissions(self):
+        if self.request.method in ["GET", "PUT", "DELETE"]:
+            return [IsAuthenticated(), IsAdminRole()];
         return [IsAuthenticated()];
     
     def get(self, request, pk=None):

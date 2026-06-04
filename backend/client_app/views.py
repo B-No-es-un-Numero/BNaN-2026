@@ -35,6 +35,10 @@ class ClientView(ApiView):
         client = get_object_or_404(Client, id=pk);
         hard = request.query_params.get("hard", "false").lower() in ["true"]
         if hard:
+            if request.user.role != "admin":
+                raise self.permission_denied(request,
+                message="Solo admin puede realizar borrado físico."
+            );
             client.delete();
             return Response(status=status.HTTP_204_NO_CONTENT);
 
