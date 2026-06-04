@@ -10,6 +10,7 @@ import { CompanyListView } from './pages/user-dashboard/company/company-list-vie
 import { TasksView } from './pages/user-dashboard/tasks/tasks-view/tasks-view';
 import { Register } from './pages/auth/register/register';
 import { NotFound } from './shared/not-found/not-found';
+import { authGuard } from './guards/auth.guard';
 
 
 export const routes: Routes = [
@@ -17,9 +18,9 @@ export const routes: Routes = [
   { path: "registrarse", component: Register },
   {
     path: 'dashboard',
+    canActivate: [authGuard],
     component: UserDashboard,
     children: [
-      { path: '', redirectTo: 'clientes', pathMatch: 'full' },
       { path: 'clientes', component: ClientListView },
       { path: 'usuarios', component: UsersView },
       { path: 'empresas', component: CompanyListView},

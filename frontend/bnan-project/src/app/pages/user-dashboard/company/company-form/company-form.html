@@ -8,6 +8,7 @@
         placeholder="Empresa S.A."
         class="form-control"
         [class.is-invalid]="form.get('name')?.touched && form.get('name')?.invalid"
+      [class.is-valid]="form.controls.name.touched && form.controls.name.valid"
       />
       @if (form.controls.name.touched && form.controls.name.invalid) {
         <small class="text-danger d-block mt-1">
@@ -29,6 +30,7 @@
         placeholder="30-12345678-9"
         class="form-control"
         [class.is-invalid]="form.get('cuit')?.touched && form.get('cuit')?.invalid"
+        [class.is-valid]="form.controls.cuit.touched && form.controls.cuit.valid"
       />
       @if (form.controls.cuit.touched && form.controls.cuit.invalid) {
         <small class="text-danger d-block mt-1">
@@ -50,6 +52,7 @@
         placeholder="empresa@email.com"
         class="form-control"
         [class.is-invalid]="form.get('email')?.touched && form.get('email')?.invalid"
+        [class.is-valid]="form.controls.email.touched && form.controls.email.valid"
       />
       @if (form.controls.email.touched && form.controls.email.invalid) {
         <small class="text-danger d-block mt-1">
@@ -71,9 +74,16 @@
         placeholder="3511234567"
         class="form-control"
         [class.is-invalid]="form.get('phone')?.touched && form.get('phone')?.invalid"
+        [class.is-valid]="form.controls.phone.touched && form.controls.phone.valid"
       />
       @if (form.controls.phone.touched && form.controls.phone.invalid) {
         <small class="text-danger d-block mt-1">
+          @if (form.controls.phone.errors?.['required']) {
+            Este campo es requerido.
+          }
+          @if (form.controls.phone.errors?.['minlength']) {
+            Mínimo 10 caracteres.
+          }
           @if (form.controls.phone.errors?.['pattern']) {
             Caracter inválido. Ingrese solo números.
           }
@@ -83,7 +93,7 @@
 
     <div class="col-12 mt-4 d-flex gap-2">
       <button type="button" class="btn btn-light w-100" (click)="onCancel()">Cancelar</button>
-      <button type="submit" class="btn btn-purple w-100" [disabled]="form.invalid || isCreating()">
+      <button type="submit" class="btn btn-purple w-100" [disabled]="isCreating()">
         @if (isCreating()) {
           <span class="spinner-border spinner-border-sm me-1" role="status"></span>
           Guardando...
