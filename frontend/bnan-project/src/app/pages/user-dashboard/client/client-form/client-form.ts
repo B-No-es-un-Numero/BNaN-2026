@@ -46,7 +46,7 @@ export class ClientForm implements OnInit {
     phone: ['', [Validators.required, Validators.pattern(/^\d+$/)]],
     company: [null as number | null],
     responsible_user: [null as number | null],
-    status: ['', [Validators.required]],
+    status: ['lead', [Validators.required]],
   });
 
   ngOnInit(): void {

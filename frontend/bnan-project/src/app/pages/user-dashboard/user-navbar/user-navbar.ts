@@ -1,5 +1,5 @@
 import { Component, inject, signal } from '@angular/core';
-import { RouterLink, RouterLinkActive } from '@angular/router';
+import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { AuthService } from '../../../services/auth/auth.service';
 
 @Component({
@@ -10,7 +10,7 @@ import { AuthService } from '../../../services/auth/auth.service';
   styleUrl: './user-navbar.css',
 })
 export class UserNavbar {
-
+  private router = inject(Router);
   auth = inject(AuthService);
   isMobileOpen = signal(false);
 
@@ -20,5 +20,10 @@ export class UserNavbar {
 
   closeMobile(): void {
     this.isMobileOpen.set(false);
+  }
+
+  logout(): void {
+    this.auth.logout();
+    this.router.navigate(['/iniciar-sesion']);
   }
 }

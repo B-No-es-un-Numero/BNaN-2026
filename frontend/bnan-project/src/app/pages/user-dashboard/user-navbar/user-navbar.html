@@ -25,6 +25,13 @@
   </div>
   <hr>
   <ul class="nav nav-pills flex-column gap-2 mb-auto mt-2">
+    @if (auth.isAdmin()) {
+    <li class="nav-item">
+      <a routerLink="usuarios" routerLinkActive="active" class="nav-link d-flex align-items-center gap-2 text-dark">
+        <i class="bi bi-person-badge"></i> Usuarios
+      </a>
+    </li>
+    }
     <li class="nav-item">
       <a routerLink="clientes" routerLinkActive="active" class="nav-link d-flex align-items-center gap-2 text-dark">
         <i class="bi bi-people"></i> Clientes
@@ -40,23 +47,10 @@
         <i class="bi bi-kanban"></i> Tareas
       </a>
     </li>
-    @if (auth.isAdmin()) {
-    <li class="nav-item">
-      <a routerLink="usuarios" routerLinkActive="active" class="nav-link d-flex align-items-center gap-2 text-dark">
-        <i class="bi bi-person-badge"></i> Usuarios
-      </a>
-    </li>
-    }
+
   </ul>
-  <hr>
-  <div class="text-center pb-2">
-    <span class="badge" [class.text-bg-danger]="auth.isAdmin()" [class.text-bg-secondary]="!auth.isAdmin()">
-      Rol actual: {{ auth.isAdmin() ? 'ADMINISTRADOR' : 'USUARIO' }}
-    </span>
-  </div>
-  <hr>
   <div class="px-2 pb-3">
-    <a routerLink="/iniciar-sesion" class="btn btn-outline-danger w-100 d-flex align-items-center justify-content-center gap-2 py-2 logout-btn">
+    <a (click)="logout()" class="btn btn-outline-danger w-100 d-flex align-items-center justify-content-center gap-2 py-2 logout-btn" style="cursor: pointer">
       <i class="bi bi-box-arrow-right"></i>
       Cerrar Sesión
     </a>

@@ -24,7 +24,7 @@ export class CompanyForm implements OnInit {
     name: ['', [Validators.required, Validators.maxLength(50)]],
     cuit: ['', [Validators.required, Validators.pattern(/^\d{2}-?\d{8}-?\d$/)]],
     email: ['', [Validators.required, Validators.email]],
-    phone: ['', [Validators.pattern(/^\d+$/)]],
+    phone: ['', [Validators.required, Validators.minLength(10), Validators.pattern(/^\d+$/)]],
   });
 
   ngOnInit(): void {
