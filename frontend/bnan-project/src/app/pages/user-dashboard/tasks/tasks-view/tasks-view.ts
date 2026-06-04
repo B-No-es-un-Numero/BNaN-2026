@@ -9,6 +9,7 @@ import { Task } from '../../../../model/task.model';
 import { TasksForm } from '../tasks-form/tasks-form';
 import { DataTable } from '../../../../shared/data-table/data-table';
 import { TableTemplateDirective } from '../../../../shared/data-table/table-template.directive';
+import { HasRoleDirective } from '../../../../shared/directives/has-role.directive';
 
 @Component({
   selector: 'app-tasks-view',
@@ -20,11 +21,11 @@ import { TableTemplateDirective } from '../../../../shared/data-table/table-temp
     TasksForm,
     DataTable,
     TableTemplateDirective,
+    HasRoleDirective,
   ],
   templateUrl: './tasks-view.html',
 })
 export class TasksView implements OnInit {
-
   private taskService = inject(TaskService);
 
   tasks = signal<Task[]>([]);
@@ -43,13 +44,14 @@ export class TasksView implements OnInit {
   selectedTaskId = signal<number | null>(null);
 
   isDeleteModalOpen = signal(false);
+  isHardDelete = signal(false);
   taskToDeleteId = signal<number | null>(null);
 
   isViewModalOpen = signal(false);
   selectedTask = signal<Task | null>(null);
 
   toastMessage = signal('');
-  toastType  = signal<'success' | 'error'>('success');
+  toastType = signal<'success' | 'error'>('success');
   toastOpen = signal(false);
 
   ngOnInit(): void {
@@ -91,9 +93,7 @@ export class TasksView implements OnInit {
     this.closeTaskModal();
 
     this.showToast(
-      wasEdited
-        ? 'Tarea actualizada exitosamente'
-        : 'Tarea creada exitosamente',
+      wasEdited ? 'Tarea actualizada exitosamente' : 'Tarea creada exitosamente',
       'success'
     );
 
@@ -119,8 +119,9 @@ export class TasksView implements OnInit {
     });
   }
 
-  confirmDeleteTask(id: number): void {
+  confirmDeleteTask(id: number, hardDelete: boolean): void {
     this.taskToDeleteId.set(id);
+    this.isHardDelete.set(hardDelete);
     this.isDeleteModalOpen.set(true);
   }
 
@@ -129,26 +130,16 @@ export class TasksView implements OnInit {
 
     if (id === null) return;
 
-    this.taskService.deleteTask(id).subscribe({
+    this.taskService.deleteTask(id, this.isHardDelete()).subscribe({
       next: () => {
-        this.tasks.update(tasks =>
-          tasks.filter(task => task.id !== id)
-        );
+        this.tasks.update((tasks) => tasks.filter((task) => task.id !== id));
 
-        this.showToast(
-          'Tarea eliminada exitosamente',
-          'success'
-        );
+        this.showToast('Tarea eliminada exitosamente', 'success');
 
         this.closeDeleteModal();
       },
       error: (error) => {
-        console.error(error);
-
-        this.showToast(
-          'Error al eliminar tarea',
-          'error'
-        );
+        this.showToast('Error al eliminar tarea', 'error');
       },
     });
   }
@@ -174,10 +165,7 @@ export class TasksView implements OnInit {
     this.closeViewModal();
   }
 
-  showToast(
-    message: string,
-    type: 'success' | 'error'
-  ): void {
+  showToast(message: string, type: 'success' | 'error'): void {
     this.toastMessage.set(message);
     this.toastType.set(type);
     this.toastOpen.set(true);

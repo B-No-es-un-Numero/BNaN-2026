@@ -5,6 +5,9 @@ from client_app.models import Client
 from client_app.serializers import ClientSerializer
 from django.shortcuts import get_object_or_404
 
+from company_app.models import Company
+from task_app.models import Task
+
 class ClientView(ApiView):
         
     def get(self, request, pk=None):
@@ -35,9 +38,20 @@ class ClientView(ApiView):
         client = get_object_or_404(Client, id=pk);
         hard = request.query_params.get("hard", "false").lower() in ["true"]
         if hard:
+            if request.user.role != "admin":
+                raise self.permission_denied(request,
+                message="Solo admin puede realizar borrado físico."
+            );
             client.delete();
             return Response(status=status.HTTP_204_NO_CONTENT);
 
+        otherClients = Client.objects.filter(company=client.company);
+        if (otherClients.count() == 1):
+            Company.objects.filter(pk= client.company.id).update(enabled=False);
+        
+        relatedTask = Task.objects.filter(client=client, enabled=True);
+        relatedTask.update(enabled = False);
+        
         client.enabled = False
         client.save();
         return Response(status=status.HTTP_204_NO_CONTENT);

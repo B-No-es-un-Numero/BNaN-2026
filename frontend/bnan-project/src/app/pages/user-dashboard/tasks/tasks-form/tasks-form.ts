@@ -63,8 +63,8 @@ export class TasksForm implements OnInit {
           description: task.description,
           due_date: task.due_date,
           status: task.status,
-          assigned_user_id: task.assigned_user,
-          client_id: task.client,
+          assigned_user_id: task.assigned_user_id,
+          client_id: task.client_id,
         });
       },
       error: () => {

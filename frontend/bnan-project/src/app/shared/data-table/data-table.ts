@@ -29,7 +29,7 @@ export class DataTable implements AfterContentInit {
   private _data = signal<any[]>([]);
 
   @Input() columns: TableColumn[] = [];
-  @Input() pageSize = 8;
+  @Input() pageSize = 10;
   @Input() emptyMessage = 'No se encontraron registros';
   @Input() loading = false;
   @Input() skeletonRows = 5;

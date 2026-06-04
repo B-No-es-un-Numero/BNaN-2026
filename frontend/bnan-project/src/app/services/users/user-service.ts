@@ -10,27 +10,30 @@ import { environment } from '../../../environments/environment.development';
 export class UserService {
   private readonly baseUrl = `${environment.apiUrl}/usuarios`;
 
-  constructor(private http:HttpClient){}
+  constructor(private http: HttpClient) {}
 
   public createUser(data: CreateUserRequest) {
     return this.http.post(`${environment.apiUrl}/auth/register/`, data);
   }
-  
-  public getUserList(search?: string): Observable<User[]>{
+
+  public getUserList(search?: string): Observable<User[]> {
     const params = search ? `?search=${encodeURIComponent(search)}` : '';
     return this.http.get<User[]>(`${this.baseUrl}${params}`);
   }
 
   public getUserById(id: number): Observable<User> {
-  return this.http.get<User>(`${this.baseUrl}/${id}/`);
+    return this.http.get<User>(`${this.baseUrl}/${id}/`);
   }
 
-  public updateUser(id: number, data: any) {
-    return this.http.put(`${this.baseUrl}/${id}/`, data);
+  public updateUser(id: number, data: any): Observable<User> {
+    return this.http.put<User>(`${this.baseUrl}/${id}/`, data);
   }
 
-  public deleteUser(id: number) {
-    return this.http.delete(`${this.baseUrl}/${id}/`);
+  public softDeleteUser(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/${id}/`);
   }
 
+  public hardDeleteUser(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/${id}/?hard=true`);
+  }
 }
