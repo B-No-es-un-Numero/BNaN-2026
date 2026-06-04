@@ -6,4 +6,6 @@ export interface Task {
   due_date: string;
   client_name: string;
   assigned_user_name: string;
+  assigned_user_id: number;
+  client_id: number;
 }

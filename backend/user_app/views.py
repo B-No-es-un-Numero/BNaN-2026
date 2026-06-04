@@ -1,6 +1,8 @@
 from rest_framework.response import Response
 from rest_framework.views import APIView as ApiView
 from rest_framework import status
+from client_app.models import Client
+from task_app.models import Task
 from user_app.models import User
 from user_app.permissions import IsAdminRole
 from user_app.serializers import UserSerializer
@@ -57,6 +59,13 @@ class UserView(ApiView):
             user.delete();
             return Response(status=status.HTTP_204_NO_CONTENT);
 
+        relatedClients = Client.objects.filter(responsible_user=user, enabled=True);
+        relatedTask = Task.objects.filter(assigned_user=user, enabled=True);
+        
+        if (relatedClients.exists()):
+            return Response({"message": "No se puede eliminar un usuario que tiene clientes a cargo. Elimine o reasigne los clientes primero."}, status=status.HTTP_400_BAD_REQUEST);
+        if (relatedTask.exists()):
+            return Response({"message": "No se puede eliminar un usuario que tiene tareas a cargo. Elimine o reasigne las tareas primero."}, status=status.HTTP_400_BAD_REQUEST);
         user.enabled = False
         user.save();
         return Response(status=status.HTTP_204_NO_CONTENT);

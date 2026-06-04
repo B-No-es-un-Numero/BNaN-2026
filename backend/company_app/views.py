@@ -2,6 +2,8 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from django.shortcuts import get_object_or_404
+
+from client_app.models import Client
 from .models import Company
 from .serializers import CompanySerializer
 
@@ -45,6 +47,12 @@ class CompanyView(APIView):
             );
             company.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)    
+        
+        relatedClients = Client.objects.filter(company=company, enabled=True);
+        
+        if (relatedClients.exists()):
+            return Response({"message": "No se puede eliminar una empresa que tiene clientes asociados. Elimine o reasigne los clientes primero."}, status=status.HTTP_400_BAD_REQUEST);
+        
         company.enabled = False
         company.save()
         return Response(status=status.HTTP_204_NO_CONTENT)

@@ -9,10 +9,19 @@ import { debounceTime, distinctUntilChanged, Subject, takeUntil } from 'rxjs';
 import { TableColumn } from '../../../../model/table-column.model';
 import { DataTable } from '../../../../shared/data-table/data-table';
 import { TableTemplateDirective } from '../../../../shared/data-table/table-template.directive';
+import { HasRoleDirective } from '../../../../shared/directives/has-role.directive';
 
 @Component({
   selector: 'app-client-list-view',
-  imports: [FormsModule, Modal, ClientForm, Toast, DataTable, TableTemplateDirective],
+  imports: [
+    FormsModule,
+    Modal,
+    ClientForm,
+    Toast,
+    DataTable,
+    TableTemplateDirective,
+    HasRoleDirective,
+  ],
   templateUrl: './client-list-view.html',
   styleUrl: './client-list-view.css',
 })
@@ -38,6 +47,7 @@ export class ClientListView implements OnInit {
   selectedClientId = signal<number | null>(null);
 
   isDeleteModalOpen = signal(false);
+  isHardDelete = signal(false);
   clientToDeleteId = signal<number | null>(null);
 
   isViewModalOpen = signal(false);
@@ -156,8 +166,9 @@ export class ClientListView implements OnInit {
     this.loadClients();
   }
 
-  confirmDeleteClient(id: number) {
+  confirmDeleteClient(id: number, hardDelete: boolean) {
     this.clientToDeleteId.set(id);
+    this.isHardDelete.set(hardDelete);
     this.isDeleteModalOpen.set(true);
   }
 
@@ -170,7 +181,7 @@ export class ClientListView implements OnInit {
     const id = this.clientToDeleteId();
     if (id === null) return;
     this.clientService
-      .deleteClient(id, false)
+      .deleteClient(id, this.isHardDelete())
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: () => {
@@ -179,7 +190,7 @@ export class ClientListView implements OnInit {
           this.closeDeleteClient();
         },
         error: (error) => {
-          this.showToast('Error al eliminar cliente', 'error');
+          this.showToast('Error al eliminar cliente' + error.error.message, 'error');
         },
       });
   }

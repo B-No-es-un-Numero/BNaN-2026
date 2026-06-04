@@ -5,6 +5,14 @@ from task_app.models import Task
 class TaskSerializer(serializers.ModelSerializer):
     client_name = serializers.SerializerMethodField()
     assigned_user_name = serializers.SerializerMethodField()
+    client_id = serializers.CharField(
+        source="client.id",
+        read_only=True
+    )
+    assigned_user_id = serializers.CharField(
+        source="assigned_user.id",
+        read_only=True
+    )
 
     class Meta:
         model = Task
