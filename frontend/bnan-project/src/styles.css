@@ -215,3 +215,12 @@ small {
 .bg-gradient {
     background: linear-gradient(135deg, #ffffff 0%, var(--purple-50) 100%) !important;
 }
+
+.auth-container {
+  background-color: #f8f9fa;
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 400px;
+}
