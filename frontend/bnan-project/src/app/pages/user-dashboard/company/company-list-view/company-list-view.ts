@@ -11,6 +11,7 @@ import { TableColumn } from '../../../../model/table-column.model';
 import { DataTable } from '../../../../shared/data-table/data-table';
 import { TableTemplateDirective } from '../../../../shared/data-table/table-template.directive';
 import { DatePipe } from '@angular/common';
+import { HasRoleDirective } from '../../../../shared/directives/has-role.directive';
 
 @Component({
   selector: 'app-company-list-view',
@@ -23,6 +24,7 @@ import { DatePipe } from '@angular/common';
     DataTable,
     TableTemplateDirective,
     DatePipe,
+    HasRoleDirective,
   ],
   templateUrl: './company-list-view.html',
   styleUrl: './company-list-view.css',
@@ -49,6 +51,7 @@ export class CompanyListView implements OnInit, OnDestroy {
   selectedCompanyId = signal<number | null>(null);
 
   isDeleteModalOpen = signal(false);
+  isHardDelete = signal(false);
   companyToDeleteId = signal<number | null>(null);
 
   isViewModalOpen = signal(false);
@@ -161,8 +164,9 @@ export class CompanyListView implements OnInit, OnDestroy {
     this.loadCompanies();
   }
 
-  confirmDeleteCompany(id: number) {
+  confirmDeleteCompany(id: number, hardDelete: boolean) {
     this.companyToDeleteId.set(id);
+    this.isHardDelete.set(hardDelete);
     this.isDeleteModalOpen.set(true);
   }
 
@@ -175,7 +179,7 @@ export class CompanyListView implements OnInit, OnDestroy {
     const id = this.companyToDeleteId();
     if (id === null) return;
     this.companyService
-      .deleteCompany(id)
+      .deleteCompany(id, this.isHardDelete())
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: () => {
@@ -185,7 +189,8 @@ export class CompanyListView implements OnInit, OnDestroy {
         },
         error: (error) => {
           this.showToast(
-            'No se pudo eliminar la empresa. Comuníquese con administración si el error persiste.',
+            'No se pudo eliminar la empresa. Comuníquese con administración si el error persiste.'
+            + error.error.message,
             'error'
           );
         },

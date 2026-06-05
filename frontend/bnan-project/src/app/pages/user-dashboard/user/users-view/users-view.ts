@@ -10,11 +10,12 @@ import { TableColumn } from '../../../../model/table-column.model';
 import { DataTable } from '../../../../shared/data-table/data-table';
 import { TableTemplateDirective } from '../../../../shared/data-table/table-template.directive';
 import { Subject, debounceTime, distinctUntilChanged, takeUntil } from 'rxjs';
+import { HasRoleDirective } from '../../../../shared/directives/has-role.directive';
 
 
 @Component({
   selector: 'app-users-view',
-  imports: [CommonModule, Modal, FormsModule, Toast, UserForm, DataTable, TableTemplateDirective],
+  imports: [CommonModule, Modal, FormsModule, Toast, UserForm, DataTable, TableTemplateDirective, HasRoleDirective],
   templateUrl: './users-view.html',
 })
 export class UsersView implements OnInit, OnDestroy {
@@ -36,6 +37,7 @@ export class UsersView implements OnInit, OnDestroy {
   selectedUserId = signal<number | null>(null);
 
   isDeleteModalOpen = signal(false);
+  isHardDelete = signal(false);
   userToDeleteId = signal<number | null>(null);
 
   isViewModalOpen = signal(false);
@@ -107,28 +109,42 @@ export class UsersView implements OnInit, OnDestroy {
     this.searchSubject.next(input.value);
   }
 
-  confirmDeleteUser(id: number) {
+  confirmDeleteUser(id: number, hardDelete: boolean) {
     this.userToDeleteId.set(id);
+    this.isHardDelete.set(hardDelete);
     this.isDeleteModalOpen.set(true);
   }
 
   deleteUser() {
     const id = this.userToDeleteId();
     if (id === null) return;
-
-    this.UserService.deleteUser(id)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
+    if (this.isHardDelete()){
+      this.UserService.hardDeleteUser(id)
+      .pipe(takeUntil(this.destroy$)).subscribe({
+        next: () => {
+          this.users.update((users) => users.filter((u) => u.id !== id));
+          this.showToast('Usuario eliminado exitosamente', 'success');
+          this.closeDeleteModal();
+        },
+        error: (error) => {
+          console.error(error);
+          this.showToast('Error al eliminar usuario', 'error');
+        },
+      });
+    } else {
+    this.UserService.softDeleteUser(id)
+    .pipe(takeUntil(this.destroy$)).subscribe({
       next: () => {
         this.users.update((users) => users.filter((u) => u.id !== id));
-        this.showToast('Usuario eliminado exitosamente', 'success');
+        this.showToast('Usuario ocultado exitosamente', 'success');
         this.closeDeleteModal();
       },
       error: (error) => {
         console.error(error);
-        this.showToast('Error al eliminar usuario', 'error');
+        this.showToast('Error al ocultado usuario' + error.error.message, 'error');
       },
     });
+  }
   }
 
   closeDeleteModal() {

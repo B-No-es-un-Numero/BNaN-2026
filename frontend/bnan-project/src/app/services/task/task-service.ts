@@ -16,19 +16,18 @@ export class TaskService {
     return this.http.get<Task[]>(`${this.baseUrl}${params}`);
   }
 
-  
-  getTaskById(id: number): Observable<CreateTaskRequest> {
-    return this.http.get<CreateTaskRequest>(`${this.baseUrl}${id}/`);
+  getTaskById(id: number): Observable<Task> {
+    return this.http.get<Task>(`${this.baseUrl}${id}/`);
   }
 
 
-  createTask(taskData: CreateTaskRequest): Observable<Task> {
-    return this.http.post<Task>(this.baseUrl, taskData);
+  createTask(taskData: CreateTaskRequest): Observable<CreateTaskRequest> {
+    return this.http.post<CreateTaskRequest>(this.baseUrl, taskData);
   }
 
   
-  updateTask(id: number, taskData: CreateTaskRequest): Observable<Task> {
-    return this.http.put<Task>(`${this.baseUrl}${id}/`, taskData);
+  updateTask(id: number, taskData: CreateTaskRequest): Observable<CreateTaskRequest> {
+    return this.http.put<CreateTaskRequest>(`${this.baseUrl}${id}/`, taskData);
   }
 
   

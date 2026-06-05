@@ -9,12 +9,17 @@ interface LoginResponse {
   role?: string;
 }
 
+interface RefreshResponse {
+  access: string;
+  refresh?: string;
+}
+
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private readonly baseUrl = `${environment.apiUrl}/auth`;
   private readonly TOKEN_KEY = 'bnan_token';
   private readonly REFRESH_KEY = 'bnan_refresh_token';
-  private readonly ROLE_KEY = 'bnan_role';
+  public static readonly ROLE_KEY = 'bnan_role';
 
   private http = inject(HttpClient);
 
@@ -23,7 +28,7 @@ export class AuthService {
 
   constructor() {
     if (typeof localStorage !== 'undefined') {
-      const role = localStorage.getItem(this.ROLE_KEY);
+      const role = localStorage.getItem(AuthService.ROLE_KEY);
       if (role === 'admin') {
         this._isAdmin.set(true);
       }
@@ -40,7 +45,7 @@ export class AuthService {
         localStorage.setItem(this.TOKEN_KEY, response.access);
         localStorage.setItem(this.REFRESH_KEY, response.refresh);
         if (response.role) {
-          localStorage.setItem(this.ROLE_KEY, response.role);
+          localStorage.setItem(AuthService.ROLE_KEY, response.role);
           this._isAdmin.set(response.role === 'admin');
         }
       })
@@ -50,7 +55,7 @@ export class AuthService {
   logout(): void {
     localStorage.removeItem(this.TOKEN_KEY);
     localStorage.removeItem(this.REFRESH_KEY);
-    localStorage.removeItem(this.ROLE_KEY);
+    localStorage.removeItem(AuthService.ROLE_KEY);
     this._isAdmin.set(false);
   }
 
@@ -61,4 +66,10 @@ export class AuthService {
   isAuthenticated(): boolean {
     return !!this.getToken();
   }
+
+  refreshToken(refresh: string): Observable<RefreshResponse> {
+    return this.http.post<RefreshResponse>(`${this.baseUrl}/refresh/`, {
+      refresh,
+    });
+}
 }

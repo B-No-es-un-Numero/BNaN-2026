@@ -84,6 +84,10 @@ class TaskView(ApiView):
         hard = request.query_params.get("hard", "false").lower() in ["true"];
 
         if hard:
+            if request.user.role != "admin":
+                raise self.permission_denied(request,
+                message="Solo admin puede realizar borrado físico."
+            );
             task.delete();
             return Response(
                 status=status.HTTP_204_NO_CONTENT
