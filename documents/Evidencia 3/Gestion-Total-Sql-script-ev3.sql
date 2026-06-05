@@ -81,7 +81,7 @@ CREATE TABLE `tareas` (
 
 /* INSERTIONS */
 /* USER */
-INSERT INTO `ususarios`
+INSERT INTO `usuarios`
 (
     `id`,
     `password`,
@@ -101,21 +101,21 @@ INSERT INTO `ususarios`
 )
 VALUES
 
-(1, 'pbkdf2_sha256$1000000$hash01', NULL, 1,1,1, 'admin01','Name','Surname','admin01@gestiontotal.com','admin',1,'2026-01-03 08:00:00.000000','2026-01-03 08:00:00.000000','2026-04-02 09:20:00.000000'),
+(1, 'pbkdf2_sha256$1000000$hash01', NULL, 1,1,1, 'admin01','Ricardo','Zielinski','admin01@gestiontotal.com','admin',1,'2026-01-03 08:00:00.000000','2026-01-03 08:00:00.000000','2026-04-02 09:20:00.000000'),
 
-(2, 'pbkdf2_sha256$1000000$hash02', NULL, 1,1,1, 'admin02','Name','Surname','admin02@gestiontotal.com','admin',1,'2026-01-03 08:00:00.000000','2026-01-06 09:10:00.000000','2026-04-03 11:40:00.000000'),
+(2, 'pbkdf2_sha256$1000000$hash02', NULL, 1,1,1, 'admin02','Marcelo','Misetich','admin02@gestiontotal.com','admin',1,'2026-01-03 08:00:00.000000','2026-01-06 09:10:00.000000','2026-04-03 11:40:00.000000'),
 
-(3, 'pbkdf2_sha256$1000000$hash03', NULL, 1,1,1, 'user01','Name','Surname','user01@gestiontotal.com','user',1,'2026-01-03 08:00:00.000000','2026-01-10 10:30:00.000000','2026-04-04 14:00:00.000000'),
+(3, 'pbkdf2_sha256$1000000$hash03', NULL, 1,1,1, 'user01','Luis Fabian','Artime','user01@gestiontotal.com','user',1,'2026-01-03 08:00:00.000000','2026-01-10 10:30:00.000000','2026-04-04 14:00:00.000000'),
 
-(4, 'pbkdf2_sha256$1000000$hash04', NULL, 1,1,1, 'user02','Name','Surname','user02@gestiontotal.com','user',1,'2026-01-03 08:00:00.000000','2026-01-12 12:00:00.000000','2026-04-05 16:15:00.000000'),
+(4, 'pbkdf2_sha256$1000000$hash04', NULL, 1,1,1, 'user02','Lucas','Zelarrayan','user02@gestiontotal.com','user',1,'2026-01-03 08:00:00.000000','2026-01-12 12:00:00.000000','2026-04-05 16:15:00.000000'),
 
-(5, 'pbkdf2_sha256$1000000$hash05', NULL, 1,1,1, 'user03','Name','Surname','user03@gestiontotal.com','user',1,'2026-01-03 08:00:00.000000','2026-01-15 11:15:00.000000','2026-04-07 09:50:00.000000'),
+(5, 'pbkdf2_sha256$1000000$hash05', NULL, 1,1,1, 'user03','Thiago','Cardozo','user03@gestiontotal.com','user',1,'2026-01-03 08:00:00.000000','2026-01-15 11:15:00.000000','2026-04-07 09:50:00.000000'),
 
-(6, 'pbkdf2_sha256$1000000$hash06', NULL, 1,1,1, 'user04','Name','Surname','user04@gestiontotal.com','user',1,'2026-01-03 08:00:00.000000','2026-01-18 15:40:00.000000','2026-04-08 13:20:00.000000'),
+(6, 'pbkdf2_sha256$1000000$hash06', NULL, 1,1,1, 'user04','Lisandro','Lopez','user04@gestiontotal.com','user',1,'2026-01-03 08:00:00.000000','2026-01-18 15:40:00.000000','2026-04-08 13:20:00.000000'),
 
-(7, 'pbkdf2_sha256$1000000$hash07', NULL, 1,1,1, 'user05','Name','Surname','user05@gestiontotal.com','user',1,'2026-01-03 08:00:00.000000','2026-01-22 08:25:00.000000','2026-04-10 10:45:00.000000'),
+(7, 'pbkdf2_sha256$1000000$hash07', NULL, 1,1,1, 'user05','Leonardo','Morales','user05@gestiontotal.com','user',1,'2026-01-03 08:00:00.000000','2026-01-22 08:25:00.000000','2026-04-10 10:45:00.000000'),
 
-(8, 'pbkdf2_sha256$1000000$hash08', NULL, 1,1,1, 'user06','Name','Surname','user06@gestiontotal.com','user',1,'2026-01-03 08:00:00.000000','2026-02-01 09:00:00.000000','2026-04-12 15:30:00.000000');
+(8, 'pbkdf2_sha256$1000000$hash08', NULL, 1,1,1, 'user06','Francisco','González Metilli','user06@gestiontotal.com','user',1,'2026-01-03 08:00:00.000000','2026-02-01 09:00:00.000000','2026-04-12 15:30:00.000000');
 
 /* COMPANY */
 INSERT INTO `empresas`
