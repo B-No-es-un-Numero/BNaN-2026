@@ -2,7 +2,7 @@ import { Component, inject, signal, input, output, OnInit } from '@angular/core'
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { UserService } from '../../../../services/users/user-service';
-import { User } from '../../../../model/user.model';
+import { CreateUserRequest, User } from '../../../../model/user.model';
 
 @Component({
   selector: 'app-user-form',
@@ -60,7 +60,7 @@ export class UserForm implements OnInit {
     const userId = this.userIdInput();
 
     if (userId) {
-      const payload: any = {
+      const payload: CreateUserRequest = {
         username: data.username,
         first_name: data.first_name,
         last_name: data.last_name,

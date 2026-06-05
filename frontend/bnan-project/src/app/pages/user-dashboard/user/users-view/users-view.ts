@@ -64,7 +64,7 @@ export class UsersView implements OnInit, OnDestroy {
     this.UserService.getUserList(search)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-      next: (data: any) => {
+      next: (data: User[]) => {
         this.users.set(data);
         this.loadingUsers.set(false);
       },
@@ -141,7 +141,7 @@ export class UsersView implements OnInit, OnDestroy {
       },
       error: (error) => {
         console.error(error);
-        this.showToast('Error al ocultado usuario' + error.error.message, 'error');
+        this.showToast('Error al ocultado usuario' + error.error?.message, 'error');
       },
     });
   }

@@ -144,7 +144,7 @@ export class TasksView implements OnInit, OnDestroy {
         this.closeDeleteModal();
       },
       error: (error) => {
-        this.showToast('Error al eliminar tarea', 'error');
+        this.showToast('Error al eliminar tarea', error.error?.message);
       },
     });
   }
