@@ -190,7 +190,7 @@ export class CompanyListView implements OnInit, OnDestroy {
         error: (error) => {
           this.showToast(
             'No se pudo eliminar la empresa. Comuníquese con administración si el error persiste.'
-            + error.error.message,
+            + error.error?.message,
             'error'
           );
         },

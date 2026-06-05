@@ -21,13 +21,13 @@ export class TaskService {
   }
 
 
-  createTask(taskData: CreateTaskRequest): Observable<CreateTaskRequest> {
-    return this.http.post<CreateTaskRequest>(this.baseUrl, taskData);
+  createTask(taskData: CreateTaskRequest): Observable<Task> {
+    return this.http.post<Task>(this.baseUrl, taskData);
   }
 
   
-  updateTask(id: number, taskData: CreateTaskRequest): Observable<CreateTaskRequest> {
-    return this.http.put<CreateTaskRequest>(`${this.baseUrl}${id}/`, taskData);
+  updateTask(id: number, taskData: CreateTaskRequest): Observable<Task> {
+    return this.http.put<Task>(`${this.baseUrl}${id}/`, taskData);
   }
 
   

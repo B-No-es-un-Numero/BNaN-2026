@@ -2,6 +2,7 @@ import { Injectable, inject, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
 import { environment } from '../../../environments/environment.development';
+import { CreateUserRequest } from '../../model/user.model';
 
 interface LoginResponse {
   access: string;
@@ -35,8 +36,8 @@ export class AuthService {
     }
   }
 
-  register(data: { first_name: string; last_name: string; username: string; email: string; password: string }): Observable<any> {
-    return this.http.post(`${this.baseUrl}/register/`, data);
+  register(data: { first_name: string; last_name: string; username: string; email: string; password: string }): Observable<CreateUserRequest> {
+    return this.http.post<CreateUserRequest>(`${this.baseUrl}/register/`, data);
   }
 
   login(username: string, password: string): Observable<LoginResponse> {

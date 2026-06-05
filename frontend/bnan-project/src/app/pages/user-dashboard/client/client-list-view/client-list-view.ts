@@ -192,7 +192,7 @@ export class ClientListView implements OnInit {
           this.closeDeleteClient();
         },
         error: (error) => {
-          this.showToast('Error al eliminar cliente' + error.error.message, 'error');
+          this.showToast('Error al eliminar cliente' + error.error?.message, 'error');
         },
       });
   }
