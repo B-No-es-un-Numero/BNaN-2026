@@ -76,11 +76,7 @@ export class TasksForm implements OnInit {
   form = this.fb.nonNullable.group({
     title: ['', [Validators.required, Validators.maxLength(100)]],
     description: ['', Validators.required],
-    due_date: ['', [Validators.required, (c: any) => {
-      if (!c.value) return null;
-      const today = new Date(); today.setHours(0, 0, 0, 0);
-      return new Date(c.value) < today ? { minDate: true } : null;
-    }]],
+    due_date: ['', Validators.required],
     status: ['pending', Validators.required],
     assigned_user_id: [0, [Validators.required, Validators.min(1)]],
     client_id: [0, [Validators.required, Validators.min(1)]],
