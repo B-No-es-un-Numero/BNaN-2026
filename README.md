@@ -6,7 +6,7 @@
 ![Bootstrap](https://img.shields.io/badge/Bootstrap-563D7C?style=for-the-badge&logo=bootstrap&logoColor=white)
 ![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)
 
-## Descripción general
+## Descripción general del proyecto
 Esta aplicación web centraliza la información de clientes, acciones realizadas y por realizar en un único sistema accesible por todo el equipo de trabajo. Permite gestionar clientes, estados, interacciones y tareas. De este modo, organiza la información de forma estructurada y accesible. 
 
 El **problema principal** que aborda es la fragmentación de la información: los datos de clientes, el historial de interacciones y las tareas de seguimiento se encuentran distribuidos en múltiples fuentes, lo que genera duplicaciones, inconsistencias, pérdida de información y falta de visibilidad sobre el estado real de cada cliente.
@@ -36,6 +36,8 @@ La aplicación propone como **solución** un sistema único que permite:
 * Consistencia de datos mediante validaciones.
 * Estructura simple que permita futuras extensiones.
 
+Para mayor detalle sobre requerimientos, se puede revisar el apartado específico de la [wiki](https://github.com/B-No-es-un-Numero/GestionTotal-BNaN-2026/wiki/Requisitos-Funcionales-y-No-Funcionales).
+
 ---
 
 ## Estructura del Proyecto
@@ -46,9 +48,11 @@ El repositorio está dividido de manera modular en 3 carpetas principales:
 - `frontend/`: Código fuente de la interfaz desarrollada en Angular.
 - `documents/`: Archivos auxiliares como el script de base de datos SQL inicial (`Gestion Total SQL insertions.sql`).
 
+Para mayor detalle sobre la arquitectura del proyecto, se puede revisar el [anexo al documento PMI](https://docs.google.com/document/d/1fRECcmmsum6uZzUrU-YYKPl7DIBUYYHPoSA8BmNgO78/edit?usp=sharing), apartado 2.1.
+
 ---
 
-## Guía de Instalación y Uso (Local)
+## Guía de Instalación (Local)
 
 Seguí estos pasos en orden para ejecutar todo el ecosistema del proyecto en tu máquina.
 
@@ -80,19 +84,28 @@ Asegurate de contar con lo siguiente instalado en tu sistema:
 4. Creá el archivo de variables de entorno:
    - Hacé una copia del archivo `.env_example` y renombralo a `.env`.
    - Modificalo para que coincida con tus credenciales locales de MySQL. Asegurate de tener `DB_NAME=gestion_total_app`.
-5. Construí las tablas de la base de datos:
+5. Opcionalmente, para una puesta en marcha rápida con datos de prueba, ejecutá el script ubicado en la carpeta documents/, el cual crea la base de datos, genera las tablas necesarias e inserta registros iniciales de ejemplo.
+6. Si omitiste el punto anterior, ahora construí las tablas de la base de datos. Si lo ejecutaste correctamente, podés desestimar este:
    ```bash
    python manage.py migrate
    ```
-6. Iniciá el servidor backend:
+7. Ahora, iniciá el servidor backend:
    ```bash
    python manage.py runserver
    ```
    *(Estará disponible en `http://127.0.0.1:8000`)*
-7. Endpoints disponibles:
-
+8. Endpoints disponibles (guía uso directo de Backend):
+* `api/usuarios`
+* `api/usuarios/{id}`
 * `/api/clientes`
-* `/api/clientes/{uuid}`
+* `/api/clientes/{id}`
+* `api/tareas`
+* `api/tareas/{id}`
+* `/api/empresas`
+* `/api/empresas/{id}`
+
+Para mayor detalle sobre los endpoints, sus requests y responses, se puede revisar el [anexo al documento PMI](https://docs.google.com/document/d/1fRECcmmsum6uZzUrU-YYKPl7DIBUYYHPoSA8BmNgO78/edit?usp=sharing), apartado 3.2 y 3.3.
+
 
 ### Paso 3: Levantar el Frontend (Angular)
 
@@ -111,11 +124,33 @@ Asegurate de contar con lo siguiente instalado en tu sistema:
  
 ---
 
-## Uso básico (próximamente)
+## Guia de Uso (Local)
 
-* Registrar nuevos clientes mediante formulario. 
-* Visualizar listado general con búsqueda y filtros.
-* Editar información de clientes existentes.
-* Asignar estado y responsable.
-* Crear y gestionar tareas asociadas.
-* Exportar listados para análisis externo.
+En este momento, backend y frontend se encuentran conectados. El manejo continúa siendo local, pero se estima será posible desplegar el mismo a la brevedad.
+
+Una vez iniciadas ambas aplicaciones, el uso esperado consiste en:
+
+* Registrarse con un email y nombre válidos.
+* Iniciar sesión con el usuario dado de alta.
+* Acceder desde la barra de navegación a las distintas vistas que componen el sistema:
+-- Clientes
+-- Empresas
+-- Tareas
+-- Usuarios (únicamente para rol administrador)
+* En todas las vistas se puede:
+-- Visualizar la lista completa de registros.
+-- Filtrar por campos significativos.
+-- Abrir registros para consultar sus detalles.
+-- Editar registros con aplicación en tiempo real.
+-- Eliminar registros para que dejen de figurar en el sistema.
+-- El eliminado lógico, si bien existente, queda reservado únicamente para usuarios con rol administrador.
+* Cerrar sesión.
+
+---
+
+## Integrantes del equipo y roles
+* Bruvera, Melina Belén - Fullstack dev & Project Manager.
+* Diván, Guillermo Mauricio - Fullstack dev & Product owner.
+* García Pardo, Alejandro David - Fullstack dev.
+* Natale, Gabriel Alejandro - Fullstack dev.
+* Romero, Joaquín David - Fullstack dev.

@@ -1,0 +1,79 @@
+<div class="card border-0 shadow-sm">
+  <div class="table-responsive">
+    <table class="table align-middle mb-0">
+      <thead class="bg-light">
+        <tr>
+          @for (col of columns; track col.key) {
+            <th [class.text-end]="col.align === 'end'">{{ col.label }}</th>
+          }
+        </tr>
+      </thead>
+      <tbody>
+        @if (loading) {
+          @for (row of skeletonArray; track $index) {
+            <tr>
+              @for (col of columns; let ci = $index; track col.key) {
+                <td [class.text-end]="col.align === 'end'">
+                  <div class="placeholder-wave">
+                    <span class="placeholder" [class]="skeletonWidthClass(ci, columns.length)"></span>
+                  </div>
+                </td>
+              }
+            </tr>
+          }
+        } @else {
+          @for (row of paginatedData(); track $index) {
+            <tr>
+              @for (col of columns; track col.key) {
+                <td [class.text-end]="col.align === 'end'">
+                  @if (templateKeys.has(col.key)) {
+                    <ng-container
+                      [ngTemplateOutlet]="templatesMap[col.key]"
+                      [ngTemplateOutletContext]="{ $implicit: row }"
+                    />
+                  } @else {
+                    {{ row[col.key] }}
+                  }
+                </td>
+              }
+            </tr>
+          } @empty {
+            <tr>
+              <td [attr.colspan]="columns.length" class="text-center py-5">
+                <i class="bi bi-inbox fs-1 text-muted d-block mb-2"></i>
+                <span class="text-muted">{{ emptyMessage }}</span>
+              </td>
+            </tr>
+          }
+        }
+      </tbody>
+    </table>
+  </div>
+
+  @if (totalPages() > 1) {
+    <div class="d-flex justify-content-between align-items-center border-top px-3 py-2">
+      <span class="text-muted small">
+        Página {{ currentPage() }} de {{ totalPages() }}
+      </span>
+      <nav>
+        <ul class="pagination pagination-sm mb-0">
+          <li class="page-item" [class.disabled]="currentPage() === 1">
+            <a class="page-link" (click)="prevPage()">Anterior</a>
+          </li>
+          @for (page of pages(); track $index) {
+            @if (page === '...') {
+              <li class="page-item disabled"><a class="page-link">...</a></li>
+            } @else {
+              <li class="page-item" [class.active]="page === currentPage()">
+                <a class="page-link" (click)="goToPage(page)">{{ page }}</a>
+              </li>
+            }
+          }
+          <li class="page-item" [class.disabled]="currentPage() === totalPages()">
+            <a class="page-link" (click)="nextPage()">Siguiente</a>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  }
+</div>

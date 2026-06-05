@@ -27,14 +27,14 @@ CREATE TABLE `user_app_user` (
 CREATE TABLE `company_app_company` (
   `id` bigint NOT NULL AUTO_INCREMENT,
   `name` varchar(150) NOT NULL,
-  `cuil` varchar(20) NOT NULL,
+  `cuit` varchar(20) NOT NULL,
   `phone` varchar(20) DEFAULT NULL,
   `email` varchar(254) NOT NULL,
   `enabled` tinyint(1) NOT NULL,
   `created_at` datetime(6) NOT NULL,
   `updated_at` datetime(6) NOT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `cuil` (`cuil`),
+  UNIQUE KEY `cuit` (`cuit`),
   UNIQUE KEY `email` (`email`)
 ) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
@@ -118,7 +118,7 @@ VALUES
 
 /* COMPANY */
 INSERT INTO `company_app_company`
-(`id`,`name`,`cuil`,`phone`,`email`,`enabled`,`created_at`,`updated_at`)
+(`id`,`name`,`cuit`,`phone`,`email`,`enabled`,`created_at`,`updated_at`)
 VALUES
 (1,'Arcor SAIC','30-50279308-1','3514201001','contacto@arcor.com',1,'2026-01-05 09:15:00.000000','2026-04-02 11:40:00.000000'),
 (2,'Mercado Libre SRL','30-70308853-4','3514201002','marketing@mercadolibre.com',1,'2026-01-08 10:20:00.000000','2026-04-03 14:10:00.000000'),

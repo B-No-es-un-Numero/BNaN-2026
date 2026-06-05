@@ -1,6 +1,5 @@
 nav.navbar {
-  backdrop-filter: blur(8px);
-  background-color: rgba(255, 255, 255, 0.95) !important;
+  background-color: #ffffff !important;
 }
 
 .nav-link {
@@ -14,4 +13,8 @@ nav.navbar {
 
 .btn-link {
   text-decoration: none;
+}
+
+.navbar-brand-purple {
+  color: #6f42c1 !important;
 }

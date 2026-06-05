@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
-import { UserNavbar } from './user-navbar/user-navbar';
 import { RouterOutlet } from '@angular/router';
+import { UserNavbar } from './user-navbar/user-navbar';
 
 @Component({
   selector: 'app-user-dashboard',

@@ -1,27 +1,48 @@
 from rest_framework.response import Response
 from rest_framework.views import APIView as ApiView
 from rest_framework import status
+from client_app.models import Client
+from task_app.models import Task
 from user_app.models import User
+from user_app.permissions import IsAdminRole
 from user_app.serializers import UserSerializer
 from django.shortcuts import get_object_or_404
+from django.db.models import Q as query
+from rest_framework.permissions import IsAuthenticated, AllowAny
 
+
+class RegisterView(ApiView):
+    permission_classes = [AllowAny];
+    def post(self, request):
+        serializer = UserSerializer(data=request.data);
+        if serializer.is_valid():
+            serializer.save();
+            return Response(
+                {"message": "Usuario registrado exitosamente"},
+                status=status.HTTP_201_CREATED
+            );
+        return Response({"message": "Hubo un error en registro", "errors": serializer.errors}, status=status.HTTP_400_BAD_REQUEST);
 
 class UserView(ApiView):
+    def get_permissions(self):
+        if self.request.method in ["GET", "PUT", "DELETE"]:
+            return [IsAuthenticated(), IsAdminRole()];
+        return [IsAuthenticated()];
+    
     def get(self, request, pk=None):
         if pk:
             user = get_object_or_404(User, id=pk);
             serializer = UserSerializer(user);
         else:
             users = User.objects.filter(enabled=True);
+            search = request.query_params.get('search', '');
+            if search:
+                users = users.filter(
+                   query(username__icontains=search) | 
+                   query(email__icontains=search)
+                )
             serializer = UserSerializer(users, many=True);
         return Response(serializer.data, status=status.HTTP_200_OK);
-
-    def post(self, request):
-        serializer = UserSerializer(data=request.data);
-        if serializer.is_valid():
-            serializer.save();
-            return Response(serializer.data, status=status.HTTP_201_CREATED);
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST);
 
     def put(self, request, pk=None):
         user = get_object_or_404(User, id=pk);
@@ -29,7 +50,7 @@ class UserView(ApiView):
         if serializer.is_valid():
             serializer.save();
             return Response(serializer.data, status=status.HTTP_200_OK);
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST);
+        return Response({"message": "Hubo un error modificando usuario", "errors": serializer.errors}, status=status.HTTP_400_BAD_REQUEST);
 
     def delete(self, request, pk=None):
         user = get_object_or_404(User, id=pk);
@@ -38,6 +59,13 @@ class UserView(ApiView):
             user.delete();
             return Response(status=status.HTTP_204_NO_CONTENT);
 
+        relatedClients = Client.objects.filter(responsible_user=user, enabled=True);
+        relatedTask = Task.objects.filter(assigned_user=user, enabled=True);
+        
+        if (relatedClients.exists()):
+            return Response({"message": "No se puede eliminar un usuario que tiene clientes a cargo. Elimine o reasigne los clientes primero."}, status=status.HTTP_400_BAD_REQUEST);
+        if (relatedTask.exists()):
+            return Response({"message": "No se puede eliminar un usuario que tiene tareas a cargo. Elimine o reasigne las tareas primero."}, status=status.HTTP_400_BAD_REQUEST);
         user.enabled = False
         user.save();
         return Response(status=status.HTTP_204_NO_CONTENT);

@@ -1,0 +1,224 @@
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h4 class="mb-0">Gestión de Tareas</h4>
+
+  <button class="btn btn-sm btn-purple" (click)="newTask()">
+    <i class="bi bi-plus-lg"></i> Nueva Tarea
+  </button>
+</div>
+
+<div class="mb-3">
+  <div class="input-group">
+    <span class="input-group-text bg-white border-end-0">
+      <i class="bi bi-search"></i>
+    </span>
+
+    <input
+      type="text"
+      class="form-control border-start-0"
+      placeholder="Buscar por título, descripción, cliente o usuario asignado..."
+      (input)="onSearch($event)"
+    />
+  </div>
+</div>
+
+<app-data-table
+  [data]="tasks()"
+  [columns]="taskColumns"
+  [loading]="loadingTasks()"
+  emptyMessage="No se encontraron tareas"
+>
+  <ng-template [appTableTemplate]="'id'" let-task>
+    <span class="text-muted fw-bold">#{{ task.id }}</span>
+  </ng-template>
+  <ng-template [appTableTemplate]="'status'" let-task>
+    @if (task.status === 'pending') {
+      <span class="badge bg-warning-subtle text-warning">Pendiente</span>
+    } @else if (task.status === 'in_progress') {
+      <span class="badge bg-info-subtle text-info">En progreso</span>
+    } @else if (task.status === 'done') {
+      <span class="badge bg-success-subtle text-success">Completada</span>
+    } @else {
+      <span class="badge bg-danger-subtle text-danger">Cancelada</span>
+    }
+  </ng-template>
+  <ng-template [appTableTemplate]="'actions'" let-task>
+    <button class="btn btn-sm btn-outline-purple me-2" (click)="viewTask(task)">
+      <i class="bi bi-eye"></i>
+    </button>
+    <button class="btn btn-sm btn-outline-purple me-2" (click)="editTask(task)">
+      <i class="bi bi-pencil"></i>
+    </button>
+    <button class="btn btn-sm btn-outline-danger me-2" (click)="confirmDeleteTask(task.id, false)">
+      <i class="bi bi-trash"></i>
+    </button>
+    <button *appHasRole="'admin'" class="btn btn-sm btn-outline-danger me-2" (click)="confirmDeleteTask(task.id, true)">
+      <i class="bi bi-x-octagon"></i>
+    </button>
+  </ng-template>
+</app-data-table>
+
+<app-modal
+  [title]="selectedTaskId() === null ? 'Crear Tarea' : 'Editar Tarea'"
+  [isOpen]="isTaskModalOpen()"
+  (close)="closeTaskModal()"
+  size="md"
+>
+  @if (isTaskModalOpen()) {
+
+    <app-task-form
+      [taskIdInput]="selectedTaskId()"
+      (saved)="handleTaskSaved()"
+      (error)="handleTaskError($event)"
+      (canceled)="closeTaskModal()"
+    />
+
+  }
+</app-modal>
+
+<app-modal
+  title="Confirmar Eliminación"
+  [isOpen]="isDeleteModalOpen()"
+  (close)="closeDeleteModal()"
+  size="sm"
+>
+
+  <div class="text-center py-3">
+    <i class="bi bi-exclamation-triangle text-danger display-3 mb-3"></i>
+    <p class="fs-5 fw-bold">
+      ¿Estás seguro?
+    </p>
+    <p class="text-muted small">{{isHardDelete() ? "Esta acción elimina para siempre la tarea del sistema!" 
+        : "Esta acción oculta la tarea del sistema!"}}</p> 
+  </div>
+
+  <div class="d-flex gap-2 mt-2">
+
+    <button
+      class="btn btn-light w-100"
+      (click)="closeDeleteModal()"
+    >
+      No, volver
+    </button>
+
+    <button
+      class="btn btn-danger w-100"
+      (click)="deleteTask()"
+    >
+      {{isHardDelete() ? "Eliminar" : "Ocultar"}}</button> 
+
+  </div>
+
+</app-modal>
+
+<app-modal
+  title="Detalle de la Tarea"
+  [isOpen]="isViewModalOpen()"
+  (close)="closeViewModal()"
+  size="md"
+>
+
+  @if (selectedTask(); as task) {
+
+    <div class="text-center mb-4">
+
+      <div
+        class="bg-purple-light text-purple rounded-circle d-inline-flex align-items-center justify-content-center mb-2 avatar-circle"
+      >
+        <i class="bi bi-list-check fs-2"></i>
+      </div>
+
+      <h5 class="mb-0">
+        {{ task.title }}
+      </h5>
+
+    </div>
+
+    <div class="card border-0 bg-light p-3">
+
+      <div class="mb-3">
+        <label class="small text-muted d-block fw-bold text-uppercase">
+          Descripción
+        </label>
+
+        <span>
+          {{ task.description }}
+        </span>
+      </div>
+
+      <div class="row">
+
+        <div class="col-6">
+          <label class="small text-muted d-block fw-bold text-uppercase">
+            Cliente
+          </label>
+
+          <span>
+            {{ task.client_name }}
+          </span>
+        </div>
+
+        <div class="col-6">
+          <label class="small text-muted d-block fw-bold text-uppercase">
+            Usuario asignado
+          </label>
+
+          <span>
+            {{ task.assigned_user_name }}
+          </span>
+        </div>
+
+      </div>
+
+      <div class="row mt-3">
+
+        <div class="col-6">
+          <label class="small text-muted d-block fw-bold text-uppercase">
+            Estado
+          </label>
+
+          <span>
+            @if (task.status === 'pending') {
+              <span class="badge bg-warning-subtle text-warning">Pendiente</span>
+            } @else if (task.status === 'in_progress') {
+              <span class="badge bg-info-subtle text-info">En progreso</span>
+            } @else if (task.status === 'done') {
+              <span class="badge bg-success-subtle text-success">Completada</span>
+            } @else {
+              <span class="badge bg-danger-subtle text-danger">Cancelada</span>
+            }
+          </span>
+        </div>
+
+        <div class="col-6">
+          <label class="small text-muted d-block fw-bold text-uppercase">
+            Fecha límite
+          </label>
+
+          <span>
+            {{ task.due_date }}
+          </span>
+        </div>
+
+      </div>
+
+    </div>
+
+    <div class="mt-4">
+      <button
+        class="btn btn-purple w-100"
+        (click)="closeViewModal()"
+      >
+        Cerrar
+      </button>
+    </div>
+
+  }
+
+</app-modal>
+
+<app-toast
+  [message]="toastMessage()"
+  [type]="toastType()"
+  [isOpen]="toastOpen()"
+  (close)="toastOpen.set(false)"
+></app-toast>
