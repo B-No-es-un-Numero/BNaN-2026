@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import { Navbar } from '../../shared/navbar/navbar';
-import { Footer } from '../../shared/footer/footer';
+import { Navbar } from '../../../shared/navbar/navbar';
+import { Footer } from '../../../shared/footer/footer';
 
 
 @Component({

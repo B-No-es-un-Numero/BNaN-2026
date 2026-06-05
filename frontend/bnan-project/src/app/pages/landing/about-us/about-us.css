@@ -37,14 +37,3 @@
   background-color: #f472b6;
   opacity: 0.2;
 }
-
-.dashboard-preview {
-  max-width: 100%;
-  border-radius: 20px;
-  opacity: 0.92;
-  transition: transform 0.3s ease;
-}
-
-.dashboard-preview:hover {
-  transform: scale(1.02);
-}
