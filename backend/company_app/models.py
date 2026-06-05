@@ -1,6 +1,8 @@
 from django.db import models
 
 class Company(models.Model):
+    class Meta:
+        db_table= "empresas";
 
     id = models.BigAutoField(primary_key=True, editable=False)
     
@@ -9,10 +11,10 @@ class Company(models.Model):
         help_text="Nombre completo de la empresa."
     )
     
-    cuil = models.CharField(
+    cuit = models.CharField(
         max_length=20,
         unique=True,
-        help_text="Número de CUIL."
+        help_text="Número de CUIT."
     )
     
     phone = models.CharField(

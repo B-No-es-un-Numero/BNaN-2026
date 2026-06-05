@@ -4,21 +4,34 @@ from .models import User
 
 class UserSerializer(serializers.ModelSerializer):
 
-    password = serializers.CharField(write_only=True, required=False)
+    password = serializers.CharField(write_only=True, required=False);
+    
     class Meta:
         model = User
         fields = '__all__'
         read_only_fields = ['id', 'created_at', 'updated_at']
 
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        if instance.is_superuser:
+            representation['role'] = 'admin'
+        return representation
+
     def create(self, validated_data):
-        password = validated_data.pop('password')
+        password = validated_data.pop('password', None)
         user = User(**validated_data)
         user.set_password(password)
         user.save()
         return user
 
     def update(self, instance, validated_data):
-        password = validated_data.pop('password', None)
+        password = validated_data.pop('password', None);
+        
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value);
+
         if password:
-            instance.set_password(password)
-        return super().update(instance, validated_data)
+            instance.set_password(password);
+            
+        instance.save();
+        return instance;

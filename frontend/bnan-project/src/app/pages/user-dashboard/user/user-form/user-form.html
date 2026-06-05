@@ -1,0 +1,149 @@
+<form [formGroup]="form" (ngSubmit)="saveUser()">
+  <div class="row g-3">
+
+    <div class="col-12">
+      <label class="form-label small fw-bold text-muted">Nombre de usuario</label>
+      <input
+        type="text"
+        class="form-control"
+        formControlName="username"
+        placeholder="sebastian12"
+        [class.is-invalid]="form.controls.username.touched && form.controls.username.invalid"
+        [class.is-valid]="form.controls.username.touched && form.controls.username.valid"
+      />
+      @if (form.controls.username.touched && form.controls.username.invalid) {
+        <div class="invalid-feedback d-block">
+          @if (form.controls.username.errors?.['required']) { El nombre de usuario es obligatorio. }
+          @if (form.controls.username.errors?.['minlength']) { Mínimo 3 caracteres. }
+          @if (form.controls.username.errors?.['maxlength']) { Máximo 20 caracteres. }
+        </div>
+      }
+    </div>
+
+    <div class="col-12">
+      <label class="form-label small fw-bold text-muted">Contraseña</label>
+      <div class="input-group">
+        <input
+          [type]="showPassword() ? 'text' : 'password'"
+          formControlName="password"
+          placeholder="Mínimo 6 caracteres"
+          class="form-control"
+          [class.is-invalid]="form.controls.password.touched && form.controls.password.invalid"
+          [class.is-valid]="form.controls.password.touched && form.controls.password.valid"
+        />
+        <button class="btn btn-light border" type="button" (click)="togglePassword()">
+          <i [class]="showPassword() ? 'bi bi-eye-slash' : 'bi bi-eye'"></i>
+        </button>
+      </div>
+      @if (form.controls.password.touched && form.controls.password.invalid) {
+        <div class="invalid-feedback d-block">
+          @if (form.controls.password.errors?.['required']) { La contraseña es obligatoria. }
+          @if (form.controls.password.errors?.['minlength']) { Mínimo 6 caracteres. }
+          @if (form.controls.password.errors?.['maxlength']) { Máximo 20 caracteres. }
+        </div>
+      }
+      @if (userIdInput()) {
+        <small class="text-muted d-block mt-1">
+          <i class="bi bi-info-circle me-1"></i>Dejá en blanco si no querés cambiar la contraseña.
+        </small>
+      }
+    </div>
+
+    <div class="col-12">
+      <label class="form-label small fw-bold text-muted">Nombre</label>
+      <input
+        type="text"
+        formControlName="first_name"
+        placeholder="Sebastián"
+        class="form-control"
+        [class.is-invalid]="form.controls.first_name.touched && form.controls.first_name.invalid"
+        [class.is-valid]="form.controls.first_name.touched && form.controls.first_name.valid"
+      />
+      @if (form.controls.first_name.touched && form.controls.first_name.invalid) {
+        <div class="invalid-feedback d-block">
+          @if (form.controls.first_name.errors?.['required']) { El nombre es obligatorio. }
+          @if (form.controls.first_name.errors?.['minlength']) { Mínimo 2 caracteres. }
+          @if (form.controls.first_name.errors?.['maxlength']) { Máximo 50 caracteres. }
+        </div>
+      }
+    </div>
+
+    <div class="col-12">
+      <label class="form-label small fw-bold text-muted">Apellido</label>
+      <input
+        type="text"
+        formControlName="last_name"
+        placeholder="García"
+        class="form-control"
+        [class.is-invalid]="form.controls.last_name.touched && form.controls.last_name.invalid"
+        [class.is-valid]="form.controls.last_name.touched && form.controls.last_name.valid"
+      />
+      @if (form.controls.last_name.touched && form.controls.last_name.invalid) {
+        <div class="invalid-feedback d-block">
+          @if (form.controls.last_name.errors?.['required']) { El apellido es obligatorio. }
+          @if (form.controls.last_name.errors?.['minlength']) { Mínimo 2 caracteres. }
+          @if (form.controls.last_name.errors?.['maxlength']) { Máximo 50 caracteres. }
+        </div>
+      }
+    </div>
+
+    <div class="col-12">
+      <label class="form-label small fw-bold text-muted">Email</label>
+      <input
+        type="email"
+        class="form-control"
+        formControlName="email"
+        placeholder="sebastian@mimail.com"
+        [class.is-invalid]="form.controls.email.touched && form.controls.email.invalid"
+        [class.is-valid]="form.controls.email.touched && form.controls.email.valid"
+      />
+      @if (form.controls.email.touched && form.controls.email.invalid) {
+        <div class="invalid-feedback d-block">
+          @if (form.controls.email.errors?.['required']) { El email es obligatorio. }
+          @if (form.controls.email.errors?.['email']) { Ingresá un email válido (ej: nombre@dominio.com). }
+        </div>
+      }
+    </div>
+
+    <div class="col-12">
+      <label class="form-label small fw-bold text-muted">Rol</label>
+      <select
+        class="form-select"
+        formControlName="role"
+        [class.is-invalid]="form.controls.role.touched && form.controls.role.invalid"
+        [class.is-valid]="form.controls.role.touched && form.controls.role.valid"
+      >
+        <option value="admin">Administrador</option>
+        <option value="user">Usuario</option>
+      </select>
+      @if (form.controls.role.touched && form.controls.role.invalid) {
+        <div class="invalid-feedback d-block">Seleccioná un rol para el usuario.</div>
+      }
+    </div>
+
+    @if (serverError()) {
+      <div class="col-12">
+        <div class="alert alert-danger d-flex align-items-center gap-2 py-2 px-3 mb-0" role="alert">
+          <i class="bi bi-exclamation-triangle-fill flex-shrink-0"></i>
+          <span>{{ serverError() }}</span>
+        </div>
+      </div>
+    }
+
+    <div class="col-12 mt-2 d-flex gap-2">
+      <button type="button" class="btn btn-light w-100" (click)="onCancel()">
+        Cancelar
+      </button>
+
+      <button type="submit" class="btn btn-purple w-100" [disabled]="isCreating()">
+        @if (isCreating()) {
+          <span class="spinner-border spinner-border-sm me-1" role="status"></span>
+          Guardando...
+        } @else {
+          {{ userIdInput() ? 'Actualizar Usuario' : 'Crear Usuario' }}
+        }
+      </button>
+    </div>
+
+  </div>
+</form>

@@ -2,6 +2,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView as ApiView
 from rest_framework import status
 from django.shortcuts import get_object_or_404
+from django.db.models import Q as query
 from task_app.models import Task
 from task_app.serializer import TaskSerializer
 
@@ -26,6 +27,16 @@ class TaskView(ApiView):
             if assigned_user:
                 tasks = tasks.filter(assigned_user_id=assigned_user);
 
+            search = request.query_params.get('search', '');
+            if search:
+                tasks = tasks.filter(
+                    query(title__icontains=search) |
+                    query(description__icontains=search) |
+                    query(client__name__icontains=search) |
+                    query(assigned_user__first_name__icontains=search) |
+                    query(assigned_user__last_name__icontains=search)
+                )
+
             serializer = TaskSerializer(tasks, many=True);
 
         return Response(serializer.data, status=status.HTTP_200_OK);
@@ -39,7 +50,7 @@ class TaskView(ApiView):
                 status=status.HTTP_201_CREATED
             );
         return Response(
-            serializer.errors,
+            {"message": "Hubo un error generando la tarea", "errors": serializer.errors},
             status=status.HTTP_400_BAD_REQUEST
         );
 
@@ -64,7 +75,7 @@ class TaskView(ApiView):
                 status=status.HTTP_200_OK
             );
         return Response(
-            serializer.errors,
+            {"message": "Hubo un error modificando la tarea", "errors": serializer.errors},
             status=status.HTTP_400_BAD_REQUEST
         );
 
@@ -73,6 +84,10 @@ class TaskView(ApiView):
         hard = request.query_params.get("hard", "false").lower() in ["true"];
 
         if hard:
+            if request.user.role != "admin":
+                raise self.permission_denied(request,
+                message="Solo admin puede realizar borrado físico."
+            );
             task.delete();
             return Response(
                 status=status.HTTP_204_NO_CONTENT

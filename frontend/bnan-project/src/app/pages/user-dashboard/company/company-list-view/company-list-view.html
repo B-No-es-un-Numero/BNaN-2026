@@ -1,0 +1,163 @@
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h4 class="mb-0">Empresas</h4>
+
+  <a class="btn btn-sm btn-purple" (click)="openNewCompany()">
+    <i class="bi bi-plus-lg"></i>
+    Nueva Empresa
+  </a>
+</div>
+
+<div class="mb-3">
+  <div class="input-group">
+    <span class="input-group-text bg-white border-end-0">
+      <i class="bi bi-search"></i>
+    </span>
+
+    <input
+      type="text"
+      class="form-control border-start-0"
+      placeholder="Buscar empresas..."
+      [value]="searchTerm()"
+      (input)="onSearch($event)"
+    />
+  </div>
+</div>
+
+<app-data-table
+  [data]="filteredCompanyList()"
+  [columns]="companyColumns"
+  [loading]="loadingCompanies()"
+  emptyMessage="No se encontraron empresas"
+>
+  <ng-template [appTableTemplate]="'status'" let-company>
+    @if (company.enabled) {
+      <span class="badge bg-success-subtle text-success">Activa</span>
+    } @else {
+      <span class="badge bg-secondary-subtle text-secondary">Inactiva</span>
+    }
+  </ng-template>
+  <ng-template [appTableTemplate]="'actions'" let-company>
+    <button class="btn btn-sm btn-outline-purple me-2" (click)="openViewCompany(company)">
+      <i class="bi bi-eye"></i>
+    </button>
+    <button class="btn btn-sm btn-outline-purple me-2" (click)="openEditCompany(company)">
+      <i class="bi bi-pencil"></i>
+    </button>
+    <button class="btn btn-sm btn-outline-danger me-2" (click)="confirmDeleteCompany(company.id, false)">
+      <i class="bi bi-trash"></i>
+    </button>
+    <button *appHasRole="'admin'" class="btn btn-sm btn-outline-danger me-2" (click)="confirmDeleteCompany(company.id, true)">
+      <i class="bi bi-x-octagon"></i>
+    </button>
+  </ng-template>
+</app-data-table>
+
+<app-modal
+  [title]="selectedCompanyId() === null ? 'Crear Empresa' : 'Editar Empresa'"
+  [isOpen]="isCompanyModalOpen()"
+  (close)="closeCompanyModal()"
+  size="md"
+>
+  @if (isCompanyModalOpen()) {
+    <app-company-form
+      [companyIdInput]="selectedCompanyId()"
+      (saved)="handleCompanySaved()"
+      (error)="handleCompanyError($event)"
+      (canceled)="closeCompanyModal()"
+    />
+  }
+</app-modal>
+
+<app-modal
+  title="Confirmar Eliminaci&oacute;n"
+  [isOpen]="isDeleteModalOpen()"
+  (close)="closeDeleteCompany()"
+  size="sm"
+>
+  <div class="text-center py-3">
+    <i class="bi bi-exclamation-triangle text-danger display-3 mb-3"></i>
+    <p class="fs-5 fw-bold">&iquest;Est&aacute;s seguro?</p>
+    <p class="text-muted small">{{isHardDelete() ? "Esta acción elimina completamente la empresa del sistema!" 
+        : "Esta acción oculta la empresa en el sistema!"}}</p> 
+  </div>
+
+  <div class="d-flex gap-2 mt-2">
+    <button class="btn btn-light w-100" (click)="closeDeleteCompany()">No, volver</button>
+    <button class="btn btn-danger w-100" (click)="deleteCompany()">S&iacute;, 
+      {{isHardDelete() ? "Eliminar" : "Ocultar"}}</button> 
+  </div>
+</app-modal>
+
+<app-modal
+  title="Ficha de la empresa"
+  [isOpen]="isViewModalOpen()"
+  (close)="closeViewCompany()"
+  size="md"
+>
+  @if (selectedCompany(); as company) {
+    <div class="d-flex justify-content-center">
+      <div class="w-100 view-card">
+        <div class="card border-0 shadow-sm p-3">
+          <div class="table-responsive">
+            <table class="table align-middle mb-0">
+              <tbody>
+                <tr>
+                  <th class="bg-light w-25">Nombre</th>
+                  <td>{{ company.name }}</td>
+                </tr>
+
+                <tr>
+                  <th class="bg-light">CUIT</th>
+                  <td>{{ company.cuit }}</td>
+                </tr>
+
+                <tr>
+                  <th class="bg-light">Email</th>
+                  <td>{{ company.email }}</td>
+                </tr>
+
+                <tr>
+                  <th class="bg-light">Teléfono</th>
+                  <td>{{ company.phone }}</td>
+                </tr>
+
+                <tr>
+                  <th class="bg-light">Estado</th>
+
+                  <td>
+                    @if (company.enabled) {
+                      <span class="badge bg-success-subtle text-success"> Activa </span>
+                    } @else {
+                      <span class="badge bg-secondary-subtle text-secondary"> Inactiva </span>
+                    }
+                  </td>
+                </tr>
+
+                <tr>
+                  <th class="bg-light">Creado</th>
+                  <td>{{ company.created_at | date: 'dd/MM/yyyy' }}</td>
+                </tr>
+
+                <tr>
+                  <th class="bg-light">Actualizado</th>
+                  <td>{{ company.updated_at | date: 'dd/MM/yyyy' }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-4">
+      <button class="btn btn-purple w-100" (click)="closeViewCompany()">Cerrar</button>
+    </div>
+  }
+</app-modal>
+
+<app-toast
+  [message]="toastMessage()"
+  [type]="toastType()"
+  [isOpen]="toastOpen()"
+  (close)="toastOpen.set(false)"
+></app-toast>

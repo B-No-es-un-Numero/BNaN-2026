@@ -1,0 +1,83 @@
+<header>
+  <app-navbar></app-navbar>
+</header>
+
+<main>
+<section class="team-section py-5 mt-5">
+  <div class="container">
+
+    <!-- Header -->
+    <div class="text-center mb-5 mt-5">
+      <h1 class="display-4 fw-bold">Nuestro Equipo</h1>
+
+      <p class="lead text-secondary mx-auto section-description">
+        Somos un equipo apasionado por el marketing digital,
+        comprometidos con el crecimiento y éxito de nuestros clientes.
+      </p>
+    </div>
+
+    <!-- Cards -->
+    <div class="row g-4 justify-content-center mb-5">
+
+        @for (persona of equipo; track persona.id) {
+        <div class="col-md-6 col-lg-4">
+          <div class="card border-0 shadow-sm h-100 rounded-4 p-4 text-center">
+
+            <div class="fs-1 mb-3">{{ persona.emoji }}</div>
+
+            <h4 class="fw-bold">{{ persona.nombre }}</h4>
+
+            <p class="text-purple fw-semibold">
+              {{ persona.puesto }}
+            </p>
+
+            <p class="text-secondary">
+              {{ persona.bio }}
+            </p>
+
+            <button class="btn btn-purple mt-auto" [routerLink]="['/about', persona.id]">
+              Ver más
+              <i class="bi bi-arrow-right ms-2"></i>
+            </button>
+
+          </div>
+        </div>
+      } @empty {
+        <p class="text-center">No hay miembros en el equipo para mostrar.</p>
+      }
+    </div>
+
+    <hr class="section-divider my-5">
+
+    <div class="row g-4 justify-content-center">
+      
+      @for (item of valores; track item.titulo) {
+        <div class="col-md-6">
+          <div class="card border-0 shadow-sm h-100 rounded-4 p-5 value-card">
+            <div class="d-flex align-items-center mb-3">
+              <div class="bg-purple-light p-3 rounded-circle me-3">
+                <i class="bi {{ item.icon }} fs-2 text-purple"></i>
+              </div>
+              <h2 class="fw-bold m-0">{{ item.titulo }}</h2>
+            </div>
+            
+            <p class="text-secondary fs-5 lh-base">
+              {{ item.descripcion }}
+            </p>
+          </div>
+        </div>
+      }
+
+    </div>
+
+  </div>
+</section>
+</main>
+
+<app-footer></app-footer>
+
+
+
+
+
+

@@ -2,7 +2,10 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 
 class User(AbstractUser):
-
+    class Meta:
+        swappable= "AUTH_USER_MODEL";
+        db_table= "usuarios";
+        
     ROLE_CHOICES = [
         ('admin', 'Administrador'),
         ('user', 'Usuario estandar'),
@@ -31,6 +34,9 @@ class User(AbstractUser):
     created_at = models.DateTimeField(auto_now_add=True)
 
     updated_at = models.DateTimeField(auto_now=True)
+
+    USERNAME_FIELD = 'email';
+    REQUIRED_FIELDS = ['username'];
 
     def __str__(self):
         return self.email

@@ -1,0 +1,153 @@
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h4 class="mb-0">Gesti&oacute;n de Usuarios</h4>
+  <button class="btn btn-sm btn-purple" (click)="newUser()">
+    <i class="bi bi-plus-lg"></i> Nuevo Usuario
+  </button>
+</div>
+
+<div class="mb-3">
+  <div class="input-group">
+    <span class="input-group-text bg-white border-end-0">
+      <i class="bi bi-search"></i>
+    </span>
+    <input
+      type="text"
+      class="form-control border-start-0"
+      placeholder="Buscar usuarios por nombre o email..."
+      (input)="onSearch($event)"
+    />
+  </div>
+</div>
+
+<app-data-table
+  [data]="users()"
+  [columns]="userColumns"
+  [loading]="loadingUsers()"
+  emptyMessage="No se encontraron usuarios"
+>
+  <ng-template [appTableTemplate]="'id'" let-user>
+    <span class="text-muted fw-bold">#{{ user.id }}</span>
+  </ng-template>
+  <ng-template [appTableTemplate]="'full_name'" let-user>
+    {{ user.first_name }} {{ user.last_name }}
+  </ng-template>
+  <ng-template [appTableTemplate]="'role'" let-user>
+    @if (user.role === 'admin') {
+      <span class="badge bg-primary-subtle text-primary">Administrador</span>
+    } @else {
+      <span class="badge bg-secondary-subtle text-secondary">Usuario</span>
+    }
+  </ng-template>
+  <ng-template [appTableTemplate]="'actions'" let-user>
+    <button class="btn btn-sm btn-outline-purple me-2" (click)="viewUser(user)">
+      <i class="bi bi-eye"></i>
+    </button>
+    <button class="btn btn-sm btn-outline-purple me-2" (click)="editUser(user)">
+      <i class="bi bi-pencil"></i>
+    </button>
+    <button class="btn btn-sm btn-outline-danger me-2" (click)="confirmDeleteUser(user.id, false)">
+      <i class="bi bi-trash"></i>
+    </button>
+    <button *appHasRole="'admin'" class="btn btn-sm btn-outline-danger me-2" (click)="confirmDeleteUser(user.id, true)">
+      <i class="bi bi-x-octagon"></i>
+    </button>
+  </ng-template>
+</app-data-table>
+
+<app-modal
+  [title]="selectedUserId() === null ? 'Crear Usuario' : 'Editar Usuario'"
+  [isOpen]="isUserModalOpen()"
+  (close)="closeUserModal()"
+  size="md"
+>
+  @if (isUserModalOpen()) {
+    <app-user-form
+      [userIdInput]="selectedUserId()"
+      (saved)="handleUserSaved()"
+      (error)="handleUsererror($event)"
+      (canceled)="closeUserModal()"
+    />
+  }
+</app-modal>
+
+<app-modal
+  title="Confirmar Eliminaci&oacute;n"
+  [isOpen]="isDeleteModalOpen()"
+  (close)="closeDeleteModal()"
+  size="sm"
+>
+  <div class="text-center py-3">
+    <i class="bi bi-exclamation-triangle text-danger display-3 mb-3"></i>
+    <p class="fs-5 fw-bold">&iquest;Est&aacute;s seguro?</p>
+    <p class="text-muted small">{{isHardDelete() ? "Esta acción elimina para siempre el usuario del sistema!" 
+        : "Esta acción oculta el usuario del sistema!"}}</p> 
+  </div>
+
+  <div class="d-flex gap-2 mt-2">
+    <button class="btn btn-light w-100" (click)="closeDeleteModal()">No, volver</button>
+    <button class="btn btn-danger w-100" (click)="deleteUser()">S&iacute;,
+      {{isHardDelete() ? "Eliminar" : "Ocultar"}}</button> 
+  </div>
+</app-modal>
+
+<app-modal
+  title="Ficha del Usuario"
+  [isOpen]="isViewModalOpen()"
+  (close)="closeViewModal()"
+  size="md"
+>
+  @if (selectedUser(); as user) {
+    <div class="text-center mb-4">
+      <div
+        class="bg-primary-subtle text-primary rounded-circle d-inline-flex align-items-center justify-content-center mb-2 avatar-circle"
+      >
+        <span class="fs-1 fw-bold">{{ user.first_name.charAt(0) }}</span>
+      </div>
+      <h5 class="mb-0">{{ user.first_name }} {{ user.last_name }}</h5>
+      <span
+        class="badge"
+        [ngClass]="
+          user.role === 'admin'
+            ? 'bg-primary-subtle text-primary'
+            : 'bg-secondary-subtle text-secondary'
+        "
+      >
+        {{ user.role }}
+      </span>
+    </div>
+
+    <div class="card border-0 bg-light p-3">
+      <div class="mb-3">
+        <label class="small text-muted d-block fw-bold text-uppercase">Email Personal</label>
+        <div class="d-flex align-items-center">
+          <i class="bi bi-envelope me-2 text-primary"></i>
+          <span>{{ user.email }}</span>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-6">
+          <label class="small text-muted d-block fw-bold text-uppercase">ID Usuario</label>
+          <span>#{{ user.id }}</span>
+        </div>
+        <div class="col-6">
+          <label class="small text-muted d-block fw-bold text-uppercase">Estado</label>
+          <span class="text-success small"
+            ><i class="bi bi-circle-fill me-1 fs-xs"></i> Activo</span
+          >
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-4">
+      <button class="btn btn-purple w-100" (click)="closeViewModal()">Cerrar</button>
+    </div>
+  }
+</app-modal>
+
+<app-toast
+  [message]="toastMessage()"
+  [type]="toastType()"
+  [isOpen]="toastOpen()"
+  (close)="toastOpen.set(false)"
+></app-toast>
