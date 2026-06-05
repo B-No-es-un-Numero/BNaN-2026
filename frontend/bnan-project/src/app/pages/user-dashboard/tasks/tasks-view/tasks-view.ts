@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, signal, OnInit } from '@angular/core';
+import { Component, inject, signal, OnInit, OnDestroy } from '@angular/core';
 import { Modal } from '../../../../shared/modal/modal';
 import { FormsModule } from '@angular/forms';
 import { TableColumn } from '../../../../model/table-column.model';
@@ -9,6 +9,7 @@ import { Task } from '../../../../model/task.model';
 import { TasksForm } from '../tasks-form/tasks-form';
 import { DataTable } from '../../../../shared/data-table/data-table';
 import { TableTemplateDirective } from '../../../../shared/data-table/table-template.directive';
+import { Subject, debounceTime, distinctUntilChanged, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-tasks-view',
@@ -23,12 +24,14 @@ import { TableTemplateDirective } from '../../../../shared/data-table/table-temp
   ],
   templateUrl: './tasks-view.html',
 })
-export class TasksView implements OnInit {
+export class TasksView implements OnInit, OnDestroy {
 
   private taskService = inject(TaskService);
 
   tasks = signal<Task[]>([]);
   loadingTasks = signal(false);
+  private searchSubject = new Subject<string>();
+  private destroy$ = new Subject<void>();
 
   taskColumns: TableColumn[] = [
     { key: 'id', label: 'ID' },
@@ -54,11 +57,21 @@ export class TasksView implements OnInit {
 
   ngOnInit(): void {
     this.loadTasks();
+    this.searchSubject
+      .pipe(debounceTime(100), distinctUntilChanged(), takeUntil(this.destroy$))
+      .subscribe((term) => this.loadTasks(term || undefined));
   }
 
-  loadTasks(): void {
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  loadTasks(search?: string): void {
     this.loadingTasks.set(true);
-    this.taskService.getTasks().subscribe({
+    this.taskService.getTasks(search)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
       next: (data: Task[]) => {
         this.tasks.set(data);
         this.loadingTasks.set(false);
@@ -105,18 +118,8 @@ export class TasksView implements OnInit {
   }
 
   onSearch(event: Event) {
-    const term = (event.target as HTMLInputElement).value;
-    this.loadingTasks.set(true);
-    this.taskService.getTasks(term || undefined).subscribe({
-      next: (data: Task[]) => {
-        this.tasks.set(data);
-        this.loadingTasks.set(false);
-      },
-      error: (error: any) => {
-        this.loadingTasks.set(false);
-        console.error(error);
-      },
-    });
+    const input = event.target as HTMLInputElement;
+    this.searchSubject.next(input.value);
   }
 
   confirmDeleteTask(id: number): void {
@@ -129,7 +132,9 @@ export class TasksView implements OnInit {
 
     if (id === null) return;
 
-    this.taskService.deleteTask(id).subscribe({
+    this.taskService.deleteTask(id)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
       next: () => {
         this.tasks.update(tasks =>
           tasks.filter(task => task.id !== id)

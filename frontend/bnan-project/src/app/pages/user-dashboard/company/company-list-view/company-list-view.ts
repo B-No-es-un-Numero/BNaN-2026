@@ -10,6 +10,7 @@ import { CommonModule } from '@angular/common';
 import { TableColumn } from '../../../../model/table-column.model';
 import { DataTable } from '../../../../shared/data-table/data-table';
 import { TableTemplateDirective } from '../../../../shared/data-table/table-template.directive';
+import { DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-company-list-view',
@@ -21,6 +22,7 @@ import { TableTemplateDirective } from '../../../../shared/data-table/table-temp
     CompanyForm,
     DataTable,
     TableTemplateDirective,
+    DatePipe,
   ],
   templateUrl: './company-list-view.html',
   styleUrl: './company-list-view.css',

@@ -1,5 +1,6 @@
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { DatePipe } from '@angular/common';
 import { ClientService } from '../../../../services/client/client-service';
 import { Client } from '../../../../model/client.model';
 import { Modal } from '../../../../shared/modal/modal';
@@ -12,7 +13,7 @@ import { TableTemplateDirective } from '../../../../shared/data-table/table-temp
 
 @Component({
   selector: 'app-client-list-view',
-  imports: [FormsModule, Modal, ClientForm, Toast, DataTable, TableTemplateDirective],
+  imports: [FormsModule, Modal, ClientForm, Toast, DataTable, TableTemplateDirective, DatePipe],
   templateUrl: './client-list-view.html',
   styleUrl: './client-list-view.css',
 })

@@ -43,7 +43,7 @@ export class ClientForm implements OnInit {
     email: ['', [Validators.required, Validators.email]],
     dni: ['', [Validators.required, Validators.pattern(/^\d{7,8}$/)]],
     date_of_birth: ['', [Validators.required]],
-    phone: ['', [Validators.required, Validators.pattern(/^\d+$/)]],
+    phone: ['', [Validators.required, Validators.minLength(10), Validators.pattern(/^\d+$/)]],
     company: [null as number | null],
     responsible_user: [null as number | null],
     status: ['lead', [Validators.required]],

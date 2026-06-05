@@ -12,8 +12,8 @@ export class UserService {
 
   constructor(private http:HttpClient){}
 
-  public createUser(data: CreateUserRequest) {
-    return this.http.post(`${environment.apiUrl}/auth/register/`, data);
+  public createUser(data: CreateUserRequest): Observable<User> {
+    return this.http.post<User>(`${environment.apiUrl}/auth/register/`, data);
   }
   
   public getUserList(search?: string): Observable<User[]>{
@@ -25,12 +25,12 @@ export class UserService {
   return this.http.get<User>(`${this.baseUrl}/${id}/`);
   }
 
-  public updateUser(id: number, data: any) {
-    return this.http.put(`${this.baseUrl}/${id}/`, data);
+  public updateUser(id: number, data: User): Observable<User> {
+    return this.http.put<User>(`${this.baseUrl}/${id}/`, data);
   }
 
-  public deleteUser(id: number) {
-    return this.http.delete(`${this.baseUrl}/${id}/`);
+  public deleteUser(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/${id}/`);
   }
 
 }

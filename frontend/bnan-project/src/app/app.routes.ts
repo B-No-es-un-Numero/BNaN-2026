@@ -21,6 +21,7 @@ export const routes: Routes = [
     canActivate: [authGuard],
     component: UserDashboard,
     children: [
+      { path: '', redirectTo: 'clientes', pathMatch: 'full' },
       { path: 'clientes', component: ClientListView },
       { path: 'usuarios', component: UsersView },
       { path: 'empresas', component: CompanyListView},

@@ -148,12 +148,12 @@
 
               <tr>
                 <th class="bg-light">Creado</th>
-                <td>{{ client.created_at }}</td>
+                <td>{{ client.created_at | date: 'dd/MM/yyyy' }}</td>
               </tr>
 
               <tr>
                 <th class="bg-light">Actualizado</th>
-                <td>{{ client.updated_at }}</td>
+                <td>{{ client.updated_at | date: 'dd/MM/yyyy' }}</td>
               </tr>
             </tbody>
           </table>

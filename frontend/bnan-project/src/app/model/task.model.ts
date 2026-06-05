@@ -7,3 +7,12 @@ export interface Task {
   client_name: string;
   assigned_user_name: string;
 }
+
+export interface CreateTaskRequest {
+  title: string;
+  description: string;
+  due_date: string;
+  status: string;
+  client: number;
+  assigned_user: number;
+}
