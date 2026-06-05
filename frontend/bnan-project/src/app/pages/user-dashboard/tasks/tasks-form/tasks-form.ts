@@ -1,5 +1,5 @@
 import { Component, inject, signal, input, output, OnInit } from '@angular/core';
-import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, Validators, ReactiveFormsModule, AbstractControl, ValidationErrors, ValidatorFn, } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { TaskService } from '../../../../services/task/task-service';
 import { UserService } from '../../../../services/users/user-service';
@@ -14,7 +14,6 @@ import { Client } from '../../../../model/client.model';
   styleUrl: './tasks-form.css',
 })
 export class TasksForm implements OnInit {
-
   private fb = inject(FormBuilder);
   private taskService = inject(TaskService);
   private userService = inject(UserService);
@@ -22,20 +21,55 @@ export class TasksForm implements OnInit {
 
   taskIdInput = input<number | null>(null);
 
-  saved = output<void>();
+  saved = output();
   error = output<string>();
-  canceled = output<void>();
+  canceled = output();
 
   isCreating = signal(false);
-  serverError = signal<string>('');
+  serverError = signal('');
 
   users = signal<User[]>([]);
   clients = signal<Client[]>([]);
 
+  private conditionalMinDateValidator(): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      const dueDate = control.value;
+      if (!dueDate) {
+        return null;
+      }
+
+      const status = this.form?.get('status')?.value;
+      const requiresFutureDate = status === 'pending' || status === 'in_progress';
+      if (!requiresFutureDate) {
+        return null;
+      }
+
+      const selectedDate = new Date(dueDate);
+      selectedDate.setHours(0, 0, 0, 0);
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      return selectedDate < today ? { minDate: true } : null;
+    };
+  }
+
+  form = this.fb.nonNullable.group({
+    title: ['', [Validators.required, Validators.maxLength(100)]],
+    description: ['', Validators.required],
+    due_date: ['', [Validators.required, this.conditionalMinDateValidator()]],
+    status: ['pending', Validators.required],
+    assigned_user_id: [0, [Validators.required, Validators.min(1)]],
+    client_id: [0, [Validators.required, Validators.min(1)]],
+  });
+
   ngOnInit(): void {
     this.loadUsers();
     this.loadClients();
+    this.form.controls.status.valueChanges.subscribe(() => {
+      this.form.controls.due_date.updateValueAndValidity();
+    });
+
     const taskId = this.taskIdInput();
+
     if (taskId) {
       this.loadTask(taskId);
     }
@@ -66,21 +100,13 @@ export class TasksForm implements OnInit {
           assigned_user_id: task.assigned_user_id,
           client_id: task.client_id,
         });
+        this.form.controls.due_date.updateValueAndValidity();
       },
       error: () => {
         this.serverError.set('No se pudo cargar la tarea. Intentá de nuevo.');
       },
     });
   }
-
-  form = this.fb.nonNullable.group({
-    title: ['', [Validators.required, Validators.maxLength(100)]],
-    description: ['', Validators.required],
-    due_date: ['', Validators.required],
-    status: ['pending', Validators.required],
-    assigned_user_id: [0, [Validators.required, Validators.min(1)]],
-    client_id: [0, [Validators.required, Validators.min(1)]],
-  });
 
   saveTask() {
     this.serverError.set('');
@@ -93,6 +119,7 @@ export class TasksForm implements OnInit {
     this.isCreating.set(true);
 
     const data = this.form.getRawValue();
+
     const taskData = {
       title: data.title,
       description: data.description,
@@ -111,7 +138,9 @@ export class TasksForm implements OnInit {
           this.isCreating.set(false);
         },
         error: () => {
-          this.serverError.set('No se pudo actualizar la tarea. Verificá los datos e intentá de nuevo.');
+          this.serverError.set(
+            'No se pudo actualizar la tarea. Verificá los datos e intentá de nuevo.'
+          );
           this.isCreating.set(false);
         },
       });
@@ -119,7 +148,11 @@ export class TasksForm implements OnInit {
       this.taskService.createTask(taskData).subscribe({
         next: () => {
           this.saved.emit();
-          this.form.reset({ status: 'pending', assigned_user_id: 0, client_id: 0 });
+          this.form.reset({
+            status: 'pending',
+            assigned_user_id: 0,
+            client_id: 0,
+          });
           this.isCreating.set(false);
         },
         error: () => {
