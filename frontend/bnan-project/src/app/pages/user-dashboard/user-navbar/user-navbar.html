@@ -25,18 +25,18 @@
   </div>
   <hr>
   <ul class="nav nav-pills flex-column gap-2 mb-auto mt-2">
-    @if (auth.isAdmin()) {
+    <li class="nav-item">
+      <a routerLink="clientes" routerLinkActive="active" class="nav-link d-flex align-items-center gap-2 text-dark">
+        <i class="bi bi-people"></i> Clientes
+      </a>
+    </li>
+        @if (auth.isAdmin()) {
     <li class="nav-item">
       <a routerLink="usuarios" routerLinkActive="active" class="nav-link d-flex align-items-center gap-2 text-dark">
         <i class="bi bi-person-badge"></i> Usuarios
       </a>
     </li>
     }
-    <li class="nav-item">
-      <a routerLink="clientes" routerLinkActive="active" class="nav-link d-flex align-items-center gap-2 text-dark">
-        <i class="bi bi-people"></i> Clientes
-      </a>
-    </li>
     <li class="nav-item">
       <a routerLink="empresas" routerLinkActive="active" class="nav-link d-flex align-items-center gap-2 text-dark">
         <i class="bi bi-building"></i> Empresas

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, signal, OnInit } from '@angular/core';
+import { Component, inject, signal, OnInit, OnDestroy } from '@angular/core';
 import { Modal } from '../../../../shared/modal/modal';
 import { FormsModule } from '@angular/forms';
 import { UserService } from '../../../../services/users/user-service';
@@ -9,6 +9,7 @@ import { UserForm } from '../user-form/user-form';
 import { TableColumn } from '../../../../model/table-column.model';
 import { DataTable } from '../../../../shared/data-table/data-table';
 import { TableTemplateDirective } from '../../../../shared/data-table/table-template.directive';
+import { Subject, debounceTime, distinctUntilChanged, takeUntil } from 'rxjs';
 import { HasRoleDirective } from '../../../../shared/directives/has-role.directive';
 
 
@@ -17,10 +18,12 @@ import { HasRoleDirective } from '../../../../shared/directives/has-role.directi
   imports: [CommonModule, Modal, FormsModule, Toast, UserForm, DataTable, TableTemplateDirective, HasRoleDirective],
   templateUrl: './users-view.html',
 })
-export class UsersView implements OnInit {
+export class UsersView implements OnInit, OnDestroy {
   private UserService = inject(UserService);
   users = signal<User[]>([]);
   loadingUsers = signal(false);
+  private searchSubject = new Subject<string>();
+  private destroy$ = new Subject<void>();
 
   userColumns: TableColumn[] = [
     { key: 'id', label: 'ID' },
@@ -46,11 +49,21 @@ export class UsersView implements OnInit {
 
   ngOnInit(): void {
     this.loadUsers();
+    this.searchSubject
+      .pipe(debounceTime(100), distinctUntilChanged(), takeUntil(this.destroy$))
+      .subscribe((term) => this.loadUsers(term || undefined));
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   private loadUsers(search?: string): void {
     this.loadingUsers.set(true);
-    this.UserService.getUserList(search).subscribe({
+    this.UserService.getUserList(search)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
       next: (data: any) => {
         this.users.set(data);
         this.loadingUsers.set(false);
@@ -92,8 +105,8 @@ export class UsersView implements OnInit {
   }
 
   onSearch(event: Event) {
-    const term = (event.target as HTMLInputElement).value;
-    this.loadUsers(term || undefined);
+    const input = event.target as HTMLInputElement;
+    this.searchSubject.next(input.value);
   }
 
   confirmDeleteUser(id: number, hardDelete: boolean) {
@@ -106,7 +119,8 @@ export class UsersView implements OnInit {
     const id = this.userToDeleteId();
     if (id === null) return;
     if (this.isHardDelete()){
-      this.UserService.hardDeleteUser(id).subscribe({
+      this.UserService.hardDeleteUser(id)
+      .pipe(takeUntil(this.destroy$)).subscribe({
         next: () => {
           this.users.update((users) => users.filter((u) => u.id !== id));
           this.showToast('Usuario eliminado exitosamente', 'success');
@@ -118,7 +132,8 @@ export class UsersView implements OnInit {
         },
       });
     } else {
-    this.UserService.softDeleteUser(id).subscribe({
+    this.UserService.softDeleteUser(id)
+    .pipe(takeUntil(this.destroy$)).subscribe({
       next: () => {
         this.users.update((users) => users.filter((u) => u.id !== id));
         this.showToast('Usuario ocultado exitosamente', 'success');

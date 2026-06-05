@@ -23,7 +23,7 @@ export class ClientService {
     return this.http.get<Client>(`${this.baseUrl}/${id}/`);
   }
 
-  public updateClient(id: number, clientData: any): Observable<Client> {
+  public updateClient(id: number, clientData: CreateClientRequest): Observable<Client> {
     return this.http.put<Client>(`${this.baseUrl}/${id}/`, clientData);
   }
 

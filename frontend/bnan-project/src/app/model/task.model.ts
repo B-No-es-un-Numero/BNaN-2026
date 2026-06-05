@@ -9,3 +9,11 @@ export interface Task {
   assigned_user_id: number;
   client_id: number;
 }
+export interface CreateTaskRequest {
+  title: string;
+  description: string;
+  due_date: string;
+  status: string;
+  client: number;
+  assigned_user: number;
+}

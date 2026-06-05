@@ -10,6 +10,7 @@ import { CommonModule } from '@angular/common';
 import { TableColumn } from '../../../../model/table-column.model';
 import { DataTable } from '../../../../shared/data-table/data-table';
 import { TableTemplateDirective } from '../../../../shared/data-table/table-template.directive';
+import { DatePipe } from '@angular/common';
 import { HasRoleDirective } from '../../../../shared/directives/has-role.directive';
 
 @Component({
@@ -22,6 +23,7 @@ import { HasRoleDirective } from '../../../../shared/directives/has-role.directi
     CompanyForm,
     DataTable,
     TableTemplateDirective,
+    DatePipe,
     HasRoleDirective,
   ],
   templateUrl: './company-list-view.html',

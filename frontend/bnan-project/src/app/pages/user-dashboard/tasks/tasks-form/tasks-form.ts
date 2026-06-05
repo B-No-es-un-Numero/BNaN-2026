@@ -43,14 +43,14 @@ export class TasksForm implements OnInit {
 
   loadUsers(): void {
     this.userService.getUserList().subscribe({
-      next: (data: any) => this.users.set(data),
+      next: (data: User[]) => this.users.set(data),
       error: () => this.serverError.set('No se pudieron cargar los usuarios disponibles.'),
     });
   }
 
   loadClients(): void {
     this.clientService.getClientList().subscribe({
-      next: (data: any) => this.clients.set(data),
+      next: (data: Client[]) => this.clients.set(data),
       error: () => this.serverError.set('No se pudieron cargar los clientes disponibles.'),
     });
   }

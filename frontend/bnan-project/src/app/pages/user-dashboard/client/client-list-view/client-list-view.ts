@@ -1,5 +1,6 @@
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { DatePipe } from '@angular/common';
 import { ClientService } from '../../../../services/client/client-service';
 import { Client } from '../../../../model/client.model';
 import { Modal } from '../../../../shared/modal/modal';
@@ -21,6 +22,7 @@ import { HasRoleDirective } from '../../../../shared/directives/has-role.directi
     DataTable,
     TableTemplateDirective,
     HasRoleDirective,
+    DatePipe
   ],
   templateUrl: './client-list-view.html',
   styleUrl: './client-list-view.css',
