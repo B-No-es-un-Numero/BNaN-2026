@@ -25,7 +25,7 @@ class RegisterView(ApiView):
 
 class UserView(ApiView):
     def get_permissions(self):
-        if self.request.method in ["GET", "PUT", "DELETE"]:
+        if self.request.method in ["PUT", "DELETE"]:
             return [IsAuthenticated(), IsAdminRole()];
         return [IsAuthenticated()];
     
