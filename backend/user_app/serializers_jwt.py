@@ -27,7 +27,7 @@ class EmailTokenObtainPairSerializer(TokenObtainPairSerializer):
                 code='authorization'
             )
 
-        if not user.is_active:
+        if not user.enabled:
             raise serializers.ValidationError(
                 {'detail': 'Esta cuenta está deshabilitada.'},
                 code='authorization'
@@ -35,10 +35,8 @@ class EmailTokenObtainPairSerializer(TokenObtainPairSerializer):
 
         refresh = self.get_token(user)
 
-        role = 'admin' if user.is_superuser else user.role
-
         return {
             'refresh': str(refresh),
             'access': str(refresh.access_token),
-            'role': role
+            'role': user.role
         }
