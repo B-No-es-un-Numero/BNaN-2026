@@ -41,3 +41,25 @@ class UserSerializer(serializers.ModelSerializer):
             
         instance.save();
         return instance;
+
+
+class RegisterSerializer(serializers.ModelSerializer):
+
+    password = serializers.CharField(write_only=True, required=True);
+
+    class Meta:
+        model = User
+        fields = [
+            'username',
+            'first_name',
+            'last_name',
+            'email',
+            'password',
+        ]
+
+    def create(self, validated_data):
+        password = validated_data.pop('password')
+        user = User(**validated_data, role='user', enabled=True)
+        user.set_password(password)
+        user.save()
+        return user

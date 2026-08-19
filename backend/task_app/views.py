@@ -11,11 +11,14 @@ class TaskView(ApiView):
 
     def get(self, request, pk=None):
 
+        tasks = Task.objects.all();
+        if request.user.role != "admin":
+            tasks = tasks.filter(enabled=True);
+
         if pk:
-            task = get_object_or_404(Task, id=pk);
+            task = get_object_or_404(tasks, id=pk);
             serializer = TaskSerializer(task);
         else:
-            tasks = Task.objects.filter(enabled=True);
             client_id = request.query_params.get('client');
             status_filter = request.query_params.get('status');
             assigned_user = request.query_params.get('assigned_user');

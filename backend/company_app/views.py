@@ -10,11 +10,14 @@ from .serializers import CompanySerializer
 class CompanyView(APIView):
     
     def get(self, request, pk=None):
+        companies = Company.objects.all()
+        if request.user.role != "admin":
+            companies = companies.filter(enabled=True)
+
         if pk:
-            company = get_object_or_404(Company, id=pk)
+            company = get_object_or_404(companies, id=pk)
             serializer = CompanySerializer(company)
         else:
-            companies = Company.objects.filter(enabled=True)
             serializer = CompanySerializer(companies, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 

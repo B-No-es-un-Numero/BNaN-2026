@@ -1,5 +1,7 @@
 from rest_framework import serializers
+from django.utils import timezone
 from task_app.models import Task
+from task_app.enum import STATUS_CHOICES
 
 
 class TaskSerializer(serializers.ModelSerializer):
@@ -31,3 +33,19 @@ class TaskSerializer(serializers.ModelSerializer):
             full = f"{obj.assigned_user.first_name} {obj.assigned_user.last_name}".strip()
             return full or obj.assigned_user.username
         return None
+
+    def validate(self, attrs):
+        status = attrs.get('status', getattr(self.instance, 'status', None))
+        due_date = attrs.get('due_date', getattr(self.instance, 'due_date', None))
+
+        if status in (STATUS_CHOICES.PENDING, STATUS_CHOICES.IN_PROGRESS):
+            if due_date is None:
+                raise serializers.ValidationError(
+                    {"due_date": "Las tareas pendientes o en progreso deben tener una fecha límite."}
+                )
+            if due_date < timezone.localdate():
+                raise serializers.ValidationError(
+                    {"due_date": "La fecha límite no puede ser anterior a hoy para tareas pendientes o en progreso."}
+                )
+
+        return attrs

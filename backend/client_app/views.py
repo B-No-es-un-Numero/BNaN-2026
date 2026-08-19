@@ -11,11 +11,13 @@ from task_app.models import Task
 class ClientView(ApiView):
         
     def get(self, request, pk=None):
+        clients = Client.objects.all();
+        if request.user.role != "admin":
+            clients = clients.filter(enabled=True);
         if pk:
-            client = get_object_or_404(Client, id=pk);
+            client = get_object_or_404(clients, id=pk);
             serializer = ClientSerializer(client);
         else:
-            clients = Client.objects.filter(enabled=True);
             serializer = ClientSerializer(clients, many=True);
         return Response(serializer.data, status=status.HTTP_200_OK);
 
@@ -45,9 +47,10 @@ class ClientView(ApiView):
             client.delete();
             return Response(status=status.HTTP_204_NO_CONTENT);
 
-        otherClients = Client.objects.filter(company=client.company);
-        if (otherClients.count() == 1):
-            Company.objects.filter(pk= client.company.id).update(enabled=False);
+        if client.company is not None:
+            otherClients = Client.objects.filter(company=client.company).exclude(id=client.id);
+            if not otherClients.exists():
+                Company.objects.filter(pk=client.company.id).update(enabled=False);
         
         relatedTask = Task.objects.filter(client=client, enabled=True);
         relatedTask.update(enabled = False);
