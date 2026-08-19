@@ -5,16 +5,17 @@ from client_app.models import Client
 from task_app.models import Task
 from user_app.models import User
 from user_app.permissions import IsAdminRole
-from user_app.serializers import UserSerializer
+from user_app.serializers import UserSerializer, RegisterSerializer
 from django.shortcuts import get_object_or_404
 from django.db.models import Q as query
+from django.db.models.deletion import ProtectedError
 from rest_framework.permissions import IsAuthenticated, AllowAny
 
 
 class RegisterView(ApiView):
     permission_classes = [AllowAny];
     def post(self, request):
-        serializer = UserSerializer(data=request.data);
+        serializer = RegisterSerializer(data=request.data);
         if serializer.is_valid():
             serializer.save();
             return Response(
@@ -30,11 +31,14 @@ class UserView(ApiView):
         return [IsAuthenticated()];
     
     def get(self, request, pk=None):
+        users = User.objects.all();
+        if request.user.role != "admin":
+            users = users.filter(enabled=True);
+
         if pk:
-            user = get_object_or_404(User, id=pk);
+            user = get_object_or_404(users, id=pk);
             serializer = UserSerializer(user);
         else:
-            users = User.objects.filter(enabled=True);
             search = request.query_params.get('search', '');
             if search:
                 users = users.filter(
@@ -55,9 +59,6 @@ class UserView(ApiView):
     def delete(self, request, pk=None):
         user = get_object_or_404(User, id=pk);
         hard = request.query_params.get("hard", "false").lower() in ["true"]
-        if hard:
-            user.delete();
-            return Response(status=status.HTTP_204_NO_CONTENT);
 
         relatedClients = Client.objects.filter(responsible_user=user, enabled=True);
         relatedTask = Task.objects.filter(assigned_user=user, enabled=True);
@@ -66,6 +67,14 @@ class UserView(ApiView):
             return Response({"message": "No se puede eliminar un usuario que tiene clientes a cargo. Elimine o reasigne los clientes primero."}, status=status.HTTP_400_BAD_REQUEST);
         if (relatedTask.exists()):
             return Response({"message": "No se puede eliminar un usuario que tiene tareas a cargo. Elimine o reasigne las tareas primero."}, status=status.HTTP_400_BAD_REQUEST);
+
+        if hard:
+            try:
+                user.delete();
+            except ProtectedError:
+                return Response({"message": "No se puede eliminar un usuario que tiene tareas a cargo. Elimine o reasigne las tareas primero."}, status=status.HTTP_400_BAD_REQUEST);
+            return Response(status=status.HTTP_204_NO_CONTENT);
+
         user.enabled = False
         user.save();
         return Response(status=status.HTTP_204_NO_CONTENT);

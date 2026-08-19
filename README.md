@@ -95,14 +95,17 @@ Asegurate de contar con lo siguiente instalado en tu sistema:
    ```
    *(Estará disponible en `http://127.0.0.1:8000`)*
 8. Endpoints disponibles (guía uso directo de Backend):
-* `api/usuarios`
-* `api/usuarios/{id}`
-* `/api/clientes`
-* `/api/clientes/{id}`
-* `api/tareas`
-* `api/tareas/{id}`
-* `/api/empresas`
-* `/api/empresas/{id}`
+* `api/auth/register/` — `POST` (registro público de usuarios)
+* `api/auth/login/` — `POST` (obtener tokens JWT de acceso/refresh)
+* `api/auth/refresh/` — `POST` (renovar el token de acceso)
+* `api/usuarios` — `GET` (listado de usuarios)
+* `api/usuarios/{id}/` — `GET` / `PUT` / `DELETE` (detalle, edición y borrado; todo el `DELETE`, lógico o físico con `?hard=true`, solo admin)
+* `api/clientes` — `GET` / `POST` (listado y creación)
+* `api/clientes/{id}/` — `GET` / `PUT` / `DELETE` (detalle, edición y borrado; `DELETE ?hard=true` borrado físico, solo admin)
+* `api/tareas/` — `GET` / `POST` (listado y creación)
+* `api/tareas/{id}/` — `GET` / `PUT` / `DELETE` (detalle, edición y borrado; `DELETE ?hard=true` borrado físico, solo admin)
+* `api/companias/` — `GET` / `POST` (listado y creación)
+* `api/companias/{id}/` — `GET` / `PUT` / `DELETE` (detalle, edición y borrado; `DELETE ?hard=true` borrado físico, solo admin)
 
 Para mayor detalle sobre los endpoints, sus requests y responses, se puede revisar el [anexo al documento PMI](https://docs.google.com/document/d/1fRECcmmsum6uZzUrU-YYKPl7DIBUYYHPoSA8BmNgO78/edit?usp=sharing), apartado 3.2 y 3.3.
 
@@ -142,8 +145,8 @@ Una vez iniciadas ambas aplicaciones, el uso esperado consiste en:
 -- Filtrar por campos significativos.
 -- Abrir registros para consultar sus detalles.
 -- Editar registros con aplicación en tiempo real.
--- Eliminar registros para que dejen de figurar en el sistema.
--- El eliminado lógico, si bien existente, queda reservado únicamente para usuarios con rol administrador.
+-- Eliminar registros para que dejen de figurar en el sistema (borrado lógico, disponible para todos los usuarios autenticados).
+-- El borrado físico definitivo (recurso con `?hard=true`) está reservado únicamente para usuarios con rol administrador.
 * Cerrar sesión.
 
 ---
