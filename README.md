@@ -154,6 +154,5 @@ Una vez iniciadas ambas aplicaciones, el uso esperado consiste en:
 ## Integrantes del equipo y roles
 * Bruvera, Melina Belén - Fullstack dev & Project Manager.
 * Diván, Guillermo Mauricio - Fullstack dev & Product owner.
-* García Pardo, Alejandro David - Fullstack dev.
 * Natale, Gabriel Alejandro - Fullstack dev.
 * Romero, Joaquín David - Fullstack dev.
